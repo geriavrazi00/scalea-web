@@ -8,6 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -17,15 +20,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.sun.istack.NotNull;
 
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
-@NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Table(name="users")
 public class User implements UserDetails {
 
@@ -37,25 +37,44 @@ public class User implements UserDetails {
 	
 	@NotNull
 	@Size(max=255)
-	private final String username;
+	private String username;
 	
 	@NotNull
 	@Size(max=255)
-	private final String password;
+	private String password;
 	
 	@NotNull
 	@Column(name="firstname")
-	private final String firstName;
+	private String firstName;
 	
 	@NotNull
 	@Column(name="lastname")
-	private final String lastName;
+	private String lastName;
 	
 	@Column(name="phonenumber")
-	private final String phoneNumber;
+	private String phoneNumber;
 	
 	@NotNull
-	private final String identification;
+	private String identification;
+	
+	@ManyToMany 
+    @JoinTable( 
+        name = "users_roles", 
+        joinColumns = @JoinColumn(
+          name = "user_id", referencedColumnName = "id"), 
+        inverseJoinColumns = @JoinColumn(
+          name = "role_id", referencedColumnName = "id")) 
+    private Collection<Role> roles;
+	
+	public User(@Size(max = 255) String username, @Size(max = 255) String password, String firstName, String lastName, String phoneNumber, 
+		String identification) {
+		this.username = username;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phoneNumber = phoneNumber;
+		this.identification = identification;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

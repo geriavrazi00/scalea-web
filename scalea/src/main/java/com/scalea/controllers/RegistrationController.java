@@ -7,16 +7,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.scalea.controllers.forms.RegistrationForm;
+import com.scalea.repositories.RoleRepository;
 import com.scalea.repositories.UserRepository;
 
 @Controller
 @RequestMapping("/register")
 public class RegistrationController {
 	private UserRepository userRepo;
+	private RoleRepository roleRepo;
 	private PasswordEncoder passwordEncoder;
 	
-	public RegistrationController(UserRepository userRepo, PasswordEncoder passwordEncoder) {
+	public RegistrationController(UserRepository userRepo, PasswordEncoder passwordEncoder, RoleRepository roleRepo) {
 		this.userRepo = userRepo;
+		this.roleRepo = roleRepo;
 		this.passwordEncoder = passwordEncoder;
 	}
 
@@ -27,7 +30,7 @@ public class RegistrationController {
 
 	@PostMapping
 	public String processRegistration(RegistrationForm form) {
-		userRepo.save(form.toUser(passwordEncoder));
+		userRepo.save(form.toUser(passwordEncoder, roleRepo));
 		return "redirect:/login";
 	}
 }

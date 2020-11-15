@@ -11,5 +11,9 @@
 	<body>
 		<h1>Welcome to Scalea bitch</h1>
 		<div th:replace="commons/menu :: client_header"></div>
+		
+		<form method="POST" th:action="@{/logout}">
+			<input type="submit" value="Logout"/>
+		</form>
 	</body>
 </html>

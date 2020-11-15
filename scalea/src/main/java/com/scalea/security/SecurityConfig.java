@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.scalea.enums.InitialRoles;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -30,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/", "/home").access("hasRole('ROLE_USER')")
+			.antMatchers("/", "/home", "/barcode").access("hasRole('" + InitialRoles.ROLE_USER + "')")
 			.antMatchers("/**").access("permitAll")
 			.and().formLogin().loginPage("/login")
 			.and().logout().logoutSuccessUrl("/");

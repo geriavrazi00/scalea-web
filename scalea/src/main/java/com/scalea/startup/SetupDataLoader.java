@@ -1,5 +1,6 @@
 package com.scalea.startup;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 import com.scalea.entities.Privilege;
 import com.scalea.entities.Role;
 import com.scalea.entities.User;
+import com.scalea.enums.InitialPrivileges;
+import com.scalea.enums.InitialRoles;
 import com.scalea.repositories.PrivilegeRepository;
 import com.scalea.repositories.RoleRepository;
 import com.scalea.repositories.UserRepository;
@@ -45,31 +48,37 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		if (alreadySetup) return;
 		
-        Privilege readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
-        Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+		List<Privilege> adminPrivileges = new ArrayList<>();
+		List<Privilege> userPrivileges = new ArrayList<>();
+		
+		/*
+		 *  Setting up privileges. The administrator role should have them all. The User role at the moment only has read privileges. This will change 
+		 *  with time.
+		 */
+		for (InitialPrivileges initialPrivilege: InitialPrivileges.values()) {
+			Privilege privilege = createPrivilegeIfNotFound(initialPrivilege.getName());
+			adminPrivileges.add(privilege);
+			
+			if (initialPrivilege.equals(InitialPrivileges.READ_PRIVILEGE)) {
+				userPrivileges.add(privilege);
+			}
+		}
+		
+        createRoleIfNotFound(InitialRoles.ROLE_ADMIN.getName(), adminPrivileges);
+        createRoleIfNotFound(InitialRoles.ROLE_USER.getName(), userPrivileges);
  
-        List<Privilege> adminPrivileges = Arrays.asList(readPrivilege, writePrivilege);        
-        createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
- 
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
+        Role adminRole = roleRepository.findByName(InitialRoles.ROLE_ADMIN.getName());
         createAdminUserIfNotFound(adminRole);
         
         alreadySetup = true;
 	}
 	
+	@Transactional
 	private User createAdminUserIfNotFound(Role adminRole) {
 		User admin = userRepository.findByUsername(Constants.DEFAULT_ADMIN_USERNAME);
 		if (admin == null) {
-			admin = new User();
-			admin.setUsername(Constants.DEFAULT_ADMIN_USERNAME);
-			admin.setPassword(passwordEncoder.encode(Constants.DEFAULT_ADMIN_PASSWORD));
-			admin.setFirstName(Constants.DEFAULT_ADMIN_FIRSTNAME);
-			admin.setLastName(Constants.DEFAULT_ADMIN_LASTNAME);
-			admin.setPhoneNumber(Constants.DEFAULT_ADMIN_PHONE);
-			admin.setIdentification("");
-			admin.setRoles(Arrays.asList(adminRole));
-			
+			admin = new User(Constants.DEFAULT_ADMIN_USERNAME, passwordEncoder.encode(Constants.DEFAULT_ADMIN_PASSWORD), Constants.DEFAULT_ADMIN_FIRSTNAME, 
+				Constants.DEFAULT_ADMIN_LASTNAME, Constants.DEFAULT_ADMIN_PHONE, "", Arrays.asList(adminRole));
 	        userRepository.save(admin);
 		}
 		return admin;

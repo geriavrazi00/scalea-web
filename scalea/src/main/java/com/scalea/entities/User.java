@@ -67,13 +67,14 @@ public class User implements UserDetails {
     private Collection<Role> roles;
 	
 	public User(@Size(max = 255) String username, @Size(max = 255) String password, String firstName, String lastName, String phoneNumber, 
-		String identification) {
+		String identification, Collection<Role> roles) {
 		this.username = username;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
 		this.identification = identification;
+		this.roles = roles;
 	}
 
 	@Override

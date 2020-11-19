@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 import com.scalea.entities.Privilege;
 import com.scalea.entities.Role;
 import com.scalea.entities.User;
-import com.scalea.enums.InitialPrivileges;
-import com.scalea.enums.InitialRoles;
+import com.scalea.enums.ApplicationPrivileges;
+import com.scalea.enums.ApplicationRoles;
 import com.scalea.repositories.PrivilegeRepository;
 import com.scalea.repositories.RoleRepository;
 import com.scalea.repositories.UserRepository;
@@ -55,19 +55,19 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 		 *  Setting up privileges. The administrator role should have them all. The User role at the moment only has read privileges. This will change 
 		 *  with time.
 		 */
-		for (InitialPrivileges initialPrivilege: InitialPrivileges.values()) {
+		for (ApplicationPrivileges initialPrivilege: ApplicationPrivileges.values()) {
 			Privilege privilege = createPrivilegeIfNotFound(initialPrivilege.getName());
 			adminPrivileges.add(privilege);
 			
-			if (initialPrivilege.equals(InitialPrivileges.READ_PRIVILEGE)) {
+			if (initialPrivilege.isForUsers()) {
 				userPrivileges.add(privilege);
 			}
 		}
 		
-        createRoleIfNotFound(InitialRoles.ROLE_ADMIN.getName(), adminPrivileges);
-        createRoleIfNotFound(InitialRoles.ROLE_USER.getName(), userPrivileges);
+        createRoleIfNotFound(ApplicationRoles.ROLE_ADMIN.getName(), adminPrivileges);
+        createRoleIfNotFound(ApplicationRoles.ROLE_USER.getName(), userPrivileges);
  
-        Role adminRole = roleRepository.findByName(InitialRoles.ROLE_ADMIN.getName());
+        Role adminRole = roleRepository.findByName(ApplicationRoles.ROLE_ADMIN.getName());
         createAdminUserIfNotFound(adminRole);
         
         alreadySetup = true;

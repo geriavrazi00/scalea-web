@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,11 +22,13 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
 import com.google.zxing.oned.EAN13Writer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.scalea.utils.Constants;
 
 @Controller
 @RequestMapping("/barcode")
 public class BarCodeController {
 	
+	@PreAuthorize("hasAuthority('" + Constants.VIEW_BARCODE_PRIVILEGE + "')")
 	@GetMapping
 	public String barCodeIndex(Model model) throws Exception {
 		UUID uuid = UUID.randomUUID();
@@ -33,7 +36,6 @@ public class BarCodeController {
 		model.addAttribute("image", imageAsBase64);
 		return "private/barcode";
 	}
-	
 	
 	public String generateEAN13BarcodeImage() throws Exception {
 		String text = "geriavraziaa";

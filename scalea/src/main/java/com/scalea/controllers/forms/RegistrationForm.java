@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.scalea.entities.User;
-import com.scalea.enums.InitialRoles;
+import com.scalea.enums.ApplicationRoles;
 import com.scalea.repositories.RoleRepository;
 
 import lombok.Data;
@@ -22,6 +22,6 @@ public class RegistrationForm {
 
 	public User toUser(PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
 		return new User(username, passwordEncoder.encode(password), firstname, lastname, phonenumber, identification, 
-			Arrays.asList(roleRepository.findByName(InitialRoles.ROLE_USER.getName())));
+			Arrays.asList(roleRepository.findByName(ApplicationRoles.ROLE_USER.getName())));
 	}
 }

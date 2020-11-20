@@ -29,7 +29,7 @@ public class RoleController {
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_ROLES_PRIVILEGE + "'")
 	@PostMapping
 	public String createRole() {
-		return "redirect:private/administration/roles/createrole";
+		return "redirect:private/administration/roles/rolelist";
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.VIEW_ROLES_PRIVILEGE + "'")
@@ -41,18 +41,18 @@ public class RoleController {
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_ROLES_PRIVILEGE + "'")
 	@GetMapping("/{id}/edit")
 	public String editRole() {
-		return "private/administration/roles/showrole";
+		return "private/administration/roles/editrole";
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_ROLES_PRIVILEGE + "'")
 	@PutMapping("/{id}")
 	public String updateRole() {
-		return "redirect:private/administration/roles/createrole";
+		return "redirect:private/administration/roles/rolelist";
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_ROLES_PRIVILEGE + "'")
 	@DeleteMapping("/{id}")
 	public String deleteRole() {
-		return "redirect:private/administration/roles/createrole";
+		return "redirect:private/administration/roles/rolelist";
 	}
 }

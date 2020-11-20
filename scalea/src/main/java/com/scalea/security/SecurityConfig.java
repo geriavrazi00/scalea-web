@@ -31,9 +31,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		String[] adminRoutes = {"/barcode**", "/barcode/**", "/roles**", "/roles/**"};
+		String[] sharedRoutes = {"/", "/home"};
+		
 		http.authorizeRequests()
-			.antMatchers("/barcode**", "/barcode/**").access("hasRole('" + Constants.ROLE_ADMIN + "')")
-			.antMatchers("/", "/home").access("hasAnyRole('" + Constants.ROLE_ADMIN + "', '" + Constants.ROLE_USER + "')")
+			.antMatchers(adminRoutes).access("hasRole('" + Constants.ROLE_ADMIN + "')")
+			.antMatchers(sharedRoutes).access("hasAnyRole('" + Constants.ROLE_ADMIN + "', '" + Constants.ROLE_USER + "')")
 			.antMatchers("/**").access("permitAll")
 			.and().formLogin().loginPage("/login")
 			.and().logout().logoutSuccessUrl("/");

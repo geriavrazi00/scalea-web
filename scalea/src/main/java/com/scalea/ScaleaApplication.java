@@ -17,5 +17,4 @@ public class ScaleaApplication implements WebMvcConfigurer {
 		registry.addViewController("/").setViewName("private/home");
 		registry.addViewController("/login");
 	}
-
 }

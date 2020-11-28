@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body>
-	<img th:src="${'data:image/png;base64,' + image}"/>
-</body>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<body>
+		<img th:src="${'data:image/png;base64,' + image1}"/>
+		<br/>
+		<p th:text="${code1}"></p>
+		
+		<br/><br/>
+		
+		<img th:src="${'data:image/png;base64,' + image2}"/>
+		<br/>
+		<p th:text="${code2}"></p>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
 </html>

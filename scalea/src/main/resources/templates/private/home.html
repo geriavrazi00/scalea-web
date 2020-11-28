@@ -1,42 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<meta charset="ISO-8859-1">
-		<title>Taco Cloud</title>
-		
-		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-		<link th:href="@{/css/app.css}" rel="stylesheet">
-		
-		<script type="text/javascript">
-			$(document).ready(function() {
-			    $("#locales").change(function () {
-			        var selectedOption = $('#locales').val();
-			        if (selectedOption != ''){
-			            window.location.replace('?lang=' + selectedOption);
-			        }
-			    });
-			});
-		</script>
-	</head>
+	<head th:replace="/commons/template.html :: headerfiles"></head>
 	
 	<body>
-		<h1 th:text="#{greeting}"></h1>
-		<div th:replace="commons/menu :: client_header"></div>
+		<h1 th:text="#{messages.greeting}"></h1>
 		
-		<span th:text="#{lang.change}"></span>:
+		<span th:text="#{messages.lang.change}"></span>:
 		<select id="locales">
 		    <option value=""></option>
-		    <option value="sq" th:text="#{lang.sq}"></option>
-		    <option value="en" th:text="#{lang.en}"></option>
+		    <option value="sq" th:text="#{messages.lang.sq}"></option>
+		    <option value="en" th:text="#{messages.lang.en}"></option>
 		</select>
 		
 		<form method="POST" th:action="@{/logout}">
 			<input type="submit" value="Logout"/>
 		</form>
 		
-		<script type="text/javascript" th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
-		<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
-		<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
-		<script type="text/javascript" th:src="@{/js/app.js}"></script>
+		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>
 </html>

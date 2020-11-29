@@ -18,4 +18,7 @@ public interface Constants {
 	public static final String VIEW_ROLES_PRIVILEGE 	= "VIEW_ROLES_PRIVILEGE";
 	public static final String UPSERT_ROLES_PRIVILEGE 	= "UPSERT_ROLES_PRIVILEGE";
 	public static final String DELETE_ROLES_PRIVILEGE 	= "DELETE_ROLES_PRIVILEGE";
+	public static final String VIEW_USERS_PRIVILEGE		= "VIEW_USERS_PRIVILEGE";
+	public static final String UPSERT_USERS_PRIVILEGE	= "UPSERT_USERS_PRIVILEGE";
+	public static final String DELETE_USERS_PRIVILEGE	= "DELETE_USERS_PRIVILEGE";
 }

@@ -103,9 +103,11 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             role = new Role(name);
             role.setPrivileges(privileges);
             role.setDeletable(false);
-            
-            roleRepository.save(role);
+        } else {
+        	role.setPrivileges(privileges);
         }
+        
+        roleRepository.save(role);
         return role;
     }
 }

@@ -12,7 +12,12 @@ public enum ApplicationPrivileges {
 	// Roles
 	VIEW_ROLES_PRIVILEGE(Constants.VIEW_ROLES_PRIVILEGE, false),
 	UPSERT_ROLES_PRIVILEGE(Constants.UPSERT_ROLES_PRIVILEGE, false),
-	DELETE_ROLES_PRIVILEGE(Constants.DELETE_ROLES_PRIVILEGE, false);
+	DELETE_ROLES_PRIVILEGE(Constants.DELETE_ROLES_PRIVILEGE, false),
+	
+	// Users
+	VIEW_USERS_PRIVILEGE(Constants.VIEW_USERS_PRIVILEGE, false),
+	UPSERT_USERS_PRIVILEGE(Constants.UPSERT_USERS_PRIVILEGE, false),
+	DELETE_USERS_PRIVILEGE(Constants.DELETE_USERS_PRIVILEGE, false);
 	
 	private String name;
 	private boolean forUsers;

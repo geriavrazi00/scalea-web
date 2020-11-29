@@ -17,7 +17,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 public class LanguageConfig implements WebMvcConfigurer {
 	
 	@Bean
-	public LocaleResolver localeResolver() {
+	public LocaleResolver localeResolver() { 
 	    SessionLocaleResolver slr = new SessionLocaleResolver();
 	    slr.setDefaultLocale(Locale.forLanguageTag("sq"));
 	    return slr;

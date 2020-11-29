@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
 	<head th:replace="/commons/template.html :: headerfiles"></head>
 	
 	<body>
 		<h1 th:text="#{messages.role.list}"></h1>
 		
-		<a th:href="@{/roles/create}" th:text="#{messages.role.create}"></a>
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<a th:href="@{/roles/create}" th:text="#{messages.role.create}" sec:authorize="hasAuthority('UPSERT_ROLES_PRIVILEGE')"></a>
 		
 		<div th:each="role : ${roles}">
-			<span th:text="${role.name}">Role</span><br/>
+			<span th:text="${role.name}"></span><br/>
+			<a th:href="@{'/roles/edit/{id}'(id=${role.id})}" th:text="#{messages.role.edit}" sec:authorize="hasAuthority('UPSERT_ROLES_PRIVILEGE')"></a>
+			
+			<form method="POST" th:action="@{'/roles/delete/{id}'(id=${role.id})}" th:if="${role.deletable}" sec:authorize="hasAuthority('DELETE_ROLES_PRIVILEGE')">
+				<input type="submit" th:value="#{messages.role.delete}"/>
+			</form>
 		</div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>

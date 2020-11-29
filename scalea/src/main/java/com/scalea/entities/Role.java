@@ -18,8 +18,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.scalea.annotations.Unique;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -37,7 +35,7 @@ public class Role {
 	@Size(max=255, message="{messages.name.max}")
 	@NotBlank(message="{messages.name.required}")
 	@Column(unique=true)
-	@Unique(message="{messages.role.exists}")
+	// @Unique(message="{messages.role.exists}")
     private String name;
     
     @ManyToMany(mappedBy = "roles")
@@ -52,6 +50,8 @@ public class Role {
           name = "privilege_id", referencedColumnName = "id"))
     @NotEmpty(message="{messages.at.least.one.privilege}")
     private Collection<Privilege> privileges;
+    
+    private boolean deletable = true;
     
     public Role(String name) {
     	this.name = name;

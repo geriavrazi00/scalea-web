@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	
+	<body>
+		<h1 th:text="#{messages.user.list}"></h1>
+		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<a th:href="@{/users/create}" th:text="#{messages.user.create}" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></a>
+		
+		<div th:each="user : ${users}">
+			<span th:text="${user.username}"></span><br/>
+			<a th:href="@{'/users/edit/{id}'(id=${user.id})}" th:text="#{messages.user.edit}" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></a>
+			
+			<form method="POST" th:action="@{'/users/delete/{id}'(id=${user.id})}" sec:authorize="hasAuthority('DELETE_USERS_PRIVILEGE')">
+				<input type="submit" th:value="#{messages.user.delete}"/>
+			</form>
+		</div>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

@@ -78,7 +78,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 		User admin = userRepository.findByUsername(Constants.DEFAULT_ADMIN_USERNAME);
 		if (admin == null) {
 			admin = new User(Constants.DEFAULT_ADMIN_USERNAME, passwordEncoder.encode(Constants.DEFAULT_ADMIN_PASSWORD), Constants.DEFAULT_ADMIN_FIRSTNAME, 
-				Constants.DEFAULT_ADMIN_LASTNAME, Constants.DEFAULT_ADMIN_PHONE, "", Arrays.asList(adminRole));
+				Constants.DEFAULT_ADMIN_LASTNAME, Constants.DEFAULT_ADMIN_PHONE, Arrays.asList(adminRole));
 	        userRepository.save(admin);
 		}
 		return admin;

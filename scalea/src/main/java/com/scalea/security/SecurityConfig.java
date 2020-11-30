@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		String[] adminRoutes = {"/barcode**", "/barcode/**", "/roles**", "/roles/**"};
+		String[] adminRoutes = {"/barcode**", "/barcode/**", "/roles**", "/roles/**", "/users**", "/users/**"};
 		String[] sharedRoutes = {"/", "/home"};
 		
 		http.authorizeRequests()

@@ -18,10 +18,9 @@ public class RegistrationForm {
 	private String firstname;
 	private String lastname;
 	private String phonenumber;
-	private String identification;
 
 	public User toUser(PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
-		return new User(username, passwordEncoder.encode(password), firstname, lastname, phonenumber, identification, 
+		return new User(username, passwordEncoder.encode(password), firstname, lastname, phonenumber, 
 			Arrays.asList(roleRepository.findByName(ApplicationRoles.ROLE_USER.getName())));
 	}
 }

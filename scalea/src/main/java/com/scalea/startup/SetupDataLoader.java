@@ -44,6 +44,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Transactional
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		if (alreadySetup) return;
@@ -79,6 +80,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 		if (admin == null) {
 			admin = new User(Constants.DEFAULT_ADMIN_USERNAME, passwordEncoder.encode(Constants.DEFAULT_ADMIN_PASSWORD), Constants.DEFAULT_ADMIN_FIRSTNAME, 
 				Constants.DEFAULT_ADMIN_LASTNAME, Constants.DEFAULT_ADMIN_PHONE, Arrays.asList(adminRole));
+			
+			admin.setConfirmPassword(admin.getPassword()); // To bypass the validation of the password confirmation
 	        userRepository.save(admin);
 		}
 		return admin;
@@ -90,7 +93,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Privilege privilege = privilegeRepository.findByName(name);
         if (privilege == null) {
             privilege = new Privilege(name);
-            privilegeRepository.save(privilege);
+            privilege = privilegeRepository.save(privilege);
         }
         return privilege;
     }
@@ -107,7 +110,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         	role.setPrivileges(privileges);
         }
         
-        roleRepository.save(role);
+        role = roleRepository.save(role);
         return role;
     }
 }

@@ -19,11 +19,20 @@ public class FieldsMatchValidator implements ConstraintValidator<FieldsMatch, Ob
 	public boolean isValid(Object value, ConstraintValidatorContext context) {
 		Object fieldValue = new BeanWrapperImpl(value).getPropertyValue(field);
 		Object fieldMatchValue = new BeanWrapperImpl(value).getPropertyValue(fieldVerify);
+		boolean isValid = false;
 		        
         if (fieldValue != null) {
-            return fieldValue.equals(fieldMatchValue);
+        	isValid = fieldValue.equals(fieldMatchValue);
         } else {
-            return fieldMatchValue == null;
+        	isValid = fieldMatchValue == null;
         }
+        
+        if(!isValid) {
+        	context.disableDefaultConstraintViolation();
+        	context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+            	.addPropertyNode( "confirmPassword" ).addConstraintViolation();
+       }
+        
+        return isValid;
 	}
 }

@@ -85,6 +85,7 @@ public class UserController {
 		try {
 			String rawPassword = user.getPassword();
 			user.setPassword(passwordEncoder.encode(rawPassword));
+			user.setConfirmPassword(user.getPassword());
 			this.userRepo.save(user);
 			
 			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.created"));
@@ -152,8 +153,8 @@ public class UserController {
 		
 		if (!user.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
 		User foundUser = user.get();
-//		foundRole.setPrivileges(null);
-//		foundRole.setUsers(null);
+		foundUser.setRoles(null);
+		
 		this.userRepo.delete(foundUser);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.deleted"));

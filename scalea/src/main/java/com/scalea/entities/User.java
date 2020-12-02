@@ -110,7 +110,7 @@ public class User implements UserDetails {
 		this.phoneNumber = phoneNumber;
 		this.roles = roles;
 	}
-
+	
 	@Override
 	@Transactional
 	public Collection<? extends GrantedAuthority> getAuthorities() {

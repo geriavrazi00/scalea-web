@@ -25,6 +25,7 @@ import com.scalea.entities.Role;
 import com.scalea.entities.User;
 import com.scalea.exceptions.UniqueUserUsernameViolationException;
 import com.scalea.exceptions.UserNotFoundException;
+import com.scalea.models.dto.UserDTO;
 import com.scalea.repositories.RoleRepository;
 import com.scalea.repositories.UserRepository;
 import com.scalea.utils.Constants;
@@ -118,8 +119,12 @@ public class UserController {
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_USERS_PRIVILEGE + "'")
 	@PostMapping("/edit/{id}")
-	public String updateUser(@Valid User user, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException {
+	public String updateUser(@PathVariable("id") Long id, UserDTO userDTO, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException, UserNotFoundException {
 		log.info("Method updateUser()");
+		
+		Optional<User> user = userRepo.findById(id);
+		if (!user.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
+		User foundUser = user.get();
 		
 		if (errors.hasErrors()) {
 			Iterable<Role> roles = roleRepo.findAll();
@@ -134,12 +139,12 @@ public class UserController {
 			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.updated"));
 		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 			
-			this.userRepo.save(user);
+			this.userRepo.save(userDTO.toUser(foundUser, roleRepo));
 			return "redirect:/users";
 			
 		} catch (DataIntegrityViolationException e) {
 		    if (e.getMostSpecificCause().getClass().getName().equals("org.postgresql.util.PSQLException") && ((SQLException) e.getMostSpecificCause()).getSQLState().equals("23505"))
-		        throw new UniqueUserUsernameViolationException(messages.get("messages.user.unique.username", user.getUsername()));
+		        throw new UniqueUserUsernameViolationException(messages.get("messages.user.unique.username", foundUser.getUsername()));
 		    throw e;
 		}
 	}

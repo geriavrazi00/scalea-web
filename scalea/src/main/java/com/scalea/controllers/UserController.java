@@ -30,8 +30,8 @@ import com.scalea.models.dto.ChangePasswordDTO;
 import com.scalea.repositories.RoleRepository;
 import com.scalea.repositories.UserRepository;
 import com.scalea.utils.Constants;
-import com.scalea.validators.UserCreate;
-import com.scalea.validators.UserEdit;
+import com.scalea.validators.groups.UserCreate;
+import com.scalea.validators.groups.UserEdit;
 
 @Controller
 @RequestMapping("/users")

@@ -27,8 +27,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.scalea.annotations.FieldsMatch;
-import com.scalea.validators.UserCreate;
-import com.scalea.validators.UserEdit;
+import com.scalea.validators.groups.UserCreate;
+import com.scalea.validators.groups.UserEdit;
 import com.sun.istack.NotNull;
 
 import lombok.Data;

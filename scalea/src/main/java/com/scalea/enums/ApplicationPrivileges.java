@@ -17,6 +17,7 @@ public enum ApplicationPrivileges {
 	// Users
 	VIEW_USERS_PRIVILEGE(Constants.VIEW_USERS_PRIVILEGE, false),
 	UPSERT_USERS_PRIVILEGE(Constants.UPSERT_USERS_PRIVILEGE, false),
+	PASSWORDS_USERS_PRIVILEGE(Constants.PASSWORDS_USERS_PRIVILEGE, false),
 	DELETE_USERS_PRIVILEGE(Constants.DELETE_USERS_PRIVILEGE, false);
 	
 	private String name;

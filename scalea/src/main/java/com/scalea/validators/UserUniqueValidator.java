@@ -1,10 +1,11 @@
-package com.scalea.annotations;
+package com.scalea.validators;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.scalea.annotations.Unique;
 import com.scalea.repositories.RoleRepository;
 
 public class UserUniqueValidator implements ConstraintValidator<Unique, String> {

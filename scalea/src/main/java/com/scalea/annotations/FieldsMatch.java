@@ -8,6 +8,8 @@ import java.lang.annotation.RetentionPolicy;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import com.scalea.validators.FieldsMatchValidator;
+
 @Constraint(validatedBy = FieldsMatchValidator.class)
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

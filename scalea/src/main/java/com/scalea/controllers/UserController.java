@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,10 +26,12 @@ import com.scalea.entities.Role;
 import com.scalea.entities.User;
 import com.scalea.exceptions.UniqueUserUsernameViolationException;
 import com.scalea.exceptions.UserNotFoundException;
-import com.scalea.models.dto.UserDTO;
+import com.scalea.models.dto.ChangePasswordDTO;
 import com.scalea.repositories.RoleRepository;
 import com.scalea.repositories.UserRepository;
 import com.scalea.utils.Constants;
+import com.scalea.validators.UserCreate;
+import com.scalea.validators.UserEdit;
 
 @Controller
 @RequestMapping("/users")
@@ -73,7 +76,7 @@ public class UserController {
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_USERS_PRIVILEGE + "'")
 	@PostMapping("/create")
-	public String createUser(@Valid User user, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException {
+	public String createUser(@Validated(UserCreate.class) User user, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException {
 		log.info("Method createUser()");
 		
 		if (errors.hasErrors()) {
@@ -106,25 +109,19 @@ public class UserController {
 		log.info("Method editUser()");
 		
 		Optional<User> user = userRepo.findById(id);
-		if (user.isPresent()) {
-			Iterable<Role> roles = roleRepo.findAll();
-			
-			model.addAttribute("user", user.get());
-			model.addAttribute("roles", roles);
-			return "private/administration/users/edituser";
-		} else {
-			throw new UserNotFoundException(messages.get("messages.user.not.found"));
-		}
+		if (!user.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
+		
+		Iterable<Role> roles = roleRepo.findAll();
+		
+		model.addAttribute("user", user.get());
+		model.addAttribute("roles", roles);
+		return "private/administration/users/edituser";
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_USERS_PRIVILEGE + "'")
 	@PostMapping("/edit/{id}")
-	public String updateUser(@PathVariable("id") Long id, UserDTO userDTO, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException, UserNotFoundException {
+	public String updateUser(@Validated(UserEdit.class) User user, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException, UserNotFoundException {
 		log.info("Method updateUser()");
-		
-		Optional<User> user = userRepo.findById(id);
-		if (!user.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
-		User foundUser = user.get();
 		
 		if (errors.hasErrors()) {
 			Iterable<Role> roles = roleRepo.findAll();
@@ -135,11 +132,21 @@ public class UserController {
 			return "private/administration/users/edituser";
 		}
 		
+		Optional<User> userById = userRepo.findById(user.getId());
+		if (!userById.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
+		User foundUser = userById.get();
+		
 		try {
+			foundUser.setUsername(user.getUsername());
+			foundUser.setFirstName(user.getFirstName());
+			foundUser.setLastName(user.getLastName());
+			foundUser.setPhoneNumber(user.getPhoneNumber());
+			foundUser.setRoles(user.getRoles());
+			
+			this.userRepo.save(foundUser);
+			
 			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.updated"));
 		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-			
-			this.userRepo.save(userDTO.toUser(foundUser, roleRepo));
 			return "redirect:/users";
 			
 		} catch (DataIntegrityViolationException e) {
@@ -147,6 +154,40 @@ public class UserController {
 		        throw new UniqueUserUsernameViolationException(messages.get("messages.user.unique.username", foundUser.getUsername()));
 		    throw e;
 		}
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.PASSWORDS_USERS_PRIVILEGE + "'")
+	@GetMapping("password/{id}")
+	public String changePassword(@PathVariable("id") Long id, Model model) throws Exception {
+		log.info("Method changePassword()");
+		
+		Optional<User> user = userRepo.findById(id);
+		if (!user.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
+		
+		model.addAttribute("changePasswordDTO", new ChangePasswordDTO(id));
+		return "private/administration/users/changepassword";
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.PASSWORDS_USERS_PRIVILEGE + "'")
+	@PostMapping("password/{id}")
+	public String updatePassword(@Valid ChangePasswordDTO changePasswordDTO, Errors errors, Model model, RedirectAttributes redirectAttributes) throws Exception {
+		log.info("Method updatePassword()");
+		
+		if (errors.hasErrors()) {
+			model.addAttribute("changePasswordDTO", changePasswordDTO);
+			return "private/administration/users/changepassword";
+		}
+		
+		Optional<User> optionalUser = userRepo.findById(changePasswordDTO.getId());
+		if (!optionalUser.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
+		User user = optionalUser.get();
+		
+		user.setPassword(passwordEncoder.encode(changePasswordDTO.getPassword()));
+		this.userRepo.save(user);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.password.updated"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+		return "redirect:/users";
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_USERS_PRIVILEGE + "'")

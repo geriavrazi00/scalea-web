@@ -1,9 +1,11 @@
-package com.scalea.annotations;
+package com.scalea.validators;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.beans.BeanWrapperImpl;
+
+import com.scalea.annotations.FieldsMatch;
 
 public class FieldsMatchValidator implements ConstraintValidator<FieldsMatch, Object> {
 	
@@ -30,7 +32,7 @@ public class FieldsMatchValidator implements ConstraintValidator<FieldsMatch, Ob
         if(!isValid) {
         	context.disableDefaultConstraintViolation();
         	context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
-            	.addPropertyNode( "confirmPassword" ).addConstraintViolation();
+            	.addPropertyNode("confirmPassword" ).addConstraintViolation();
        }
         
         return isValid;

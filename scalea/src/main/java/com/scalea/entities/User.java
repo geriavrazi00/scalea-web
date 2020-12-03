@@ -27,6 +27,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.scalea.annotations.FieldsMatch;
+import com.scalea.validators.UserCreate;
+import com.scalea.validators.UserEdit;
 import com.sun.istack.NotNull;
 
 import lombok.Data;
@@ -49,7 +51,8 @@ import lombok.NoArgsConstructor;
     @FieldsMatch(
       field = "password", 
       fieldVerify = "confirmPassword", 
-      message = "{messages.password.do.not.match}"
+      message = "{messages.password.do.not.match}",
+      groups = UserCreate.class
     )
 })
 public class User implements UserDetails {
@@ -61,34 +64,34 @@ public class User implements UserDetails {
 	private Long id;
 	
 	@NotNull
-	@Size(max=255, message="{messages.username.max}")
-	@NotBlank(message="{messages.username.required}")
+	@Size(max=255, message="{messages.username.max}", groups = {UserCreate.class, UserEdit.class})
+	@NotBlank(message="{messages.username.required}", groups = {UserCreate.class, UserEdit.class})
 	private String username;
 	
 	@NotNull
-	@Size(max=255, message="{messages.password.max}")
-	@NotBlank(message="{messages.password.required}")
-	@Pattern(regexp="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$", message="{messages.password.format}")
+	@Size(max=255, message="{messages.password.max}", groups = {UserCreate.class})
+	@NotBlank(message="{messages.password.required}", groups = {UserCreate.class})
+	@Pattern(regexp="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$", message="{messages.password.format}", groups = {UserCreate.class})
 	private String password;
 	
 	@Transient
 	private String confirmPassword;
 	
 	@NotNull
-	@Size(max=255, message="{messages.name.max}")
-	@NotBlank(message="{messages.name.required}")
+	@Size(max=255, message="{messages.name.max}", groups = {UserCreate.class, UserEdit.class})
+	@NotBlank(message="{messages.name.required}", groups = {UserCreate.class, UserEdit.class})
 	@Column(name="firstname")
 	private String firstName;
 	
 	@NotNull
-	@Size(max=255, message="{messages.lastname.max}")
-	@NotBlank(message="{messages.lastname.required}")
+	@Size(max=255, message="{messages.lastname.max}", groups = {UserCreate.class, UserEdit.class})
+	@NotBlank(message="{messages.lastname.required}", groups = {UserCreate.class, UserEdit.class})
 	@Column(name="lastname")
 	private String lastName;
 	
 	@Column(name="phonenumber")
-	@Size(max=50, message="{messages.phonenumber.max}")
-	@NotBlank(message="{messages.phonenumber.required}")
+	@Size(max=50, message="{messages.phonenumber.max}", groups = {UserCreate.class, UserEdit.class})
+	@NotBlank(message="{messages.phonenumber.required}", groups = {UserCreate.class, UserEdit.class})
 	private String phoneNumber;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -98,7 +101,7 @@ public class User implements UserDetails {
           name = "user_id", referencedColumnName = "id"), 
         inverseJoinColumns = @JoinColumn(
           name = "role_id", referencedColumnName = "id"))
-	@NotEmpty(message="{messages.at.least.one.role}")
+	@NotEmpty(message="{messages.at.least.one.role}", groups = {UserCreate.class, UserEdit.class})
     private Collection<Role> roles;
 	
 	public User(@Size(max = 255) String username, @Size(max = 255) String password, String firstName, String lastName, String phoneNumber, 

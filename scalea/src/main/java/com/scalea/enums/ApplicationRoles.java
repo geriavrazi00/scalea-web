@@ -15,4 +15,15 @@ public enum ApplicationRoles {
 	public String getName() {
 		return name;
 	}
+	
+	public static ApplicationRoles getRoleByName(String name) {
+		switch (name) {
+			case Constants.ROLE_ADMIN:
+				return ApplicationRoles.ROLE_ADMIN;
+			case Constants.ROLE_USER:
+				return ApplicationRoles.ROLE_USER;
+			default:
+				return null;
+		}
+	}
 }

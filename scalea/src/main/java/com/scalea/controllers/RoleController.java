@@ -1,6 +1,7 @@
 package com.scalea.controllers;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Privilege;
 import com.scalea.entities.Role;
+import com.scalea.enums.ApplicationRoles;
 import com.scalea.exceptions.RoleCannotBeDeletedException;
 import com.scalea.exceptions.RoleNotFoundException;
 import com.scalea.exceptions.UniqueRoleNameViolationException;
@@ -128,7 +130,8 @@ public class RoleController {
 		try {
 			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.role.updated"));
 		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-			
+			if (ApplicationRoles.getRoleByName(role.getName()) != null) role.setDeletable(false);
+		    
 			this.roleRepo.save(role);
 			return "redirect:/roles";
 			

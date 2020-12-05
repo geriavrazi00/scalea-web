@@ -1,0 +1,1 @@
+ALTER TABLE employees RENAME COLUMN "phone_numberc" TO "phone_number";

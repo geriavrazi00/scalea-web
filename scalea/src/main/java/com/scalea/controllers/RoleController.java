@@ -1,7 +1,6 @@
 package com.scalea.controllers;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Optional;
 
 import javax.validation.Valid;

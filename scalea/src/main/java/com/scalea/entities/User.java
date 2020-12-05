@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
@@ -103,6 +104,9 @@ public class User implements UserDetails {
           name = "role_id", referencedColumnName = "id"))
 	@NotEmpty(message="{messages.at.least.one.role}", groups = {UserCreate.class, UserEdit.class})
     private Collection<Role> roles;
+	
+	@OneToMany(mappedBy="user")
+	private Collection<Process> processes;
 	
 	public User(@Size(max = 255) String username, @Size(max = 255) String password, String firstName, String lastName, String phoneNumber, 
 		Collection<Role> roles) {

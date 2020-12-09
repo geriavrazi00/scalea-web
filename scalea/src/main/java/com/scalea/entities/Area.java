@@ -13,10 +13,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.scalea.annotations.UniqueAreaName;
-import com.scalea.validators.groups.OnCreate;
-import com.scalea.validators.groups.OnUpdate;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,9 +20,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Table(name="areas")
-@UniqueAreaName.List({
-	@UniqueAreaName(message="{messages.area.exists}", id="id", name="name")
-})
 public class Area {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

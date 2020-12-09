@@ -1,6 +1,5 @@
 package com.scalea.controllers;
 
-import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,7 +8,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,12 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Area;
-import com.scalea.entities.Privilege;
-import com.scalea.entities.Role;
 import com.scalea.entities.Vacancy;
-import com.scalea.enums.ApplicationRoles;
 import com.scalea.exceptions.GenericException;
-import com.scalea.exceptions.RoleNotFoundException;
 import com.scalea.exceptions.UniqueRoleNameViolationException;
 import com.scalea.exceptions.UniqueUserUsernameViolationException;
 import com.scalea.exceptions.UserNotFoundException;
@@ -78,6 +72,15 @@ public class AreaController {
 		
 		if (errors.hasErrors()) {
 			return "private/areas/createarea";
+		}
+		
+		if (areaRepo.existsByName(area.getName())) {
+			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.area.exists", area.getName()));
+		    redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+		    redirectAttributes.addAttribute("area", area);
+		    //model.addAttribute("area", area);
+		    
+			return "redirect:/areas/create";
 		}
 		
 		area = this.areaRepo.save(area);

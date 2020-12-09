@@ -33,7 +33,8 @@ public class Area {
 	private boolean enabled;
 
 	@Min(value=1, message="{messages.value.at.least.one}")
-	private int capacity;
+	@NotNull(message="{messages.capacity.required}")
+	private Integer capacity;
 	
 	@OneToMany(mappedBy="area")
     private Collection<Process> processes;

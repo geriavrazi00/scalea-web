@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -33,6 +34,7 @@ public class Area {
 	private boolean enabled;
 
 	@Min(value=1, message="{messages.value.at.least.one}")
+	@Max(value=5000, message="{messages.value.max.threshold}")
 	@NotNull(message="{messages.capacity.required}")
 	private Integer capacity;
 	

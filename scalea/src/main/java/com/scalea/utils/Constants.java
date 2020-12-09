@@ -29,4 +29,8 @@ public interface Constants {
 	public static final String VIEW_AREAS_PRIVILEGE	= "VIEW_AREAS_PRIVILEGE";
 	public static final String UPSERT_AREAS_PRIVILEGE = "UPSERT_AREAS_PRIVILEGE";
 	public static final String DELETE_AREAS_PRIVILEGE	= "DELETE_AREAS_PRIVILEGE";
+	
+	public static final String VIEW_EMPLOYEES_PRIVILEGE = "VIEW_EMPLOYEES_PRIVILEGE";
+	public static final String UPSERT_EMPLOYEES_PRIVILEGE = "UPSERT_EMPLOYEES_PRIVILEGE";
+	public static final String DELETE_EMPLOYEES_PRIVILEGE = "DELETE_EMPLOYEES_PRIVILEGE";
 }

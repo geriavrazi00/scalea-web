@@ -67,7 +67,7 @@ public class AreaController {
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_AREAS_PRIVILEGE + "'")
 	@PostMapping("/create")
 	public String createArea(@Valid Area area, Errors errors, Model model, RedirectAttributes redirectAttributes) {
-		log.info("Method createUser()");
+		log.info("Method createArea()");
 		
 		if (errors.hasErrors()) {
 			return "private/areas/createarea";
@@ -108,7 +108,7 @@ public class AreaController {
 		return "private/areas/editarea";
 	}
 	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_ROLES_PRIVILEGE + "'")
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_AREAS_PRIVILEGE + "'")
 	@PostMapping("/edit/{id}")
 	public String updateArea(@Valid Area area, Errors errors, Model model, RedirectAttributes redirectAttributes) throws GenericException {
 		log.info("Method updateArea()");
@@ -194,7 +194,7 @@ public class AreaController {
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_AREAS_PRIVILEGE + "'")
 	@PostMapping("/delete/{id}")
 	public String deleteArea(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws GenericException {
-		log.info("Method deleteUser()");
+		log.info("Method deleteArea()");
 		
 		Optional<Area> area = areaRepo.findById(id);
 		

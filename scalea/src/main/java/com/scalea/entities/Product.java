@@ -36,7 +36,7 @@ public class Product {
 	private String image;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable( 
+    @JoinTable(
         name = "products_hierarchy", 
         joinColumns = @JoinColumn(
           name = "father_id", referencedColumnName = "id"), 
@@ -45,7 +45,7 @@ public class Product {
 	private Collection<Product> childrenProducts;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable( 
+    @JoinTable(
         name = "products_hierarchy", 
         joinColumns = @JoinColumn(
           name = "children_id", referencedColumnName = "id"), 

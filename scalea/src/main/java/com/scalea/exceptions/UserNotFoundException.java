@@ -8,8 +8,8 @@ public class UserNotFoundException extends GenericException {
 
 	private static final long serialVersionUID = 8385020074165943786L;
 
-	public UserNotFoundException(String messageKey) {
-		super(messageKey);
+	public UserNotFoundException(String message) {
+		super(message);
 	}
 
 }

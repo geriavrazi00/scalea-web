@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	
+	<body>
+		<h1 th:text="#{messages.area.list}"></h1>
+		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<a th:href="@{/areas/create}" th:text="#{messages.area.create}" sec:authorize="hasAuthority('UPSERT_AREAS_PRIVILEGE')"></a>
+		
+		<div th:if="${areas.size() > 0}" th:each="area : ${areas}">
+			<span th:text="${area.name}"></span><br/>
+			<a th:href="@{'/areas/edit/{id}'(id=${area.id})}" th:text="#{messages.area.edit}" sec:authorize="hasAuthority('UPSERT_AREAS_PRIVILEGE')"></a>
+			
+			<form method="POST" th:action="@{'/areas/delete/{id}'(id=${area.id})}" sec:authorize="hasAuthority('DELETE_AREAS_PRIVILEGE')">
+				<input type="submit" th:value="#{messages.area.delete}"/>
+			</form>
+		</div>
+		
+		<div th:if="${areas.size() == 0}">
+			<p th:text="#{messages.no.areas}"></p>
+		</div>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

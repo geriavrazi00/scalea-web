@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<body>
+		<h1 th:text="#{messages.area.create}"></h1>
+		
+		<form method="POST" th:action="@{'/areas/edit/{id}'(id=${area.id})}" th:object="${area}">
+			<div th:if="${#fields.hasErrors()}">
+				<span class="validationError" th:text="#{messages.correct.problems}"></span>
+			</div>
+			
+			<label for="name" th:text="#{messages.name}"></label>
+			<input type="text" name="name" th:field="*{name}"/>
+			<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+			<br />
+			
+			<label for="enabled" th:text="#{messages.enabled}"></label>
+			<input type="checkbox" id="enabled" name="enabled" th:field="*{enabled}"/>
+			<br />
+			
+			<label for="capacity" th:text="#{messages.capacity}"></label>
+			<input type="number" name="capacity" th:field="*{capacity}"/>
+			<span class="validationError" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></span>
+			<br />
+			
+			<input type="submit" th:value="#{messages.save}" />
+		</form>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

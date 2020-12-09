@@ -10,13 +10,17 @@
 		
 		<a th:href="@{/roles/create}" th:text="#{messages.role.create}" sec:authorize="hasAuthority('UPSERT_ROLES_PRIVILEGE')"></a>
 		
-		<div th:each="role : ${roles}">
+		<div th:if="${roles.size() > 0}" th:each="role : ${roles}">
 			<span th:text="${role.name}"></span><br/>
 			<a th:href="@{'/roles/edit/{id}'(id=${role.id})}" th:text="#{messages.role.edit}" sec:authorize="hasAuthority('UPSERT_ROLES_PRIVILEGE')"></a>
 			
 			<form method="POST" th:action="@{'/roles/delete/{id}'(id=${role.id})}" th:if="${role.deletable}" sec:authorize="hasAuthority('DELETE_ROLES_PRIVILEGE')">
 				<input type="submit" th:value="#{messages.role.delete}"/>
 			</form>
+		</div>
+		
+		<div th:if="${roles.size() == 0}">
+			<p th:text="#{messages.no.roles}"></p>
 		</div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>

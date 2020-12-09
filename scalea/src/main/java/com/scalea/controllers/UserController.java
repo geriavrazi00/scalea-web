@@ -30,8 +30,8 @@ import com.scalea.models.dto.ChangePasswordDTO;
 import com.scalea.repositories.RoleRepository;
 import com.scalea.repositories.UserRepository;
 import com.scalea.utils.Constants;
-import com.scalea.validators.groups.UserCreate;
-import com.scalea.validators.groups.UserEdit;
+import com.scalea.validators.groups.OnCreate;
+import com.scalea.validators.groups.OnUpdate;
 
 @Controller
 @RequestMapping("/users")
@@ -76,7 +76,7 @@ public class UserController {
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_USERS_PRIVILEGE + "'")
 	@PostMapping("/create")
-	public String createUser(@Validated(UserCreate.class) User user, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException {
+	public String createUser(@Validated(OnCreate.class) User user, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException {
 		log.info("Method createUser()");
 		
 		if (errors.hasErrors()) {
@@ -120,7 +120,7 @@ public class UserController {
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_USERS_PRIVILEGE + "'")
 	@PostMapping("/edit/{id}")
-	public String updateUser(@Validated(UserEdit.class) User user, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException, UserNotFoundException {
+	public String updateUser(@Validated(OnUpdate.class) User user, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException, UserNotFoundException {
 		log.info("Method updateUser()");
 		
 		if (errors.hasErrors()) {

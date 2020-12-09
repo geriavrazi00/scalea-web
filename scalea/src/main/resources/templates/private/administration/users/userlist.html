@@ -10,7 +10,7 @@
 		
 		<a th:href="@{/users/create}" th:text="#{messages.user.create}" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></a>
 		
-		<div th:each="user : ${users}">
+		<div th:if="${users.size() > 0}" th:each="user : ${users}">
 			<span th:text="${user.username}"></span><br/>
 			<a th:href="@{'/users/edit/{id}'(id=${user.id})}" th:text="#{messages.user.edit}" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></a>
 			<a th:href="@{'/users/password/{id}'(id=${user.id})}" th:text="#{messages.change.password}" sec:authorize="hasAuthority('PASSWORDS_USERS_PRIVILEGE')"></a>
@@ -18,6 +18,10 @@
 			<form method="POST" th:action="@{'/users/delete/{id}'(id=${user.id})}" sec:authorize="hasAuthority('DELETE_USERS_PRIVILEGE')">
 				<input type="submit" th:value="#{messages.user.delete}"/>
 			</form>
+		</div>
+		
+		<div th:if="${users.size() == 0}">
+			<p th:text="#{messages.no.users}"></p>
 		</div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>

@@ -32,15 +32,16 @@ public class BarCodeController {
 	@GetMapping
 	public String barCodeIndex(Model model) throws Exception {
 		UUID uuid = UUID.randomUUID();
-		String imageAsBase64 = this.getBarCodeImage(uuid.toString(), 300, 150);
+		String imageAsBase64 = this.getBarCodeImage(uuid.getMostSignificantBits() + "", 450, 80);
 		
 		UUID uuid2 = UUID.randomUUID();
-		String imageAsBase64_2 = this.getBarCodeImage(uuid2.toString(), 300, 150);
+		String imageAsBase64_2 = this.getBarCodeImage(uuid2.getMostSignificantBits() + "", 450, 80);
 		
-		model.addAttribute("code1", uuid);
+		model.addAttribute("code1", uuid.getMostSignificantBits());
 		model.addAttribute("image1", imageAsBase64);
-		model.addAttribute("code2", uuid2);
+		model.addAttribute("code2", uuid2.getMostSignificantBits());
 		model.addAttribute("image2", imageAsBase64_2);
+		
 		return "private/barcode";
 	}
 	
@@ -69,6 +70,7 @@ public class BarCodeController {
 			return Base64.getEncoder().encodeToString( byteArrayOutputStream.toByteArray());
 //			return byteArrayOutputStream.toByteArray();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

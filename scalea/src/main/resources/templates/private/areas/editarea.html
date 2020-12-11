@@ -4,6 +4,8 @@
 	<body>
 		<h1 th:text="#{messages.area.create}"></h1>
 		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
 		<form method="POST" th:action="@{'/areas/edit/{id}'(id=${area.id})}" th:object="${area}">
 			<div th:if="${#fields.hasErrors()}">
 				<span class="validationError" th:text="#{messages.correct.problems}"></span>

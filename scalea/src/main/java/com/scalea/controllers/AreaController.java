@@ -1,5 +1,7 @@
 package com.scalea.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,9 +24,6 @@ import com.scalea.configurations.Messages;
 import com.scalea.entities.Area;
 import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
-import com.scalea.exceptions.UniqueRoleNameViolationException;
-import com.scalea.exceptions.UniqueUserUsernameViolationException;
-import com.scalea.exceptions.UserNotFoundException;
 import com.scalea.repositories.AreaRepository;
 import com.scalea.repositories.VacancyRepository;
 import com.scalea.utils.Constants;
@@ -67,20 +66,17 @@ public class AreaController {
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_AREAS_PRIVILEGE + "'")
 	@PostMapping("/create")
-	public String createArea(@Valid Area area, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException {
-		log.info("Method createUser()");
+	public String createArea(@Valid Area area, Errors errors, Model model, RedirectAttributes redirectAttributes) {
+		log.info("Method createArea()");
 		
 		if (errors.hasErrors()) {
 			return "private/areas/createarea";
 		}
 		
 		if (areaRepo.existsByName(area.getName())) {
-			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.area.exists", area.getName()));
-		    redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
-		    redirectAttributes.addAttribute("area", area);
-		    //model.addAttribute("area", area);
-		    
-			return "redirect:/areas/create";
+			model.addAttribute("message", this.messages.get("messages.area.exists", area.getName()));
+			model.addAttribute("alertClass", "alert-danger");
+		    return "private/areas/createarea";
 		}
 		
 		area = this.areaRepo.save(area);
@@ -112,9 +108,9 @@ public class AreaController {
 		return "private/areas/editarea";
 	}
 	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_ROLES_PRIVILEGE + "'")
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_AREAS_PRIVILEGE + "'")
 	@PostMapping("/edit/{id}")
-	public String updateArea(@Valid Area area, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueRoleNameViolationException {
+	public String updateArea(@Valid Area area, Errors errors, Model model, RedirectAttributes redirectAttributes) throws GenericException {
 		log.info("Method updateArea()");
 		
 		if (errors.hasErrors()) {
@@ -122,12 +118,74 @@ public class AreaController {
 			return "private/areas/editarea";
 		}
 		
-		this.areaRepo.save(area);
+		Optional<Area> existingOptionalArea = areaRepo.findById(area.getId());
+		if (!existingOptionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		Area existingArea = existingOptionalArea.get();
+		
+		// Checking if the modified name of the area is equal to the actual one. If it is, we check if there is already an area with the chosen name in the system
+		if (!existingArea.getName().equals(area.getName())) {
+			if (areaRepo.existsByName(area.getName())) {
+				model.addAttribute("message", this.messages.get("messages.area.exists", area.getName()));
+				model.addAttribute("alertClass", "alert-danger");
+			    return "private/areas/editarea";
+			}
+		}
+		
+		/*
+		 * Checking the capacity. It may remain the same, increase or decrease. If it increases or it is the same we should simply create the additional
+		 * vacancies. If it decreases, we should check first if there are employees associated to the area. We do not decrease the capacity if there 
+		 * are employees associated.
+		*/
+		if (area.getCapacity() >= existingArea.getCapacity()) {
+			int newVacancies = area.getCapacity() - existingArea.getCapacity();
+			int lastVacancyNumber = vacancyRepo.findMaxVacancyNumberOfArea(existingArea) + 1;
+			
+			for (int i = 0; i < newVacancies; i++) {
+				Vacancy vacancy = new Vacancy();
+				vacancy.setNumber(i + lastVacancyNumber);
+				vacancy.setUuid(UUID.randomUUID().toString());
+				vacancy.setArea(existingArea);
+				
+				this.vacancyRepo.save(vacancy);
+			}
+			
+			this.areaRepo.save(area);
+		} else {
+			int employeeAssociations = 0;
+			
+			if (existingArea.getVacancies() != null && existingArea.getVacancies().size() > 0) {
+				for (Vacancy vacancy: existingArea.getVacancies()) {
+					if (vacancy.getEmployee() != null) employeeAssociations++;
+				}
+			}
+			
+			if (employeeAssociations > 0) {
+				model.addAttribute("message", this.messages.get("message.area.capacity.cannot.be.decreased", employeeAssociations));
+				model.addAttribute("alertClass", "alert-danger");
+				return "private/areas/editarea";
+			} else {
+				int vacanciesToDelete = existingArea.getCapacity() - area.getCapacity();
+				List<Vacancy> toDelete = new ArrayList<>();
+				
+				for (int i = existingArea.getVacancies().size() - 1; i >= 0; i--) {
+					if (vacanciesToDelete == 0) break;
+					
+					Vacancy v = (Vacancy) existingArea.getVacancies().toArray()[i];
+					toDelete.add(v);
+					vacanciesToDelete--;
+				}
+				
+				for (Vacancy vacancy: toDelete) {
+					this.vacancyRepo.delete(vacancy);
+				}
+				
+				this.areaRepo.save(area);
+			}
+		}
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.area.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		return "redirect:/areas";
-
 	}
 	
 	/*
@@ -135,12 +193,12 @@ public class AreaController {
 	 */
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_AREAS_PRIVILEGE + "'")
 	@PostMapping("/delete/{id}")
-	public String deleteArea(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws UserNotFoundException {
-		log.info("Method deleteUser()");
+	public String deleteArea(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws GenericException {
+		log.info("Method deleteArea()");
 		
 		Optional<Area> area = areaRepo.findById(id);
 		
-		if (!area.isPresent()) throw new UserNotFoundException(messages.get("messages.area.not.found"));
+		if (!area.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
 		Area foundArea = area.get();
 		int employeeAssociations = 0;
 		

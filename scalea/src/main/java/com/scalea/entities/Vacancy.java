@@ -35,4 +35,9 @@ public class Vacancy {
 	@OneToOne
 	@JoinColumn(name="employee_id", nullable=true)
 	private Employee employee;
+
+	@Override
+	public String toString() {
+		return "Vacancy [number=" + number + "]";
+	}
 }

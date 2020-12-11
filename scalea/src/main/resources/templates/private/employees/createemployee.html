@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<body>
+		<h1 th:text="#{messages.employee.create}"></h1>
+		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<form method="POST" th:action="@{/employees/create}" th:object="${employee}">
+			<div th:if="${#fields.hasErrors()}">
+				<span class="validationError" th:text="#{messages.correct.problems}"></span>
+			</div>
+			
+			<label for="firstName" th:text="#{messages.name}"></label>
+			<input type="text" name="firstName" th:field="*{firstName}"/>
+			<span class="validationError" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+			<br />
+			
+			<label for="lastName" th:text="#{messages.lastname}"></label>
+			<input type="text" name="lastName" th:field="*{lastName}"/>
+			<span class="validationError" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+			<br />
+			
+			<label for="accountNumber" th:text="#{messages.account.number}"></label>
+			<input type="text" name="accountNumber" th:field="*{accountNumber}"/>
+			<span class="validationError" th:if="${#fields.hasErrors('accountNumber')}" th:errors="*{accountNumber}"></span>
+			<br />
+			
+			<label for="birthday" th:text="#{messages.birthday}"></label>
+			<input type="date" name="birthday" th:field="*{birthday}"/>
+			<span class="validationError" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></span>
+			<br />
+			
+			<label for="personalNumber" th:text="#{messages.personal.number}"></label>
+			<input type="text" name="personalNumber" th:field="*{personalNumber}"/>
+			<span class="validationError" th:if="${#fields.hasErrors('personalNumber')}" th:errors="*{personalNumber}"></span>
+			<br />
+			
+			<label for="email" th:text="#{messages.email}"></label>
+			<input type="text" name="email" th:field="*{email}"/>
+			<span class="validationError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+			<br />
+			
+			<label for="vacancy" th:text="#{messages.vacancy}" th:if="${vacancies.size() > 0}"></label>
+			<select name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}">
+				<option th:text="#{messages.none}" value=""></option>
+				<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
+			</select>
+			
+			<p th:if="${vacancies.size() == 0}" th:text="#{messages.no.vacancies.yet}"></p>
+			<br />
+			
+			<input type="submit" th:value="#{messages.save}" />
+		</form>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

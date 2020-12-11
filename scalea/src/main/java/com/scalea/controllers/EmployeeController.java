@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Employee;
+import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
 import com.scalea.repositories.EmployeeRepository;
 import com.scalea.repositories.VacancyRepository;
@@ -29,12 +30,14 @@ import com.scalea.utils.Constants;
 public class EmployeeController {
 	
 	private EmployeeRepository employeeRepo;
+	private VacancyRepository vacancyRepo;
 	private Logger log;
 	private Messages messages;
 	
 	@Autowired
 	public EmployeeController(EmployeeRepository employeeRepo, VacancyRepository vacancyRepo, Messages messages) {
 		this.employeeRepo = employeeRepo;
+		this.vacancyRepo = vacancyRepo;
 		this.log = LoggerFactory.getLogger(RoleController.class);
 		this.messages = messages;
 	}
@@ -54,7 +57,10 @@ public class EmployeeController {
 	public String newEmployee(Model model) {
 		log.info("Method newEmployee()");
 		
+		Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+		
 		model.addAttribute("employee", new Employee());
+		model.addAttribute("vacancies", vacancies);
 		return "private/employees/createemployee";
 	}
 	
@@ -64,7 +70,25 @@ public class EmployeeController {
 		log.info("Method createEmployee()");
 		
 		if (errors.hasErrors()) {
+			Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+			model.addAttribute("vacancies", vacancies);
 			return "private/employees/createemployee";
+		}
+		
+		if (employeeRepo.existsByPersonalNumber(employee.getPersonalNumber())) {
+			Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+			model.addAttribute("vacancies", vacancies);
+			model.addAttribute("message", this.messages.get("messages.employee.exists", employee.getPersonalNumber()));
+			model.addAttribute("alertClass", "alert-danger");
+			return "private/employees/createemployee";
+		}
+		
+		employee = this.employeeRepo.save(employee);
+		
+		if (employee.getVacancy() != null) {
+			Vacancy vacancy = employee.getVacancy();
+			vacancy.setEmployee(employee);
+			this.vacancyRepo.save(vacancy);
 		}
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.created"));

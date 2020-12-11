@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	
+	<body>
+		<h1 th:text="#{messages.employee.list}"></h1>
+		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<a th:href="@{/employees/create}" th:text="#{messages.employee.create}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></a>
+		
+		<div th:if="${employees.size() > 0}" th:each="employee : ${employees}">
+			<span th:text="${employee.firstName + ' ' + employee.lastName}"></span><br/>
+			<a th:href="@{'/employees/edit/{id}'(id=${employee.id})}" th:text="#{messages.employee.edit}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></a>
+			
+			<form method="POST" th:action="@{'/employees/delete/{id}'(id=${employee.id})}" sec:authorize="hasAuthority('DELETE_EMPLOYEES_PRIVILEGE')">
+				<input type="submit" th:value="#{messages.employee.delete}"/>
+			</form>
+		</div>
+		
+		<div th:if="${employees.size() == 0}">
+			<p th:text="#{messages.no.employees}"></p>
+		</div>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

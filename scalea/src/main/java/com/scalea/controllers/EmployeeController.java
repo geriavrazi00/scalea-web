@@ -103,8 +103,10 @@ public class EmployeeController {
 		
 		Optional<Employee> employee = employeeRepo.findById(id);
 		if (!employee.isPresent()) throw new GenericException(messages.get("messages.employee.not.found"));
+		Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
 		
 		model.addAttribute("employee", employee.get());
+		model.addAttribute("vacancies", vacancies);
 		return "private/employees/editemployee";
 	}
 	

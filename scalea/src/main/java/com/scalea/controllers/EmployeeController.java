@@ -47,7 +47,8 @@ public class EmployeeController {
 	public String allEmployees(Model model) {
 		log.info("Method allEmployees()");
 		
-		Iterable<Employee> employees = employeeRepo.findAll();
+		// We only show the enabled employees at the moment
+		Iterable<Employee> employees = employeeRepo.findByEnabled(true);
 		model.addAttribute("employees", employees);
 		return "private/employees/employeelist";
 	}
@@ -131,6 +132,7 @@ public class EmployeeController {
 		if (!existingEmployee.getPersonalNumber().equals(employee.getPersonalNumber())) {
 			if (employeeRepo.existsByPersonalNumber(employee.getPersonalNumber())) {
 				Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+				employee.setVacancy(existingEmployee.getVacancy()); // When the validation fails and a value for the vacancy was selected, the new value was displayed like it was saved to the employee. Setting it back to the old value, avoids all this
 				
 				model.addAttribute("message", this.messages.get("messages.employee.exists", employee.getPersonalNumber()));
 				model.addAttribute("alertClass", "alert-danger");
@@ -141,7 +143,15 @@ public class EmployeeController {
 			}
 		}
 		
+		// When the detach check box is checked, we detach the existing employee from the old vacancy. If a vacancy is selected we attach it the employee.
+		if (employee.isDetach()) {
+			this.detachEmployeeFromVacancy(existingEmployee);
+			if (employee.getVacancy() != null) this.attachEmployeeToVacancy(employee);
+		} else {
+			if (employee.getVacancy() != null) this.attachEmployeeToVacancy(employee);
+		}
 		
+		employee = employeeRepo.save(employee);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
@@ -152,6 +162,35 @@ public class EmployeeController {
 	@PostMapping("/delete/{id}")
 	public String deleteEmployee(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws GenericException {
 		log.info("Method deleteEmployee()");
-		return "redirect:/areas";
+		
+		Optional<Employee> optionalEmployee = employeeRepo.findById(id);
+		if (!optionalEmployee.isPresent()) throw new GenericException(messages.get("messages.employee.not.found"));
+		Employee employee = optionalEmployee.get();
+		
+		/*
+		 * To delete an employee, we just detach its vacancy if there is one and set the enabled employee to false
+		 */
+		if (employee.getVacancy() != null) this.detachEmployeeFromVacancy(employee);
+		
+		employee.setVacancy(null);
+		employee.setEnabled(false);
+		employeeRepo.save(employee);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.deleted"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+		
+		return "redirect:/employees";
+	}
+	
+	private void attachEmployeeToVacancy(Employee employee) {
+		Vacancy vacancy = employee.getVacancy();
+		vacancy.setEmployee(employee);
+		this.vacancyRepo.save(vacancy);
+	}
+	
+	private void detachEmployeeFromVacancy(Employee employee) {
+		Vacancy vacancy = employee.getVacancy();
+		vacancy.setEmployee(null);
+		this.vacancyRepo.save(vacancy);
 	}
 }

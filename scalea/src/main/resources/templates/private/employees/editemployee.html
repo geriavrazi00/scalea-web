@@ -41,6 +41,11 @@
 			<span class="validationError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
 			<br />
 			
+			<label for="phoneNumber" th:text="#{messages.phonenumber}"></label>
+			<input type="text" name="phoneNumber" th:field="*{phoneNumber}"/>
+			<span class="validationError" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+			<br />
+			
 			<label for="supervisor" th:text="#{messages.supervisor}"></label>
 			<input type="checkbox" id="supervisor" name="supervisor" th:field="*{supervisor}"/>
 			<br />

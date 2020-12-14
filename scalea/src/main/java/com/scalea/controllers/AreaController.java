@@ -3,7 +3,6 @@ package com.scalea.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -27,6 +26,7 @@ import com.scalea.exceptions.GenericException;
 import com.scalea.repositories.AreaRepository;
 import com.scalea.repositories.VacancyRepository;
 import com.scalea.utils.Constants;
+import com.scalea.utils.Utils;
 
 @Controller
 @RequestMapping("/areas")
@@ -84,7 +84,7 @@ public class AreaController {
 		for (int i = 0; i < area.getCapacity(); i++) {
 			Vacancy vacancy = new Vacancy();
 			vacancy.setNumber(i + 1);
-			vacancy.setUuid(UUID.randomUUID().toString());
+			vacancy.setUuid(Utils.generateUniqueVacancyCodes());
 			vacancy.setArea(area);
 			
 			this.vacancyRepo.save(vacancy);
@@ -143,7 +143,7 @@ public class AreaController {
 			for (int i = 0; i < newVacancies; i++) {
 				Vacancy vacancy = new Vacancy();
 				vacancy.setNumber(i + lastVacancyNumber);
-				vacancy.setUuid(UUID.randomUUID().toString());
+				vacancy.setUuid(Utils.generateUniqueVacancyCodes());
 				vacancy.setArea(existingArea);
 				
 				this.vacancyRepo.save(vacancy);

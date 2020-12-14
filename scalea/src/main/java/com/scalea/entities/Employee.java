@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -66,13 +67,18 @@ public class Employee {
 	
 	private boolean enabled = true;
 	
+	private boolean supervisor = false;
+	
+	@Transient
+	private boolean detach = false;
+	
 	@OneToOne(mappedBy = "employee")
 	private Vacancy vacancy;
 
 	@Override
 	public String toString() {
-		return "Employee [firstName=" + firstName + ", lastName=" + lastName + ", accountNumber=" + accountNumber
-				+ ", birthday=" + birthday + ", personalNumber=" + personalNumber + ", email=" + email
-				+ ", phoneNumber=" + phoneNumber + ", enabled=" + enabled + "]";
+		return "Employee [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", accountNumber="
+				+ accountNumber + ", birthday=" + birthday + ", personalNumber=" + personalNumber + ", email=" + email
+				+ ", phoneNumber=" + phoneNumber + ", enabled=" + enabled + ", supervisor=" + supervisor + "]";
 	}
 }

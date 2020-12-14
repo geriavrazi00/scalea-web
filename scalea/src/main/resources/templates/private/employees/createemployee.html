@@ -41,6 +41,10 @@
 			<span class="validationError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
 			<br />
 			
+			<label for="supervisor" th:text="#{messages.supervisor}"></label>
+			<input type="checkbox" id="supervisor" name="supervisor" th:field="*{supervisor}"/>
+			<br />
+			
 			<label for="vacancy" th:text="#{messages.vacancy}" th:if="${vacancies.size() > 0}"></label>
 			<select name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}">
 				<option th:text="#{messages.none}" value=""></option>

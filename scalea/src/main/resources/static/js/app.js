@@ -7,3 +7,11 @@ $(document).ready(function() {
         }
     });
 });
+
+function changeVacancies() {
+	if (document.getElementById("vacancy").disabled == true) {
+		document.getElementById("vacancy").disabled = false;
+	} else {
+		document.getElementById("vacancy").disabled = true;
+	}
+}

@@ -41,20 +41,40 @@
 			<span class="validationError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
 			<br />
 			
+			<label for="supervisor" th:text="#{messages.supervisor}"></label>
+			<input type="checkbox" id="supervisor" name="supervisor" th:field="*{supervisor}"/>
+			<br />
+			
 			<div th:if="*{vacancy != null}">
 				<label th:text="#{messages.current.vacancy} + ': '"></label>
 				<label th:text="*{vacancy.area.name + ' - ' + vacancy.number}"></label>
 				<br />
+				
+				<label for="detach" th:text="#{messages.detach.vacancy}"></label>
+				<input type="checkbox" id="detach" name="detach" th:field="*{detach}" onchange="changeVacancies()"/>
+				<br />
+				
+				<label for="vacancy" th:text="#{messages.new.vacancy}" th:if="${vacancies.size() > 0}"></label>
+				<select id="vacancy" name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}" disabled>
+					<option th:text="#{messages.none}" value=""></option>
+					<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
+				</select>
+				<br />
 			</div>
 			
-			<label for="vacancy" th:text="#{messages.vacancy}" th:if="${vacancies.size() > 0}"></label>
-			<select name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}">
-				<option th:text="#{messages.none}" value=""></option>
-				<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
-			</select>
+			<div th:if="*{vacancy == null}">
+				<label for="vacancy" th:text="#{messages.vacancy}" th:if="${vacancies.size() > 0}"></label>
+				<select name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}">
+					<option th:text="#{messages.none}" value=""></option>
+					<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
+				</select>
+				<br />
+			</div>
 			
-			<p th:if="${vacancies.size() == 0}" th:text="#{messages.no.vacancies.yet}"></p>
-			<br />
+			<div th:if="${vacancies.size() == 0}">
+				<p th:text="#{messages.no.vacancies}"></p>
+				<br />
+			</div>
 			
 			<input type="submit" th:value="#{messages.save}" />
 		</form>

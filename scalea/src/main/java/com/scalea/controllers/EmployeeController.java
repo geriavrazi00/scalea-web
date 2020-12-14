@@ -116,9 +116,32 @@ public class EmployeeController {
 		log.info("Method updateEmployee()");
 		
 		if (errors.hasErrors()) {
+			Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+			
 			model.addAttribute("employee", employee);
+			model.addAttribute("vacancies", vacancies);
 			return "private/employees/editemployee";
 		}
+		
+		Optional<Employee> existingOptionalEmployee = employeeRepo.findById(employee.getId());
+		if (!existingOptionalEmployee.isPresent()) throw new GenericException(messages.get("messages.employee.not.found"));
+		Employee existingEmployee = existingOptionalEmployee.get();
+		
+		// Checking if the modified personal number of the employee is equal to the actual one. If it is, we check if there is already an employee with the chosen personal number in the system
+		if (!existingEmployee.getPersonalNumber().equals(employee.getPersonalNumber())) {
+			if (employeeRepo.existsByPersonalNumber(employee.getPersonalNumber())) {
+				Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+				
+				model.addAttribute("message", this.messages.get("messages.employee.exists", employee.getPersonalNumber()));
+				model.addAttribute("alertClass", "alert-danger");
+				model.addAttribute("employee", employee);
+				model.addAttribute("vacancies", vacancies);
+				
+			    return "private/employees/editemployee";
+			}
+		}
+		
+		
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");

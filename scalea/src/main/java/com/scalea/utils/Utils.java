@@ -15,11 +15,15 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 public class Utils {
 	
-	public String generateUUID() throws Exception {
+	public static String generateUUID() throws Exception {
 		return UUID.randomUUID().toString();
 	}
 	
-	public String getBarCodeImage(String text, int width, int height) {
+	public static String generateUniqueVacancyCodes() {
+		return UUID.randomUUID().getLeastSignificantBits() + "";
+	}
+	
+	public static String getBarCodeImage(String text, int width, int height) {
 		try {
 			Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<>();
 			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);

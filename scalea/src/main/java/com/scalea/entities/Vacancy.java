@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -24,10 +25,11 @@ public class Vacancy {
 	
 	private int number;
 	
-	// @Unique
 	@NotNull
+	@NotBlank
 	private String uuid;
 	
+	@NotNull(message="{messages.area.required}")
 	@ManyToOne
 	@JoinColumn(name="area_id", nullable=false)
 	private Area area;
@@ -35,6 +37,8 @@ public class Vacancy {
 	@OneToOne
 	@JoinColumn(name="employee_id", nullable=true)
 	private Employee employee;
+	
+	private boolean enabled = true;
 
 	@Override
 	public String toString() {

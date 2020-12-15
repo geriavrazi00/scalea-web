@@ -15,4 +15,6 @@ public interface VacancyRepository extends CrudRepository<Vacancy, Long> {
 	
 	@Query("SELECT v FROM Vacancy v WHERE v.employee = NULL ")
 	List<Vacancy> findUnassociatedVacancies();
+	
+	Iterable<Vacancy> findByEnabled(boolean enabled);
 }

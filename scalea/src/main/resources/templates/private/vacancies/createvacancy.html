@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<body>
+		<h1 th:text="#{messages.vacancy.create}"></h1>
+		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<form method="POST" th:action="@{/vacancies/create}" th:object="${vacancy}">
+			<div th:if="${#fields.hasErrors()}">
+				<span class="validationError" th:text="#{messages.correct.problems}"></span>
+			</div>
+			
+			<label for="area" th:text="#{messages.area.list}" th:if="${areas.size() > 0}"></label>
+			<select name="area" th:field="*{area}" th:if="${areas.size() > 0}">
+				<option th:text="#{messages.none}" value=""></option>
+				<option th:each="area : ${areas}" th:value="${area.id}" th:text="${area.name}"/>
+			</select>
+			<span class="validationError" th:if="${#fields.hasErrors('area')}" th:errors="*{area}"></span>
+			
+			<p th:if="${areas.size() == 0}" th:text="#{messages.no.areas}"></p>
+			<br />
+			
+			<label for="employee" th:text="#{messages.employee.list}" th:if="${employees.size() > 0}"></label>
+			<select name="employee" th:field="*{employee}" th:if="${employees.size() > 0}">
+				<option th:text="#{messages.none}" value=""></option>
+				<option th:each="employee : ${employees}" th:value="${employee.id}" th:text="${employee.firstName + ' ' + employee.lastName}"/>
+			</select>
+			
+			<p th:if="${employees.size() == 0}" th:text="#{messages.no.employees}"></p>
+			<br />
+			
+			<input type="submit" th:value="#{messages.save}" />
+		</form>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

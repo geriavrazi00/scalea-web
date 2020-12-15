@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	
+	<body>
+		<h1 th:text="#{messages.vacancy.list}"></h1>
+		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<a th:href="@{/vacancies/create}" th:text="#{messages.vacancy.create}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></a>
+		
+		<div th:if="${vacancies.size() > 0}" th:each="vacancy : ${vacancies}">
+			<span th:text="${vacancy.number}"></span><br/>
+			<span th:text="${vacancy.area.name}"></span><br/>
+			<span th:text="${vacancy.employee.firstName + ' ' + vacancy.employee.lastName}" th:if="${vacancy.employee != null}"></span><br/>
+			
+			<form method="POST" th:action="@{'/vacancies/detach/{id}'(id=${vacancy.id})}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" th:if="${vacancy.employee != null}">
+				<input type="submit" th:value="#{messages.vacancy.detach}"/>
+			</form>
+			
+			<form method="POST" th:action="@{'/vacancies/delete/{id}'(id=${vacancy.id})}" sec:authorize="hasAuthority('DELETE_VACANCIES_PRIVILEGE')">
+				<input type="submit" th:value="#{messages.vacancy.delete}"/>
+			</form>
+		</div>
+		
+		<div th:if="${vacancies.size() == 0}">
+			<p th:text="#{messages.no.vacancies}"></p>
+		</div>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

@@ -63,8 +63,10 @@ public class VacancyController {
 		log.info("Method newVacancy()");
 		
 		Iterable<Employee> employees = employeeRepo.findUnassociatedEmployees();
+		Iterable<Area> areas = areaRepo.findAll();
 		
 		model.addAttribute("employees", employees);
+		model.addAttribute("areas", areas);
 		model.addAttribute("vacancy", new Vacancy());
 		return "private/vacancies/createvacancy";
 	}
@@ -76,6 +78,9 @@ public class VacancyController {
 		
 		if (errors.hasErrors()) {
 			Iterable<Employee> employees = employeeRepo.findUnassociatedEmployees();
+			Iterable<Area> areas = areaRepo.findAll();
+			
+			model.addAttribute("areas", areas);
 			model.addAttribute("employees", employees);
 			return "private/vacancies/createvacancy";
 		}

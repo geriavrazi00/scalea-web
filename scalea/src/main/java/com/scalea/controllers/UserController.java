@@ -47,7 +47,7 @@ public class UserController {
 	public UserController(UserRepository userRepo, RoleRepository roleRepo, Messages messages, PasswordEncoder passwordEncoder) {
 		this.userRepo = userRepo;
 		this.roleRepo = roleRepo;
-		this.log = LoggerFactory.getLogger(RoleController.class);
+		this.log = LoggerFactory.getLogger(UserController.class);
 		this.messages = messages;
 		this.passwordEncoder = passwordEncoder;
 	}

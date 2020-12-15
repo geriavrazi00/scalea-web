@@ -38,7 +38,7 @@ public class EmployeeController {
 	public EmployeeController(EmployeeRepository employeeRepo, VacancyRepository vacancyRepo, Messages messages) {
 		this.employeeRepo = employeeRepo;
 		this.vacancyRepo = vacancyRepo;
-		this.log = LoggerFactory.getLogger(RoleController.class);
+		this.log = LoggerFactory.getLogger(EmployeeController.class);
 		this.messages = messages;
 	}
 	

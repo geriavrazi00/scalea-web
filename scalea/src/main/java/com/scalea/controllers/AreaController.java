@@ -41,7 +41,7 @@ public class AreaController {
 	public AreaController(AreaRepository areaRepo, VacancyRepository vacancyRepo, Messages messages) {
 		this.areaRepo = areaRepo;
 		this.vacancyRepo = vacancyRepo;
-		this.log = LoggerFactory.getLogger(RoleController.class);
+		this.log = LoggerFactory.getLogger(AreaController.class);
 		this.messages = messages;
 	}
 	

@@ -133,13 +133,9 @@ public class VacancyController {
 		if (!existingOptionalVacancy.isPresent()) throw new GenericException(messages.get("messages.employee.not.found"));
 		Vacancy existingVacancy = existingOptionalVacancy.get();
 		
-		// When the detach check box is checked, we detach the existing employee from the old vacancy. If a vacancy is selected we attach it the employee.
-//		if (vacancy.isDetach()) {
-//			if ()
-//		} else {
-//			if (vacancy.getEmployee() != null) this.attachVacancyToEmployee(vacancy);
-//		}
-		
+		/* If an employee should not be detached and there is no employee selected (the case when there was no previous employee and we are setting it now), we set 
+		 * the old employee. In the other cases the employee is managed automatically.
+		 */
 		if (!vacancy.isDetach() && vacancy.getEmployee() == null) {
 			vacancy.setEmployee(existingVacancy.getEmployee());
 		}
@@ -177,14 +173,5 @@ public class VacancyController {
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
 		return "redirect:/vacancies";
-	}
-	
-	private void attachVacancyToEmployee(Vacancy vacancy) {
-		Employee employee = vacancy.getEmployee();
-		vacancy.setEmployee(employee);
-	}
-	
-	private void detachVacancyFromEmployee(Vacancy vacancy) {
-		vacancy.setEmployee(null);
 	}
 }

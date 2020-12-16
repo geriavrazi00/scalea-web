@@ -27,7 +27,7 @@
 				<option th:each="employee : ${employees}" th:value="${employee.id}" th:text="${employee.firstName + ' ' + employee.lastName}"/>
 			</select>
 			
-			<p th:if="${employees.size() == 0}" th:text="#{messages.no.employees}"></p>
+			<p th:if="${employees.size() == 0}" th:text="#{messages.no.free.employee}"></p>
 			<br />
 			
 			<input type="submit" th:value="#{messages.save}" />

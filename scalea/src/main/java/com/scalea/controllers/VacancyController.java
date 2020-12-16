@@ -62,7 +62,7 @@ public class VacancyController {
 	public String newVacancy(Model model) {
 		log.info("Method newVacancy()");
 		
-		Iterable<Employee> employees = employeeRepo.findUnassociatedEmployees();
+		Iterable<Employee> employees = employeeRepo.findByVacancyIsNullAndEnabledIsTrue();
 		Iterable<Area> areas = areaRepo.findAll();
 		
 		model.addAttribute("employees", employees);
@@ -77,7 +77,7 @@ public class VacancyController {
 		log.info("Method createVacancy()");
 		
 		if (errors.hasErrors()) {
-			Iterable<Employee> employees = employeeRepo.findUnassociatedEmployees();
+			Iterable<Employee> employees = employeeRepo.findByVacancyIsNullAndEnabledIsTrue();
 			Iterable<Area> areas = areaRepo.findAll();
 			
 			model.addAttribute("areas", areas);
@@ -104,22 +104,53 @@ public class VacancyController {
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "'")
-	@PostMapping("/detach/{id}")
-	public String detachVacancy(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws GenericException {
-		log.info("Method detachVacancy()");
+	@GetMapping("edit/{id}")
+	public String editVacancy(@PathVariable("id") Long id, Model model) throws Exception {
+		log.info("Method editVacancy()");
 		
-		Optional<Vacancy> optionalVacancy = vacancyRepo.findById(id);
-		if (!optionalVacancy.isPresent()) throw new GenericException(messages.get("messages.vacancy.not.found"));
-		Vacancy vacancy = optionalVacancy.get();
+		Optional<Vacancy> vacancy = vacancyRepo.findById(id);
+		if (!vacancy.isPresent()) throw new GenericException(messages.get("messages.vacancy.not.found"));
+		Iterable<Employee> employees = employeeRepo.findByVacancyIsNullAndEnabledIsTrue();
 		
-		// To delete a vacancy, we disable it, remove its associated employee and set its number to 0 so it doesn't interfere with future numbers.
-		vacancy.setEmployee(null);
-		this.vacancyRepo.save(vacancy);
+		model.addAttribute("employees", employees);
+		model.addAttribute("vacancy", vacancy.get());
+		return "private/vacancies/editvacancy";
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "'")
+	@PostMapping("/edit/{id}")
+	public String updateVacancy(@Valid Vacancy vacancy, Errors errors, Model model, RedirectAttributes redirectAttributes) throws GenericException {
+		log.info("Method updateVacancy()");
 		
-		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.vacancy.detached"));
+		if (errors.hasErrors()) {
+			Iterable<Employee> employees = employeeRepo.findByVacancyIsNullAndEnabledIsTrue();
+			
+			model.addAttribute("employees", employees);
+			return "private/vacancies/editvacancy";
+		}
+		
+		Optional<Vacancy> existingOptionalVacancy = vacancyRepo.findById(vacancy.getId());
+		if (!existingOptionalVacancy.isPresent()) throw new GenericException(messages.get("messages.employee.not.found"));
+		Vacancy existingVacancy = existingOptionalVacancy.get();
+		
+		// When the detach check box is checked, we detach the existing employee from the old vacancy. If a vacancy is selected we attach it the employee.
+//		if (vacancy.isDetach()) {
+//			if ()
+//		} else {
+//			if (vacancy.getEmployee() != null) this.attachVacancyToEmployee(vacancy);
+//		}
+		
+		if (!vacancy.isDetach() && vacancy.getEmployee() == null) {
+			vacancy.setEmployee(existingVacancy.getEmployee());
+		}
+		
+		vacancy.setNumber(existingVacancy.getNumber());
+		vacancy.setUuid(existingVacancy.getUuid());
+		vacancyRepo.save(vacancy);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.vacancy.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-		
-		return "redirect:/vacancies";
+	    return "redirect:/vacancies";
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_VACANCIES_PRIVILEGE + "'")
@@ -146,5 +177,14 @@ public class VacancyController {
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
 		return "redirect:/vacancies";
+	}
+	
+	private void attachVacancyToEmployee(Vacancy vacancy) {
+		Employee employee = vacancy.getEmployee();
+		vacancy.setEmployee(employee);
+	}
+	
+	private void detachVacancyFromEmployee(Vacancy vacancy) {
+		vacancy.setEmployee(null);
 	}
 }

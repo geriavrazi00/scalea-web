@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<body>
+		<h1 th:text="#{messages.vacancy.edit}"></h1>
+		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<form method="POST" th:action="@{'/vacancies/edit/{id}'(id=${vacancy.id})}" th:object="${vacancy}">
+			<div th:if="${#fields.hasErrors()}">
+				<span class="validationError" th:text="#{messages.correct.problems}"></span>
+			</div>
+			
+			<input type="hidden" th:field="*{area}"/>
+			
+			<div th:if="*{employee != null}">
+				<label th:text="#{messages.current.employee} + ': '"></label>
+				<label th:text="*{employee.firstName + ' ' + employee.lastName}"></label>
+				<br />
+				
+				<label for="detach" th:text="#{messages.detach.employee}"></label>
+				<input type="checkbox" id="detach" name="detach" th:field="*{detach}" onchange="changeEmployees()"/>
+				<br />
+				
+				<label for="employee" th:text="#{messages.new.employee}" th:if="${employees.size() > 0}"></label>
+				<select id="employee" name="employee" th:field="*{employee}" th:if="${employees.size() > 0}" disabled>
+					<option th:text="#{messages.none}" value=""></option>
+					<option th:each="employee : ${employees}" th:value="${employee.id}" th:text="${employee.firstName + ' ' + employee.lastName}"/>
+				</select>
+				<br />
+			</div>
+			
+			<div th:if="*{employee == null}">
+				<label for="employee" th:text="#{messages.employee}" th:if="${employees.size() > 0}"></label>
+				<select name="employee" th:field="*{employee}" th:if="${employees.size() > 0}">
+					<option th:text="#{messages.none}" value=""></option>
+					<option th:each="employee : ${employees}" th:value="${employee.id}" th:text="${employee.firstName + ' ' + employee.lastName}"/>
+				</select>
+				<br />
+			</div>
+			
+			<div th:if="${employees.size() == 0}">
+				<p th:text="#{messages.no.free.employee}"></p>
+				<br />
+			</div>
+			
+			<input type="submit" th:value="#{messages.save}" />
+		</form>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

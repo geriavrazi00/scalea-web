@@ -11,6 +11,6 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
 	boolean existsByPersonalNumber(String personalNumber);
 	Iterable<Employee> findByEnabled(boolean enabled);
 	
-	@Query("SELECT e FROM Employee e WHERE e.enabled = true ")
-	List<Employee> findUnassociatedEmployees();
+	// @Query("SELECT e FROM Employee e WHERE e.enabled = true AND e.vacancy IS NULL ")
+	List<Employee> findByVacancyIsNullAndEnabledIsTrue();
 }

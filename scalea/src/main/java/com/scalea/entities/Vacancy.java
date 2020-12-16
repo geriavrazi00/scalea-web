@@ -8,7 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -25,8 +25,6 @@ public class Vacancy {
 	
 	private int number;
 	
-	@NotNull
-	@NotBlank
 	private String uuid;
 	
 	@NotNull(message="{messages.area.required}")
@@ -39,6 +37,9 @@ public class Vacancy {
 	private Employee employee;
 	
 	private boolean enabled = true;
+	
+	@Transient
+	private boolean detach = false;
 
 	@Override
 	public String toString() {

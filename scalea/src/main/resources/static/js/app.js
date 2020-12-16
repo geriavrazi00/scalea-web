@@ -15,3 +15,11 @@ function changeVacancies() {
 		document.getElementById("vacancy").disabled = true;
 	}
 }
+
+function changeEmployees() {
+	if (document.getElementById("employee").disabled == true) {
+		document.getElementById("employee").disabled = false;
+	} else {
+		document.getElementById("employee").disabled = true;
+	}
+}

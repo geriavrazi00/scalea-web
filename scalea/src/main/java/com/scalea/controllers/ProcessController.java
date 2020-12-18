@@ -7,21 +7,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.scalea.configurations.Messages;
-import com.scalea.repositories.ProcessRepository;
-import com.scalea.repositories.VacancyRepository;
 
 @Controller
 @RequestMapping("/processes")
 public class ProcessController {
 
-	private ProcessRepository processRepo;
+	//private ProcessRepository processRepo;
 	private Logger log;
 	private Messages messages;
 	
 	@Autowired
-	public ProcessController(ProcessRepository processRepo, VacancyRepository vacancyRepo, Messages messages) {
-		this.processRepo = processRepo;
-		this.log = LoggerFactory.getLogger(EmployeeController.class);
+	public ProcessController(/*ProcessRepository processRepo,*/ Messages messages) {
+		//this.processRepo = processRepo;
+		this.log = LoggerFactory.getLogger(ProcessController.class);
 		this.messages = messages;
 	}
 }

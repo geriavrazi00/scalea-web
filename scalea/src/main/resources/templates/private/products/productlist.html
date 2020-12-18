@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	
+	<body>
+		<h1 th:text="#{messages.product.list}"></h1>
+		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<a th:href="@{/products/create}" th:text="#{messages.product.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
+		
+		<div th:if="${products.size() > 0}" th:each="product : ${products}">
+			<span th:text="${product.name}"></span><br/>
+			<a th:href="@{'/products/edit/{id}'(id=${product.id})}" th:text="#{messages.product.edit}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
+			
+			<form method="POST" th:action="@{'/products/delete/{id}'(id=${product.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')">
+				<input type="submit" th:value="#{messages.product.delete}"/>
+			</form>
+		</div>
+		
+		<div th:if="${products.size() == 0}">
+			<p th:text="#{messages.no.product}"></p>
+		</div>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

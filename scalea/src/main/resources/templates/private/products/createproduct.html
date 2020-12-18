@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<body>
+		<h1 th:text="#{messages.product.create}"></h1>
+		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<form method="POST" th:action="@{/products/create}" th:object="${product}" enctype="multipart/form-data">
+			<div th:if="${#fields.hasErrors()}">
+				<span class="validationError" th:text="#{messages.correct.problems}"></span>
+			</div>
+			
+			<label for="name" th:text="#{messages.name}"></label>
+			<input type="text" name="name" th:field="*{name}"/>
+			<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+			<br />
+			
+			<label for="price" th:text="#{messages.price.per.kg}"></label>
+			<input type="number" name="price" th:field="*{price}" step=".0001"/>
+			<span class="validationError" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+			<br />
+			
+			<label for="img" th:text="#{messages.image}"></label>
+			<input type="file" name="img" accept="image/png, image/jpeg, image/jpg" />
+			<br />
+			
+			<label for="subproduct" th:text="#{messages.has.subproducts}"></label>
+			<input type="checkbox" id="subproduct" name="subproduct" th:field="*{withSubProducts}"/>
+			<br />
+			
+			<input type="submit" th:value="#{messages.save}" />
+		</form>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

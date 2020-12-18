@@ -39,7 +39,7 @@ public class ProductController {
 	public ProductController(ProductRepository productRepo, ConfigurationService configService, Messages messages) {
 		this.productRepo = productRepo;
 		this.configService = configService;
-		this.log = LoggerFactory.getLogger(VacancyController.class);
+		this.log = LoggerFactory.getLogger(ProductController.class);
 		this.messages = messages;
 	}
 	

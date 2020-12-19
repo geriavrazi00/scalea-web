@@ -15,6 +15,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.scalea.annotations.NumbersWhenEnabled;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +24,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Table(name="products")
+@NumbersWhenEnabled.List({ 
+    @NumbersWhenEnabled(
+      enabled = "withSubProducts", 
+      number = "price", 
+      message = "{messages.price.positive}"
+    )
+})
 public class Product {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

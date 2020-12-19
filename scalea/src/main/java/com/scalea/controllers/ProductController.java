@@ -62,7 +62,7 @@ public class ProductController {
 		return "private/products/createproduct";
 	}
 	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "'")
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
 	@PostMapping("/create")
 	public String createProduct(@Valid Product product, Errors errors, Model model, RedirectAttributes redirectAttributes, 
 			@RequestParam("img") MultipartFile multipartFile) throws IOException {

@@ -16,17 +16,17 @@
 			<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
 			<br />
 			
+			<label for="subproduct" th:text="#{messages.has.subproducts}"></label>
+			<input type="checkbox" id="subproduct" name="subproduct" th:field="*{withSubProducts}" onchange="changeProductPrice()"/>
+			<br />
+			
 			<label for="price" th:text="#{messages.price.per.kg}"></label>
-			<input type="number" name="price" th:field="*{price}" step=".0001"/>
+			<input type="number" id="price" name="price" th:field="*{price}" step=".0001" th:disabled="*{withSubProducts}"/>
 			<span class="validationError" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
 			<br />
 			
 			<label for="img" th:text="#{messages.image}"></label>
 			<input type="file" name="img" accept="image/png, image/jpeg, image/jpg" />
-			<br />
-			
-			<label for="subproduct" th:text="#{messages.has.subproducts}"></label>
-			<input type="checkbox" id="subproduct" name="subproduct" th:field="*{withSubProducts}"/>
 			<br />
 			
 			<input type="submit" th:value="#{messages.save}" />

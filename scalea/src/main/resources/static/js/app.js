@@ -23,3 +23,11 @@ function changeEmployees() {
 		document.getElementById("employee").disabled = true;
 	}
 }
+
+function changeProductPrice() {
+	if (document.getElementById("price").disabled == true) {
+		document.getElementById("price").disabled = false;
+	} else {
+		document.getElementById("price").disabled = true;
+	}
+}

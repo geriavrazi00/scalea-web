@@ -57,4 +57,10 @@ public class Product {
 	
 	@OneToMany(mappedBy="fatherProduct")
     private Collection<Product> childrenProducts;
+
+	@Override
+	public String toString() {
+		return "Product [id=" + id + ", name=" + name + ", price=" + price + ", image=" + image + ", enabled=" + enabled
+				+ ", withSubProducts=" + withSubProducts + "]";
+	}
 }

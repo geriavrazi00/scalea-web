@@ -12,6 +12,8 @@
 		
 		<div th:if="${products.size() > 0}" th:each="product : ${products}">
 			<span th:text="${product.name}"></span><br/>
+			<a th:href="@{'/products/subproduct/create/{id}'(id=${product.id})}" th:text="#{messages.subproduct.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"
+				th:if="${product.withSubProducts}"></a>
 			<a th:href="@{'/products/edit/{id}'(id=${product.id})}" th:text="#{messages.product.edit}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
 			
 			<form method="POST" th:action="@{'/products/delete/{id}'(id=${product.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')">

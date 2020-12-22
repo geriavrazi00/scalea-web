@@ -107,12 +107,7 @@ public class ProductController {
 		if (product.get().getFatherProduct() != null) throw new GenericException(messages.get("messages.product.not.found"));
 		
 		String image = null;
-		
-		if (product.get().getImage() != null) {
-			File file = new File(configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + product.get().getImage());
-			byte[] fileContent = Files.readAllBytes(file.toPath());
-	        image = "data:image/png;base64, " + Base64.getEncoder().encodeToString(fileContent);
-		}
+		if (product.get().getImage() != null) image = this.getBase64ImageString(product.get().getImage());
 		
 		model.addAttribute("imageSrc", image); 
 		model.addAttribute("product", product.get());
@@ -126,6 +121,10 @@ public class ProductController {
 		log.info("Method updateProduct()");
 		
 		if (errors.hasErrors()) {
+			String image = null;
+			if (product.getImage() != null) image = this.getBase64ImageString(product.getImage());
+			
+			model.addAttribute("imageSrc", image); 
 			return "private/products/editproduct";
 		}
 		
@@ -202,12 +201,74 @@ public class ProductController {
 		}
 		
 		subProduct.setImage(storedFileName);
-		this.productRepo.save(subProduct.toProduct());
+		this.productRepo.save(subProduct.toNewProduct());
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
 		return "redirect:/products";
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
+	@GetMapping("/subproduct/edit/{id}")
+	public String editSubProduct(@PathVariable("id") Long id, Model model) throws Exception {
+		log.info("Method editSubProduct()");
+		
+		Optional<Product> subProduct = productRepo.findById(id);
+		if (!subProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
+		if (subProduct.get().getFatherProduct() == null) throw new GenericException(messages.get("messages.product.not.found"));
+		
+		String image = null;
+		if (subProduct.get().getImage() != null) image = this.getBase64ImageString(subProduct.get().getImage());
+		
+		SubProductDTO subProductDTO = new SubProductDTO();
+		subProductDTO.toDTO(subProduct.get());
+		
+		model.addAttribute("imageSrc", image); 
+		model.addAttribute("product", subProductDTO);
+		return "private/products/subproducts/editsubproduct";
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
+	@PostMapping("/subproduct/edit/{id}")
+	public String updateSubProduct(@Valid @ModelAttribute("product") SubProductDTO subProduct, Errors errors, Model model, RedirectAttributes redirectAttributes, 
+			@RequestParam("img") MultipartFile multipartFile) throws GenericException, IOException {
+		log.info("Method updateSubProduct()");
+		
+		if (errors.hasErrors()) {
+			String image = null;
+			if (subProduct.getImage() != null) image = this.getBase64ImageString(subProduct.getImage());
+			
+			model.addAttribute("imageSrc", image); 
+			return "private/products/subproducts/editsubproduct";
+		}
+		
+		Optional<Product> existingOptionalProduct = productRepo.findById(subProduct.getId());
+		if (!existingOptionalProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
+		if (existingOptionalProduct.get().getFatherProduct() == null) throw new GenericException(messages.get("messages.product.not.found"));
+		Product existingProduct = existingOptionalProduct.get();
+		
+		/*
+		 *  While creating the image, we check if one was selected to upload. If so, we save it in the storage of the system. If not, we simply set the 
+		 *  default image value and not write anything in the storage. Also if the product has an image set and it's not the default one we should 
+		 *  delete it from the storage so we don't stack the memory with unused images. Also, if no image has been selected from the user, we keep 
+		 *  the old one.
+		 */
+		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+		
+		if (fileName != null && !fileName.isEmpty()) {
+			if (existingProduct.getImage() != null && !existingProduct.getImage().equals(Constants.PRODUCTS_DEFAULT_IMAGE)) this.deletePhotoFromDisk(existingProduct.getImage());
+			String storedFileName = this.savePhotoToDisk(multipartFile, fileName, subProduct.getName());
+			subProduct.setImage(storedFileName);
+		} else {
+			subProduct.setImage(existingProduct.getImage());
+		}
+		
+		productRepo.save(subProduct.toExistingProduct());
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.updated"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+	    return "redirect:/products";
 	}
 	
 	private String savePhotoToDisk(MultipartFile multipartFile, String fileName, String desiredName) throws IOException {
@@ -227,5 +288,11 @@ public class ProductController {
 	    } else {
 	    	log.info("Failed to delete the file.");
 	    } 
+	}
+	
+	private String getBase64ImageString(String imageName) throws IOException {
+		File file = new File(configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + imageName);
+		byte[] fileContent = Files.readAllBytes(file.toPath());
+        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(fileContent);
 	}
 }

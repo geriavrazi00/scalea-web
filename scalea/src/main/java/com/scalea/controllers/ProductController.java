@@ -98,7 +98,7 @@ public class ProductController {
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
-	@GetMapping("edit/{id}")
+	@GetMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") Long id, Model model) throws Exception {
 		log.info("Method editProduct()");
 		
@@ -164,6 +164,30 @@ public class ProductController {
 		}
 		
 		productRepo.save(product);
+	    return "redirect:/products";
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.DELETE_PRODUCTS_PRIVILEGE + "'")
+	@PostMapping("/delete/{id}")
+	public String deleteProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws Exception {
+		log.info("Method deleteProduct()");
+		
+		Optional<Product> optionalProduct = productRepo.findById(id);
+		if (!optionalProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
+		Product product = optionalProduct.get();
+		
+		if (product.isWithSubProducts() && product.getChildrenProducts() != null && product.getChildrenProducts().size() > 0) {
+			for (Product childProduct: product.getChildrenProducts()) {
+				childProduct.setEnabled(false);
+				productRepo.save(childProduct);
+			}
+		}
+		
+		product.setEnabled(false);
+		productRepo.save(product);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.product.deleted"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 	    return "redirect:/products";
 	}
 	
@@ -271,6 +295,24 @@ public class ProductController {
 	    return "redirect:/products";
 	}
 	
+	@PreAuthorize("hasAuthority('" + Constants.DELETE_PRODUCTS_PRIVILEGE + "'")
+	@PostMapping("/subproduct/delete/{id}")
+	public String deleteSubProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws Exception {
+		log.info("Method deleteSubProduct()");
+		
+		Optional<Product> optionalSubProduct = productRepo.findById(id);
+		if (!optionalSubProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
+		Product subProduct = optionalSubProduct.get();
+		if (subProduct.getFatherProduct() == null) throw new GenericException(messages.get("messages.product.not.found"));
+		
+		subProduct.setEnabled(false);
+		productRepo.save(subProduct);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.deleted"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+	    return "redirect:/products";
+	}
+	
 	private String savePhotoToDisk(MultipartFile multipartFile, String fileName, String desiredName) throws IOException {
 		String fileExtension = fileName.substring(fileName.lastIndexOf('.'));
 		String storedFileName = desiredName.toLowerCase() + "_" + System.currentTimeMillis() + fileExtension;
@@ -287,7 +329,7 @@ public class ProductController {
 	      log.info("Deleted the file: " + file.getName());
 	    } else {
 	    	log.info("Failed to delete the file.");
-	    } 
+	    }
 	}
 	
 	private String getBase64ImageString(String imageName) throws IOException {

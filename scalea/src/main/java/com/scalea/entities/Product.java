@@ -15,6 +15,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Where;
+
 import com.scalea.annotations.NumbersWhenEnabled;
 
 import lombok.Data;
@@ -55,6 +57,7 @@ public class Product {
     @JoinColumn(name="sub_product_id")
     private Product fatherProduct;
 	
+	@Where(clause="enabled = true")
 	@OneToMany(mappedBy="fatherProduct")
     private Collection<Product> childrenProducts;
 

@@ -41,6 +41,14 @@ public class ProcessController {
 		Iterable<Process> activeProcesses = processRepo.findByStatus(ProcessStatus.STARTED.getStatus());
 		Iterable<Area> areas = areaRepo.findByEnabled(true);
 		
+		for (Area area: areas) {
+			for (Process process: activeProcesses) {
+				if (process.getArea().equals(area)) {
+					area.setActiveProcess(process);
+				}
+			}
+		}
+		
 		// Maybe it would be better to get the started processes directly from the areas. Or maybe split the results in two sides
 		
 		model.addAttribute("processes", activeProcesses);

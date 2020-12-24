@@ -333,8 +333,14 @@ public class ProductController {
 	}
 	
 	private String getBase64ImageString(String imageName) throws IOException {
-		File file = new File(configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + imageName);
-		byte[] fileContent = Files.readAllBytes(file.toPath());
-        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(fileContent);
+		String pathName = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + imageName;
+		try {
+			File file = new File(pathName);
+			byte[] fileContent = Files.readAllBytes(file.toPath());
+	        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(fileContent);
+		} catch (IOException e) {
+			log.error("File " + pathName + " not found!");
+			return null;
+		}
 	}
 }

@@ -1,0 +1,1 @@
+ALTER TABLE processes ADD COLUMN elapsed_time BIGINT NULL DEFAULT NULL;

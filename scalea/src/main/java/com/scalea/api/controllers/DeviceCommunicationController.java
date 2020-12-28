@@ -1,5 +1,10 @@
 package com.scalea.api.controllers;
 
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -7,6 +12,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.scalea.controllers.ProcessController;
+import com.scalea.entities.Activity;
+import com.scalea.entities.Process;
+import com.scalea.entities.Vacancy;
+import com.scalea.enums.ProcessStatus;
+import com.scalea.repositories.ActivityRepository;
+import com.scalea.repositories.ProcessRepository;
+import com.scalea.repositories.VacancyRepository;
 
 /* The @RestController annotation serves two purposes. First, it’s a stereotype annotation like @Controller and @Service that marks a class for 
  * discovery by component scanning. But most relevant to the discussion of REST, the @RestController annotation tells Spring that all handler 
@@ -31,23 +45,42 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/device", produces = "application/json")
 @CrossOrigin(origins = "*")
 public class DeviceCommunicationController {
-
-//	@GetMapping("/recent")
-//	public Iterable<Taco> recentTacos() {
-//		PageRequest page = PageRequest.of(0, 12, Sort.by("createdAt").descending());
-//		return tacoRepo.findAll(page).getContent();
-//	}
+	
+	private VacancyRepository vacancyRepo;
+	private ActivityRepository activityRepo;
+	private ProcessRepository processRepo;
+	private Logger log;
+	
+	@Autowired
+	public DeviceCommunicationController(VacancyRepository vacancyRepo, ActivityRepository activityRepo, ProcessRepository processRepo) {
+		this.vacancyRepo = vacancyRepo;
+		this.activityRepo = activityRepo;
+		this.processRepo = processRepo;
+		this.log = LoggerFactory.getLogger(ProcessController.class);
+	}
 	
 	@GetMapping
-	public ResponseEntity<Object> receiveData(@RequestParam("weight") Double weight) {
-		if (weight != null && weight > 0) {
-			String confirmationMessage = "Weight received! It is " + weight + " kg!!!";
-			System.out.println(confirmationMessage);
-			return new ResponseEntity<>(confirmationMessage, HttpStatus.OK);
-		}
+	public ResponseEntity<Object> receiveData(@RequestParam("code") String code, @RequestParam("weight") Double weight) {
+		if (code == null || code.isBlank()) return new ResponseEntity<>("The code is wrong.", HttpStatus.BAD_REQUEST);
+		if (weight == null || weight == 0) return new ResponseEntity<>("Wrong format of the weight.", HttpStatus.BAD_REQUEST);
 		
-		String errorMessage = "Wrong format of the weight.";
-		return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+		Optional<Vacancy> optionalVacancy = vacancyRepo.findByUuid(code);
+		if (!optionalVacancy.isPresent()) return new ResponseEntity<>("Vacancy not found.", HttpStatus.NOT_FOUND);
+		Vacancy vacancy = optionalVacancy.get();
+		
+		Optional<Process> optionalProcess = processRepo.findByStatusAndArea(ProcessStatus.STARTED.getStatus(), vacancy.getArea());
+		if (!optionalProcess.isPresent()) return new ResponseEntity<>("Not active process for the vacancy.", HttpStatus.INTERNAL_SERVER_ERROR);
+		Process activeProcess = optionalProcess.get();
+		
+		Activity activity = new Activity();
+		activity.setVacancy(vacancy);
+		activity.setWeight(weight);
+		activity.setProduct(activeProcess.getProduct());
+		
+		activityRepo.save(activity);
+		
+		String confirmationMessage = "The data was saved successfully!";
+		log.info(confirmationMessage);
+		return new ResponseEntity<>(confirmationMessage, HttpStatus.OK);	
 	}
-
 }

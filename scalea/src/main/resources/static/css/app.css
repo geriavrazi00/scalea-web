@@ -4,3 +4,75 @@
 	color: red;
 }
 
+/* Main stuff */
+.main-container {
+	margin-left: 200px; /* Same as the width of the sidenav */
+	padding: 15px;
+}
+
+.primary-color {
+	color: #1f9583;
+}
+
+.primary-color-background {
+	background-color: #1f9583;
+}
+
+/** Sidenav */
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  padding-top: 150px;
+  background-color: #1f9583;
+}
+
+.sidenav a {
+  padding: 6px 6px 6px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: rgb(255,255,255,0.5);
+  display: block;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.sidenav .active {
+	border-radius: 10px;
+    background-color: #1e887a;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-left: 22px;
+    color: white;
+}
+
+.sidenav a:hover {
+  	border-radius: 10px;
+    background-color: #1e887a;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding-left: 22px;
+    color: white;
+}
+
+.sidenav-icons {
+	font-size: 18px;
+    padding-right: 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 16px;}
+}
+
+.hr-style {
+	height: 0.4px;
+	border-width: 0;
+	color: rgb(255,255,255,0.5);
+	background-color: rgb(255,255,255,0.5);
+}
+

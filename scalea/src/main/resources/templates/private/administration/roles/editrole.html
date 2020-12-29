@@ -3,33 +3,37 @@
 	<head th:replace="/commons/template.html :: headerfiles"></head>
 	
 	<body>
-		<h1 th:text="#{messages.role.edit}"></h1>
-
-		<form method="POST" th:action="@{'/roles/edit/{id}'(id=${role.id})}" th:object="${role}">
-					
-			<div th:if="${#fields.hasErrors()}">
-				<span class="validationError" th:text="#{messages.correct.problems}"></span>
-			</div>
+		<div th:replace="/commons/template.html :: menu"></div>
 		
-			<label th:text="#{messages.name}" for="name"></label>
-			<input type="text" th:field="*{name}"/>
-			<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}" th:text="#{messages.name.error}"></span>
-			<br />
-
-			<div class="grid">
-				<div id="privileges">
-					<h3 th:text="#{messages.privileges}">: </h3>
-					<div th:each="privilege : ${privileges}">
-						<input name="privilege" type="checkbox" th:value="${privilege.id}" th:field="*{privileges}"/>
-						<span th:text="${privilege.name}"></span>
-						<br />
-					</div>
-					<span class="validationError" th:if="${#fields.hasErrors('privileges')}" th:errors="*{privileges}" th:text="#{privilege}"></span>
+		<div class="main-container">
+			<h1 th:text="#{messages.role.edit}"></h1>
+	
+			<form method="POST" th:action="@{'/roles/edit/{id}'(id=${role.id})}" th:object="${role}">
+						
+				<div th:if="${#fields.hasErrors()}">
+					<span class="validationError" th:text="#{messages.correct.problems}"></span>
 				</div>
-			</div>
-
-			<input type="submit" th:value="#{messages.save}" />
-		</form>
+			
+				<label th:text="#{messages.name}" for="name"></label>
+				<input type="text" th:field="*{name}"/>
+				<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}" th:text="#{messages.name.error}"></span>
+				<br />
+	
+				<div class="grid">
+					<div id="privileges">
+						<h3 th:text="#{messages.privileges}">: </h3>
+						<div th:each="privilege : ${privileges}">
+							<input name="privilege" type="checkbox" th:value="${privilege.id}" th:field="*{privileges}"/>
+							<span th:text="${privilege.name}"></span>
+							<br />
+						</div>
+						<span class="validationError" th:if="${#fields.hasErrors('privileges')}" th:errors="*{privileges}" th:text="#{privilege}"></span>
+					</div>
+				</div>
+	
+				<input type="submit" th:value="#{messages.save}" />
+			</form>
+		</div>
 
 		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>

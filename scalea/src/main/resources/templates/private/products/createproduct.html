@@ -2,35 +2,39 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<head th:replace="/commons/template.html :: headerfiles"></head>
 	<body>
-		<h1 th:text="#{messages.product.create}"></h1>
+		<div th:replace="/commons/template.html :: menu"></div>
 		
-		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
-		
-		<form method="POST" th:action="@{/products/create}" th:object="${product}" enctype="multipart/form-data">
-			<div th:if="${#fields.hasErrors()}">
-				<span class="validationError" th:text="#{messages.correct.problems}"></span>
-			</div>
+		<div class="main-container">
+			<h1 th:text="#{messages.product.create}"></h1>
 			
-			<label for="name" th:text="#{messages.name}"></label>
-			<input type="text" name="name" th:field="*{name}"/>
-			<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
-			<br />
+			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 			
-			<label for="subproduct" th:text="#{messages.has.subproducts}"></label>
-			<input type="checkbox" id="subproduct" name="subproduct" th:field="*{withSubProducts}" onchange="changeProductPrice()"/>
-			<br />
-			
-			<label for="price" th:text="#{messages.price.per.kg}"></label>
-			<input type="number" id="price" name="price" th:field="*{price}" step=".0001" th:disabled="*{withSubProducts}"/>
-			<span class="validationError" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
-			<br />
-			
-			<label for="img" th:text="#{messages.image}"></label>
-			<input type="file" name="img" accept="image/png, image/jpeg, image/jpg" />
-			<br />
-			
-			<input type="submit" th:value="#{messages.save}" />
-		</form>
+			<form method="POST" th:action="@{/products/create}" th:object="${product}" enctype="multipart/form-data">
+				<div th:if="${#fields.hasErrors()}">
+					<span class="validationError" th:text="#{messages.correct.problems}"></span>
+				</div>
+				
+				<label for="name" th:text="#{messages.name}"></label>
+				<input type="text" name="name" th:field="*{name}"/>
+				<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+				<br />
+				
+				<label for="subproduct" th:text="#{messages.has.subproducts}"></label>
+				<input type="checkbox" id="subproduct" name="subproduct" th:field="*{withSubProducts}" onchange="changeProductPrice()"/>
+				<br />
+				
+				<label for="price" th:text="#{messages.price.per.kg}"></label>
+				<input type="number" id="price" name="price" th:field="*{price}" step=".0001" th:disabled="*{withSubProducts}"/>
+				<span class="validationError" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+				<br />
+				
+				<label for="img" th:text="#{messages.image}"></label>
+				<input type="file" name="img" accept="image/png, image/jpeg, image/jpg" />
+				<br />
+				
+				<input type="submit" th:value="#{messages.save}" />
+			</form>
+		</div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>

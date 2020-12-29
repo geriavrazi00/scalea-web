@@ -2,20 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<head th:replace="/commons/template.html :: headerfiles"></head>
 	<body>
-		<h2 th:text="#{messages.error.generic}"></h2>
+		<div th:replace="/commons/template.html :: menu"></div>
 		
-		<h3 th:text="#{messages.error.generic.info}"></h3>
-
-		<p th:text="#{messages.error.generic.url} + '=' + ${url}"></p><br>
-		
-		<p th:text="#{messages.error.generic.exception} + '=' + ${exception.message}"></p><br>
-		
-		<a href="/" th:text="#{messages.home}"></a>
-		
-		<!-- <strong>Exception Stack Trace</strong><br>
-		<div th:each="ste : ${exception.stackTrace}">
-			<span th:text="${ste}"></span><br/>
-		</div> -->
+		<div class="main-container">
+			<h2 th:text="#{messages.error.generic}"></h2>
+			
+			<h3 th:text="#{messages.error.generic.info}"></h3>
+	
+			<p th:text="#{messages.error.generic.url} + '=' + ${url}"></p><br>
+			
+			<p th:text="#{messages.error.generic.exception} + '=' + ${exception.message}"></p><br>
+			
+			<a href="/" th:text="#{messages.home}"></a>
+			
+			<!-- <strong>Exception Stack Trace</strong><br>
+			<div th:each="ste : ${exception.stackTrace}">
+				<span th:text="${ste}"></span><br/>
+			</div> -->
+		</div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>

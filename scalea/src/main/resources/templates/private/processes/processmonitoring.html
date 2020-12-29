@@ -4,59 +4,63 @@
 	<head th:replace="/commons/template.html :: headerfiles"></head>
 	
 	<body onload="loadProcessTimers()">
-		<h1 th:text="#{messages.process.list}"></h1>
+		<div th:replace="/commons/template.html :: menu"></div>
 		
-		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
-		
-		<div th:if="${areas.size() > 0}" th:each="area : ${areas}">
-			<div th:if="${area.activeProcess == null}">
-				<span th:text="${area.name} "></span>
-				
-				<form method="POST" th:if="${products != null && products.size() > 0}" th:action="@{'/processes/start/{id}'(id=${area.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
-					<label for="products" th:text="#{messages.products}" th:if="${products.size() > 0}"></label>
-					<select id="products" name="products" th:if="${products.size() > 0}">
-						<option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"/>
-					</select>
+		<div class="main-container">
+			<h1 th:text="#{messages.process.list}"></h1>
+			
+			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			
+			<div th:if="${areas.size() > 0}" th:each="area : ${areas}">
+				<div th:if="${area.activeProcess == null}">
+					<span th:text="${area.name} "></span>
 					
-					<input type="submit" th:value="#{messages.process.start}"/>
-				</form>
+					<form method="POST" th:if="${products != null && products.size() > 0}" th:action="@{'/processes/start/{id}'(id=${area.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
+						<label for="products" th:text="#{messages.products}" th:if="${products.size() > 0}"></label>
+						<select id="products" name="products" th:if="${products.size() > 0}">
+							<option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"/>
+						</select>
+						
+						<input type="submit" th:value="#{messages.process.start}"/>
+					</form>
+					
+					<span th:if="${products.size() == 0}" th:text="#{messages.no.product}"></span>
+					
+					<br/>
+				</div>
 				
-				<span th:if="${products.size() == 0}" th:text="#{messages.no.product}"></span>
-				
-				<br/>
+				<div th:if="${area.activeProcess != null}">
+					<input th:id="${'area-' + area.id}" class="area" type="hidden" th:value="${area.id}"/>
+					<input th:id="${'started-' + area.id}" class="started" type="hidden" th:value="${area.activeProcess.startedAt.getTime()}"/>
+					<input th:id="${'status-' + area.id}" class="status" type="hidden" th:value="${area.activeProcess.status}"/>
+					<input th:id="${'elapsed-' + area.id}" class="elapsed" type="hidden" th:value="${area.activeProcess.elapsedTime}"/>
+					
+					<span th:text="${area.name} +  ' process active.'"></span>
+					
+					<label for="product" th:text="#{messages.product}"></label>
+					<span th:text="${area.activeProcess.product.name}"></span>
+					
+					<span th:id="${'timer-' + area.id}" class="timer"></span>
+					
+					<form method="POST" th:if="${area.activeProcess.status == 0}" th:action="@{'/processes/pause/{id}'(id=${area.activeProcess.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
+						<input type="submit" th:value="#{messages.process.pause}"/>
+					</form>
+					
+					<form method="POST" th:if="${area.activeProcess.status == 1}" th:action="@{'/processes/resume/{id}'(id=${area.activeProcess.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
+						<input type="submit" th:value="#{messages.process.resume}"/>
+					</form>
+					
+					<form method="POST" th:action="@{'/processes/finish/{id}'(id=${area.activeProcess.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
+						<input type="submit" th:value="#{messages.process.finish}"/>
+					</form>
+					
+					<br/>
+				</div>
 			</div>
 			
-			<div th:if="${area.activeProcess != null}">
-				<input th:id="${'area-' + area.id}" class="area" type="hidden" th:value="${area.id}"/>
-				<input th:id="${'started-' + area.id}" class="started" type="hidden" th:value="${area.activeProcess.startedAt.getTime()}"/>
-				<input th:id="${'status-' + area.id}" class="status" type="hidden" th:value="${area.activeProcess.status}"/>
-				<input th:id="${'elapsed-' + area.id}" class="elapsed" type="hidden" th:value="${area.activeProcess.elapsedTime}"/>
-				
-				<span th:text="${area.name} +  ' process active.'"></span>
-				
-				<label for="product" th:text="#{messages.product}"></label>
-				<span th:text="${area.activeProcess.product.name}"></span>
-				
-				<span th:id="${'timer-' + area.id}" class="timer"></span>
-				
-				<form method="POST" th:if="${area.activeProcess.status == 0}" th:action="@{'/processes/pause/{id}'(id=${area.activeProcess.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
-					<input type="submit" th:value="#{messages.process.pause}"/>
-				</form>
-				
-				<form method="POST" th:if="${area.activeProcess.status == 1}" th:action="@{'/processes/resume/{id}'(id=${area.activeProcess.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
-					<input type="submit" th:value="#{messages.process.resume}"/>
-				</form>
-				
-				<form method="POST" th:action="@{'/processes/finish/{id}'(id=${area.activeProcess.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
-					<input type="submit" th:value="#{messages.process.finish}"/>
-				</form>
-				
-				<br/>
+			<div th:if="${areas.size() == 0}">
+				<p th:text="#{messages.no.areas}"></p>
 			</div>
-		</div>
-		
-		<div th:if="${areas.size() == 0}">
-			<p th:text="#{messages.no.areas}"></p>
 		</div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>

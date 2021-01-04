@@ -51,4 +51,7 @@ public interface Constants {
 	
 	// Default files
 	public static final String PRODUCTS_DEFAULT_IMAGE = "default-product.jpg";
+	
+	// When a record is disabled, we need to add something to a field of it that must be unique. So this way, a new record with that same field can be created
+	public static final String DISABLED_STRING = "disabled------";
 }

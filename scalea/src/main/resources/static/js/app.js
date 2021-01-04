@@ -8,6 +8,12 @@ $(document).ready(function() {
     });
 });
 
+window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 5000);
+
 function changeVacancies() {
 	if (document.getElementById("vacancy").disabled == true) {
 		document.getElementById("vacancy").disabled = false;
@@ -94,4 +100,28 @@ function startTimer(id, startTime, status, elem, elapsed) {
   } else if (status == 1) {
     print(timeToString(elapsed), id, elem);
   }
+}
+
+// Areas
+function loadArea(e, id) {
+	e.preventDefault();
+	
+	var href = $("#editAreaHref" + id).attr('href');
+	
+	$.get(href, function(area) {
+		$("#edit-area-id").val(area.id);
+		$("#edit-area-name").val(area.name);
+		$("#edit-area-capacity").val(area.capacity);
+	});
+	
+	$('#editAreaModal').modal('show');
+}
+
+function setDeleteAreaId(id) {
+	$("#delete-area-id").val(id);
+}
+
+function submitDeleteForm() {
+	id = $("#delete-area-id").val();
+	$("#deleteAreaForm" + id).submit(); // Submit the form
 }

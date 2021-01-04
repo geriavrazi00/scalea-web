@@ -11,9 +11,12 @@
 		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 		<link th:href="@{/css/fa-all.css}" rel="stylesheet">
 		<link th:href="@{/css/app.css}" rel="stylesheet">
+		
+		<script type="text/javascript" th:src="@{/js/jquery-3.5.1.js}"></script>
+		<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
 	</head>
 	<body>
-		<div th:fragment="menu">
+		<div th:fragment="menu" sec:authorize="isAuthenticated()">
 		    <div class="sidenav">
 				<a href="/areas" sec:authorize="hasAnyAuthority('VIEW_AREAS_PRIVILEGE', 'UPSERT_AREAS_PRIVILEGE', 'DELETE_AREAS_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/areas') ? 'active' : ''}">
 					<i class="fas fa-door-open sidenav-icons"></i> <span th:text="#{messages.areas}"></span>
@@ -59,9 +62,8 @@
 		</div>
 		
 		<div th:fragment="js-scripts">
-			<script type="text/javascript" th:src="@{/js/jquery-3.3.1.slim.min.js}"></script>
 			<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
-			<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+			
 			<script type="text/javascript" th:src="@{/js/app.js}"></script>
 		</div>
 	</body>

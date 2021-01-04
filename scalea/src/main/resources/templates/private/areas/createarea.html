@@ -1,37 +1,48 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head th:replace="/commons/template.html :: headerfiles"></head>
-	<body>
-		<div th:replace="/commons/template.html :: menu"></div>
-		
-		<div class="main-container">
-			<h1 th:text="#{messages.area.create}"></h1>
-			
-			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
-			
-			<form method="POST" th:action="@{/areas/create}" th:object="${area}">
-				<div th:if="${#fields.hasErrors()}">
-					<span class="validationError" th:text="#{messages.correct.problems}"></span>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+	<div th:fragment="createarea">
+		<form method="POST" th:action="@{/areas/create(size=${areas.size}, page=${pageNumber})}" th:object="${area}">	
+			<div class="modal fade" id="createAreaModal" tabindex="-1" role="dialog" aria-labelledby="createAreaModal" aria-hidden="true">
+				<div class="modal-dialog area" role="document">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div class="row area">
+								<div class="col">
+									<span class="row-table-text" th:text="#{messages.name} + ' *'"></span>
+									<input class="text-input" type="text" name="name" th:field="*{name}" required/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+								</div>
+								
+								<div class="col">
+									<span class="row-table-text" th:text="#{messages.capacity} + ' *'"></span>
+									<input class="number-input" type="number" name="capacity" th:field="*{capacity}" required/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></span>
+								</div>
+								
+								<div class="col">
+									<input class="btn btn-primary" type="submit" th:value="#{messages.create}" sec:authorize="hasAuthority('UPSERT_AREAS_PRIVILEGE')"/>
+								</div>
+								
+								<div class="col">
+									<button type="button" class="btn btn-cancel" data-dismiss="modal">
+										<i class="fas fa-times"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
-				
-				<label for="name" th:text="#{messages.name}"></label>
-				<input type="text" name="name" th:field="*{name}"/>
-				<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
-				<br />
-				
-				<label for="enabled" th:text="#{messages.enabled}"></label>
-				<input type="checkbox" id="enabled" name="enabled" th:field="*{enabled}"/>
-				<br />
-				
-				<label for="capacity" th:text="#{messages.capacity}"></label>
-				<input type="number" name="capacity" th:field="*{capacity}"/>
-				<span class="validationError" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></span>
-				<br />
-				
-				<input type="submit" th:value="#{messages.save}" />
-			</form>
-		</div>
-		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
-	</body>
+			</div>
+			
+			<div th:if="${#fields.hasErrors()}">
+				<script type="text/javascript">
+					$('#createAreaModal').modal('show');
+				</script>
+			</div>
+		</form>
+	</div>
 </html>

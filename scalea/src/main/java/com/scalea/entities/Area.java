@@ -47,4 +47,20 @@ public class Area {
 	
 	@Transient
 	private Process activeProcess;
+	
+	@Transient
+	private int employeeNumber;
+	
+	public void calculateEmployeeNumber() {
+		for (Vacancy vacancy: this.getVacancies()) {
+			if (vacancy.getEmployee() != null) {
+				employeeNumber++;
+			}
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "Area [name=" + name + ", enabled=" + enabled + ", capacity=" + capacity + "]";
+	}
 }

@@ -84,6 +84,7 @@ input[type=number] {
   overflow-x: hidden;
   padding-top: 150px;
   background-color: #1f9583;
+  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .sidenav a {
@@ -169,7 +170,10 @@ input[type=number] {
 }
 
 .filter-row {
-	padding-top: 40px;
+	display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+	padding-top: 20px;
 }
 
 .row-table {
@@ -207,6 +211,36 @@ input[type=number] {
 
 .row-table-icons {
 	color: black;
+}
+
+.active-tab {
+	color: #75a0fd;
+    font-size: 25px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.active-tab:hover {
+	color: rgb(117,159,253,0.7);
+}
+
+.inactive-tab {
+	color: #a2a6b0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.inactive-tab:hover {
+	color: rgb(162,166,176,0.7);
+}
+
+.table-container {
+	background-color: white;
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 /* Pagination */

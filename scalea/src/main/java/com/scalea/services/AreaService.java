@@ -1,5 +1,6 @@
 package com.scalea.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -7,10 +8,8 @@ import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import com.scalea.entities.Area;
 import com.scalea.exceptions.GenericException;
@@ -27,20 +26,17 @@ public class AreaService {
 	}
 	
 	public Page<Area> findPaginatedByEnabledOrderByName(Pageable pageable) {
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();       
-        Pageable paging = PageRequest.of(currentPage, pageSize);
-        
-        return areaRepo.findByEnabledOrderByName(true, paging);
+        return areaRepo.findByEnabledOrderByName(true, pageable);
     }
 	
-	public void setPageNumberToModel(Model model, int totalPages) {
+	public List<Integer> getPageNumbersList(int totalPages) {
+		List<Integer> pageNumbers = new ArrayList<>();
+		
 		if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                .boxed()
-                .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
+            pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
         }
+		
+		return pageNumbers;
 	}
 
 	public Area updateById(long id, Area editedArea) throws GenericException {

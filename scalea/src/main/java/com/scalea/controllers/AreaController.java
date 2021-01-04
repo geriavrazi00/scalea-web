@@ -28,8 +28,8 @@ import com.scalea.entities.Area;
 import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.AreaDTO;
-import com.scalea.repositories.VacancyRepository;
 import com.scalea.services.AreaService;
+import com.scalea.services.VacancyService;
 import com.scalea.utils.Constants;
 import com.scalea.utils.Utils;
 
@@ -38,7 +38,7 @@ import com.scalea.utils.Utils;
 public class AreaController {
 
 	private AreaService areaService;
-	private VacancyRepository vacancyRepo;
+	private VacancyService vacancyService;
 	private Logger log;
 	private Messages messages;
 	
@@ -46,9 +46,9 @@ public class AreaController {
 	private static final int DEFAULT_SIZE = 7;
 	
 	@Autowired
-	public AreaController(AreaService areaService, VacancyRepository vacancyRepo, Messages messages) {
+	public AreaController(AreaService areaService, VacancyService vacancyService, Messages messages) {
 		this.areaService = areaService;
-		this.vacancyRepo = vacancyRepo;
+		this.vacancyService = vacancyService;
 		this.log = LoggerFactory.getLogger(AreaController.class);
 		this.messages = messages;
 	}
@@ -70,7 +70,7 @@ public class AreaController {
 		model.addAttribute("areas", areas);
 		if (model.getAttribute("area") == null) model.addAttribute("area", new Area());
 		if (model.getAttribute("areaDTO") == null) model.addAttribute("areaDTO", new AreaDTO());
-		areaService.setPageNumberToModel(model, areas.getTotalPages());
+		model.addAttribute("pageNumbers", areaService.getPageNumbersList(areas.getTotalPages()));
 		return "private/areas/arealist";
 	}
 	
@@ -112,24 +112,12 @@ public class AreaController {
 			vacancy.setUuid(Utils.generateUniqueVacancyCodes());
 			vacancy.setArea(area);
 			
-			this.vacancyRepo.save(vacancy);
+			this.vacancyService.save(vacancy);
 		}
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.area.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		return "redirect:/areas";
-	}
-	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_AREAS_PRIVILEGE + "'")
-	@GetMapping("edit/{id}")
-	public String editArea(@PathVariable("id") Long id, Model model) throws Exception {
-		log.info("Method editArea()");
-		
-		Optional<Area> area = areaService.findById(id);
-		if (!area.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
-		
-		model.addAttribute("area", area.get());
-		return "private/areas/editarea";
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_AREAS_PRIVILEGE + "'")
@@ -162,7 +150,7 @@ public class AreaController {
 		*/
 		if (selectedArea.getCapacity() >= existingArea.getCapacity()) {
 			int newVacancies = selectedArea.getCapacity() - existingArea.getCapacity();
-			int lastVacancyNumber = vacancyRepo.findMaxVacancyNumberOfArea(existingArea) + 1;
+			int lastVacancyNumber = vacancyService.findMaxVacancyNumberOfArea(existingArea) + 1;
 			
 			for (int i = 0; i < newVacancies; i++) {
 				Vacancy vacancy = new Vacancy();
@@ -170,7 +158,7 @@ public class AreaController {
 				vacancy.setUuid(Utils.generateUniqueVacancyCodes());
 				vacancy.setArea(existingArea);
 				
-				this.vacancyRepo.save(vacancy);
+				this.vacancyService.save(vacancy);
 			}
 			
 			selectedArea.mergeWithExistingArea(existingArea);
@@ -202,7 +190,7 @@ public class AreaController {
 				
 				for (Vacancy vacancy: toDelete) {
 					existingArea.getVacancies().remove(vacancy);
-					this.vacancyRepo.delete(vacancy);
+					this.vacancyService.delete(vacancy);
 				}
 				
 				selectedArea.mergeWithExistingArea(existingArea);
@@ -246,7 +234,7 @@ public class AreaController {
 		    if (foundArea.getVacancies() != null && foundArea.getVacancies().size() > 0) {
 				for (Vacancy vacancy: foundArea.getVacancies()) {
 					vacancy.setEnabled(false);
-					this.vacancyRepo.save(vacancy);
+					this.vacancyService.save(vacancy);
 				}
 			}
 		    
@@ -256,5 +244,25 @@ public class AreaController {
 		}
 		
 		return "redirect:/areas";
+	}
+	
+	/*************************************** Vacancies ***************************************************/
+	
+	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_VACANCIES_PRIVILEGE + "', '" + Constants.UPSERT_VACANCIES_PRIVILEGE + "', '" + Constants.DELETE_VACANCIES_PRIVILEGE + "')")
+	@GetMapping("/{id}/vacancies")
+	public String allVacancies(Model model, @PathVariable("id") Long id, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws GenericException {
+		log.info("Method allVacancies()");
+		
+		int currentPage = page.orElse(DEFAULT_PAGE);
+        int pageSize = size.orElse(DEFAULT_SIZE);
+        
+        Optional<Area> area = areaService.findById(id);
+		if (!area.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		Page<Vacancy> vacancies = vacancyService.findByAreaAndEnabled(area.get(), true, PageRequest.of(currentPage - 1, pageSize));
+		
+		model.addAttribute("area", area.get());
+		model.addAttribute("vacancies", vacancies);
+		model.addAttribute("pageNumbers", vacancyService.getPageNumbersList(vacancies.getTotalPages()));
+		return "private/areas/vacancies/vacancylist";
 	}
 }

@@ -68,6 +68,10 @@ input::-webkit-inner-spin-button {
 	opacity: 0.2;
 }
 
+.not-allowed-cursor {
+	cursor: not-allowed;
+}
+
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
@@ -141,6 +145,7 @@ input[type=number] {
     border-color: #1f9583;
     font-size: 14px;
     font-weight: bold;
+    border-radius: 8px;
 }
 
 .btn-primary:hover {
@@ -194,19 +199,26 @@ input[type=number] {
     margin-bottom: 00px;
 }
 
-.col {
-	text-align: center;
-}
-
 .row-table-text {
 	padding-right: 20px;
 	font-size: 14px;
+}
+
+.row-table-text-2 {
+	font-size: 14px;
+	padding-right: 5px;
 }
 
 .row-table-value {
 	background-color: #f4f7fe;
 	padding: 5px 10px;
 	border-radius: 5px;
+}
+
+.row-table-value-2 {
+	font-size: 16px;
+	color: black;
+	font-weight: bold;
 }
 
 .row-table-icons {
@@ -236,11 +248,31 @@ input[type=number] {
 
 .table-container {
 	background-color: white;
-    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1), 0 0 10px 0 rgba(0, 0, 0, 0.19);
     padding: 20px;
     border-radius: 8px;
     margin-top: 20px;
     margin-bottom: 20px;
+}
+
+.table-container-rows {
+	margin-left: 0px;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+}
+
+.bottom-border {
+	border-bottom: 2px solid #e5e5e5;
+}
+
+.info-row {
+	box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1), 0 0 10px 0 rgba(0, 0, 0, 0.19);
 }
 
 /* Pagination */

@@ -25,9 +25,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Area;
+import com.scalea.entities.Process;
 import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.AreaDTO;
+import com.scalea.repositories.ProcessRepository;
 import com.scalea.services.AreaService;
 import com.scalea.services.VacancyService;
 import com.scalea.utils.Constants;
@@ -39,6 +41,7 @@ public class AreaController {
 
 	private AreaService areaService;
 	private VacancyService vacancyService;
+	private ProcessRepository processRepo;
 	private Logger log;
 	private Messages messages;
 	
@@ -46,9 +49,10 @@ public class AreaController {
 	private static final int DEFAULT_SIZE = 7;
 	
 	@Autowired
-	public AreaController(AreaService areaService, VacancyService vacancyService, Messages messages) {
+	public AreaController(AreaService areaService, VacancyService vacancyService, ProcessRepository processRepo, Messages messages) {
 		this.areaService = areaService;
 		this.vacancyService = vacancyService;
+		this.processRepo = processRepo;
 		this.log = LoggerFactory.getLogger(AreaController.class);
 		this.messages = messages;
 	}
@@ -258,10 +262,14 @@ public class AreaController {
         
         Optional<Area> area = areaService.findById(id);
 		if (!area.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		area.get().calculateEmployeeNumber();
+		
 		Page<Vacancy> vacancies = vacancyService.findByAreaAndEnabled(area.get(), true, PageRequest.of(currentPage - 1, pageSize));
+		Optional<Process> latestProcess = processRepo.findFirstByAreaOrderByStartedAtDesc(area.get());
 		
 		model.addAttribute("area", area.get());
 		model.addAttribute("vacancies", vacancies);
+		model.addAttribute("process", latestProcess);
 		model.addAttribute("pageNumbers", vacancyService.getPageNumbersList(vacancies.getTotalPages()));
 		return "private/areas/vacancies/vacancylist";
 	}

@@ -10,4 +10,5 @@ import com.scalea.entities.Process;
 public interface ProcessRepository extends CrudRepository<Process, Long> {
 	Iterable<Process> findByStatusIn(int[] statuses);
 	Optional<Process> findByStatusAndArea(int status, Area area);
+	Optional<Process> findFirstByAreaOrderByStartedAtDesc(Area area);
 }

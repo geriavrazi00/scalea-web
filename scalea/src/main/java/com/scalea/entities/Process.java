@@ -16,6 +16,8 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.scalea.utils.Utils;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -62,6 +64,10 @@ public class Process {
 	public void calculateElapsedTime() {
 		if (this.elapsedTime == null) this.elapsedTime = 0L;
 		this.elapsedTime += this.getStoppedAt().getTime() - this.getStartedAt().getTime();
+	}
+	
+	public String getElapsedTimeToString() {
+		return Utils.millisToString(this.elapsedTime);
 	}
 
 	@Override

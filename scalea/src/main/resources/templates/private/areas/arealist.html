@@ -47,7 +47,7 @@
 				
 				<div th:if="${areas.totalPages > 1 && areas.content.size() > 0}">
 					<ul class="pagination">
-						<li th:class="${areas.number == 0 ? 'page-item disabled' : 'page-item'}">
+						<li th:class="${areas.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
 							<a class="page-link" th:href="@{/areas(size=${areas.size}, page=${areas.number})}">
 								<span aria-hidden="true">&laquo;</span>
 							</a>
@@ -56,7 +56,7 @@
 						    <a th:href="@{/areas(size=${areas.size}, page=${pageNumber})}" th:text=${pageNumber} 
 						    	th:class="${pageNumber == areas.number + 1} ? 'page-link active' : 'page-link'"></a>
 						</li>
-						<li th:class="${(areas.number + 1) == areas.totalPages ? 'page-item disabled' : 'page-item'}">
+						<li th:class="${(areas.number + 1) == areas.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
 							<a class="page-link" th:href="@{/areas(size=${areas.size}, page=${areas.number + 2})}">
 								<span aria-hidden="true">&raquo;</span>
 							</a>

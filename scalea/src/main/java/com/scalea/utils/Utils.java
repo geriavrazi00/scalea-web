@@ -1,6 +1,7 @@
 package com.scalea.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Hashtable;
 import java.util.UUID;
@@ -36,5 +37,10 @@ public class Utils {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public static String millisToString(long millis) {
+		Duration timeLeft = Duration.ofMillis(millis);
+		return String.format("%02d:%02d:%02d", timeLeft.toHours(), timeLeft.toMinutesPart(), timeLeft.toSecondsPart());
 	}
 }

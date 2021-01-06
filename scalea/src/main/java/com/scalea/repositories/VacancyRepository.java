@@ -16,7 +16,7 @@ public interface VacancyRepository extends CrudRepository<Vacancy, Long> {
 	@Query("SELECT MAX(v.number) FROM Vacancy v WHERE v.area = ?1 ")
 	int findMaxVacancyNumberOfArea(Area area);
 	
-	@Query("SELECT v FROM Vacancy v WHERE v.employee = NULL ")
+	@Query("SELECT v FROM Vacancy v WHERE v.employee = NULL AND v.area.enabled = true ")
 	List<Vacancy> findUnassociatedVacancies();
 	
 	Iterable<Vacancy> findByEnabled(boolean enabled);
@@ -24,4 +24,6 @@ public interface VacancyRepository extends CrudRepository<Vacancy, Long> {
 	Optional<Vacancy> findByUuid(String uuid);
 	
 	Page<Vacancy> findByAreaAndEnabledOrderByNumber(Area area, boolean enabled, Pageable pageable);
+	
+	boolean existsByIdAndArea(Long id, Area area);
 }

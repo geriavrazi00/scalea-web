@@ -12,17 +12,17 @@
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 			
 			<div class="filter-row">
-				<div class="col" style="padding-left: 0px; text-align: left;">
+				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
 					<a th:href="@{'/areas/{id}/vacancies'(id=${area.id})}" th:text="#{messages.vacancies}" class="active-tab"></a>
 					&nbsp;&nbsp;&nbsp;&nbsp;
 					<a href="#" th:text="#{messages.history}" class="inactive-tab"></a>
 				</div>
 				
-				<div class="col">
-					<a class="btn btn-primary" th:href="@{/vacancies/create}" th:text="#{messages.vacancy.create}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="margin-top: 10px; float: right;"></a>
+				<div class="col-lg-3">
+					<a data-toggle="modal" data-target="#createVacancyModal" class="btn btn-primary" th:href="@{/vacancies/create}" th:text="#{messages.vacancy.create}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="margin-top: 10px; float: right;"></a>
 				</div>
 				
-				<div class="col-6" style="padding-right: 0px;">
+				<div class="col-lg-6" style="padding-right: 0px;">
 					<div class="row info-row">
 						<div class="col-md-3">
 							<span class="row-table-text-2" th:text="#{messages.capacity}"></span>
@@ -81,14 +81,13 @@
 						<input type="submit" th:value="#{messages.vacancy.delete}"/>
 					</form>-->
 					
-					
 					<div class="col">
-						<a th:id="'editAreaHref' + ${area.id}" th:href="@{'/areas/{id}'(id=${area.id})}" sec:authorize="hasAuthority('UPSERT_AREAS_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadArea(event, ' + ${area.id} + ')'">
+						<a th:id="'editVacancyHref' + ${vacancy.id}" th:href="@{'/vacancies/{id}'(id=${vacancy.id})}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadVacancy(event, ' + ${vacancy.id} + ')'">
 							<i class="fas fa-pen row-table-icons"></i>
 						</a>
 							
-						<form th:id="'deleteAreaForm' + ${area.id}" method="POST" th:action="@{'/areas/delete/{id}'(id=${area.id})}" sec:authorize="hasAuthority('DELETE_AREAS_PRIVILEGE')" style="display: initial;">
-							<a href="#" data-toggle="modal" data-target="#deleteAreaModal" th:onclick="'setDeleteAreaId(' + ${area.id} + ')'">
+						<form th:id="'deleteVacancyForm' + ${vacancy.id}" method="POST" th:action="@{'/areas/{id}/vacancies/delete/{vId}'(id=${area.id}, vId=${vacancy.id})}" sec:authorize="hasAuthority('DELETE_VACANCIES_PRIVILEGE')" style="display: initial;">
+							<a href="#" data-toggle="modal" data-target="#deleteVacancyModal" th:onclick="'setDeleteVacancyId(' + ${vacancy.id} + ')'">
 								<i class="fas fa-times row-table-icons"></i>
 							</a>
 						</form>
@@ -119,6 +118,10 @@
 				<p th:text="#{messages.no.vacancies}"></p>
 			</div>
 		</div>
+		
+		<div th:replace="/private/areas/vacancies/createvacancy.html :: createvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
+		<div th:replace="/private/areas/vacancies/editvacancy2.html :: editvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
+		<div th:replace="/private/areas/vacancies/deletevacancy.html :: deletevacancy" sec:authorize="hasAuthority('DELETE_VACANCIES_PRIVILEGE')"></div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>

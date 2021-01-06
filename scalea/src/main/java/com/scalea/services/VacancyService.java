@@ -61,4 +61,12 @@ public class VacancyService {
 	public void delete(Vacancy vacancy) {
 		this.vacancyRepo.save(vacancy);
 	}
+	
+	public Optional<Vacancy> findById(Long id) {
+		return this.vacancyRepo.findById(id);
+	}
+	
+	public boolean existsByIdAndArea(Long id, Area area) {
+		return this.vacancyRepo.existsByIdAndArea(id, area);
+	}
 }

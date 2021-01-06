@@ -25,10 +25,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Area;
+import com.scalea.entities.Employee;
 import com.scalea.entities.Process;
 import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
+import com.scalea.models.dto.AlterVacancyDTO;
 import com.scalea.models.dto.AreaDTO;
+import com.scalea.models.dto.VacancyDTO;
+import com.scalea.repositories.EmployeeRepository;
 import com.scalea.repositories.ProcessRepository;
 import com.scalea.services.AreaService;
 import com.scalea.services.VacancyService;
@@ -42,6 +46,7 @@ public class AreaController {
 	private AreaService areaService;
 	private VacancyService vacancyService;
 	private ProcessRepository processRepo;
+	private EmployeeRepository employeeRepo;
 	private Logger log;
 	private Messages messages;
 	
@@ -49,10 +54,12 @@ public class AreaController {
 	private static final int DEFAULT_SIZE = 7;
 	
 	@Autowired
-	public AreaController(AreaService areaService, VacancyService vacancyService, ProcessRepository processRepo, Messages messages) {
+	public AreaController(AreaService areaService, VacancyService vacancyService, ProcessRepository processRepo, EmployeeRepository employeeRepo,
+			Messages messages) {
 		this.areaService = areaService;
 		this.vacancyService = vacancyService;
 		this.processRepo = processRepo;
+		this.employeeRepo = employeeRepo;
 		this.log = LoggerFactory.getLogger(AreaController.class);
 		this.messages = messages;
 	}
@@ -266,11 +273,80 @@ public class AreaController {
 		
 		Page<Vacancy> vacancies = vacancyService.findByAreaAndEnabled(area.get(), true, PageRequest.of(currentPage - 1, pageSize));
 		Optional<Process> latestProcess = processRepo.findFirstByAreaOrderByStartedAtDesc(area.get());
+		Iterable<Employee> employees = employeeRepo.findByVacancyIsNullAndEnabledIsTrue();
 		
 		model.addAttribute("area", area.get());
 		model.addAttribute("vacancies", vacancies);
 		model.addAttribute("process", latestProcess);
+		model.addAttribute("employees", employees);
+		
+		if (model.getAttribute("alterVacancyDTO") == null) model.addAttribute("alterVacancyDTO", new AlterVacancyDTO());
+		if (model.getAttribute("vacancyDTO") == null) model.addAttribute("vacancyDTO", new VacancyDTO());
 		model.addAttribute("pageNumbers", vacancyService.getPageNumbersList(vacancies.getTotalPages()));
 		return "private/areas/vacancies/vacancylist";
+	}
+	
+	@PreAuthorize("hasAnyAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "')")
+	@PostMapping("/{id}/vacancies/create")
+	public String alterVacancies(Model model, @Valid AlterVacancyDTO alterVacancyDTO, Errors errors, @PathVariable("id") Long id, 
+			@RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size, RedirectAttributes redirectAttributes) throws GenericException {
+		log.info("Method alterVacancies()");
+		
+		if (errors.hasErrors()) {
+			return this.allVacancies(model, id, page, size);
+		}
+        
+        Optional<Area> optionalArea = areaService.findById(id);
+		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		Area area = optionalArea.get();
+		
+		int lastVacancyNumber = vacancyService.findMaxVacancyNumberOfArea(area) + 1;
+		
+		for (int i = 0; i < alterVacancyDTO.getCapacity(); i++) {
+			Vacancy vacancy = new Vacancy();
+			vacancy.setNumber(i + lastVacancyNumber);
+			vacancy.setUuid(Utils.generateUniqueVacancyCodes());
+			vacancy.setArea(area);
+			
+			this.vacancyService.save(vacancy);
+		}
+		
+		area.setCapacity(area.getCapacity() + alterVacancyDTO.getCapacity());
+		this.areaService.save(area);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.vacancies.and.codes.created"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+		return "redirect:/areas/" + id + "/vacancies";
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.DELETE_VACANCIES_PRIVILEGE + "'")
+	@PostMapping("/{id}/vacancies/delete/{vId}")
+	public String deleteVacancy(@PathVariable("id") Long id, @PathVariable("vId") Long vId, RedirectAttributes redirectAttributes) throws GenericException {
+		log.info("Method deleteVacancy()");
+		
+		Optional<Area> optionalArea = areaService.findById(id);
+		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		
+		Optional<Vacancy> optionalVacancy = vacancyService.findById(vId);
+		if (!optionalVacancy.isPresent()) throw new GenericException(messages.get("messages.vacancy.not.found"));
+		
+		if (!vacancyService.existsByIdAndArea(vId, optionalArea.get())) throw new GenericException(messages.get("messages.vacancy.not.found"));
+		
+		Vacancy vacancy = optionalVacancy.get();
+		
+		// To delete a vacancy, we disable it, remove its associated employee and set its number to 0 so it doesn't interfere with future numbers.
+		vacancy.setEnabled(false);
+		vacancy.setEmployee(null);
+		vacancy.setNumber(0);
+		this.vacancyService.save(vacancy);
+		
+		// Since we're disabling a vacancy to an area, the capacity of the area should decrease by 1
+		Area area = optionalArea.get();
+		area.setCapacity(area.getCapacity() - 1);
+		this.areaService.save(area);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.vacancy.deleted"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+	    return "redirect:/areas/" + id + "/vacancies";
 	}
 }

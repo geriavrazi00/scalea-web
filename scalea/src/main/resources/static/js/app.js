@@ -125,3 +125,50 @@ function submitDeleteForm() {
 	id = $("#delete-area-id").val();
 	$("#deleteAreaForm" + id).submit(); // Submit the form
 }
+
+function setDeleteVacancyId(id) {
+	$("#delete-vacancy-id").val(id);
+}
+
+function submitVacancyDeleteForm() {
+	id = $("#delete-vacancy-id").val();
+	$("#deleteVacancyForm" + id).submit(); // Submit the form
+}
+
+function incrementNumber(id) {
+  	var value = document.getElementById(id).value;
+  	
+  	// the value is only numeric
+  	if (/^\d+$/.test(value)) {
+    	value = parseInt(value) + 1;
+  		document.getElementById(id).value = value;
+  	} else {
+  		document.getElementById(id).value = 1;
+  	}
+}
+
+function decrementNumber(id) {
+  	var value = document.getElementById(id).value;
+  	
+  	// the value is only numeric
+  	if (/^\d+$/.test(value) && parseInt(value) > 1) {
+	  	value = parseInt(value) - 1;
+	  	document.getElementById(id).value = value;
+	} else {
+  		document.getElementById(id).value = 1;
+  	}
+}
+
+// Vacancies
+
+function loadVacancy(e, id) {
+	e.preventDefault();
+	
+	var href = $("#editVacancyHref" + id).attr('href');
+	
+	$.get(href, function(vacancy) {
+		$("#edit-vacancy-id").val(vacancy.id);
+	});
+	
+	$('#editVacancyModal').modal('show');
+}

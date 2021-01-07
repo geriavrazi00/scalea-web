@@ -74,21 +74,20 @@
 						<span class="row-table-value" th:text="${vacancy.enabled} ? #{messages.active} : #{messages.not.active}" th:style="${vacancy.enabled} ? 'color: #1f9583;' : 'color: #f1818c;'"></span>
 					</div>
 					
-					<!--  
-					<a th:href="@{'/vacancies/edit/{id}'(id=${vacancy.id})}" th:text="#{messages.vacancy.edit}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></a>
-					
-					<form method="POST" th:action="@{'/vacancies/delete/{id}'(id=${vacancy.id})}" sec:authorize="hasAuthority('DELETE_VACANCIES_PRIVILEGE')">
-						<input type="submit" th:value="#{messages.vacancy.delete}"/>
-					</form>-->
-					
 					<div class="col">
-						<a th:id="'editVacancyHref' + ${vacancy.id}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadVacancy(event, ' + ${vacancy.id} + ', ' + ${vacancy.employee != null ? vacancy.employee.id : null} + ', ' + ${employees.size()} + ')'">
-							<i class="fas fa-pen row-table-icons"></i>
+						<a th:id="'editVacancyHref' + ${vacancy.id}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadVacancy(event, ' + ${vacancy.id} + ', ' + ${employees.size()} + ')'" th:if="${vacancy.employee == null}">
+							<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
 						</a>
+						
+						<form th:id="'detachVacancyForm' + ${vacancy.id}" method="POST" th:action="@{'/areas/{id}/vacancies/detach/{vId}'(id=${area.id}, vId=${vacancy.id}, size=${vacancies.size}, page=${vacancies.number + 1})}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="display: initial;" th:if="${vacancy.employee != null}">
+							<a href="#" data-toggle="modal" data-target="#detachVacancyModal" style="padding-right: 20px;" th:onclick="'setDetachVacancyId(' + ${vacancy.id} + ')'">
+								<i class="fas fa-unlink row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.detach}"></i>
+							</a>
+						</form>
 							
-						<form th:id="'deleteVacancyForm' + ${vacancy.id}" method="POST" th:action="@{'/areas/{id}/vacancies/delete/{vId}'(id=${area.id}, vId=${vacancy.id})}" sec:authorize="hasAuthority('DELETE_VACANCIES_PRIVILEGE')" style="display: initial;">
+						<form th:id="'deleteVacancyForm' + ${vacancy.id}" method="POST" th:action="@{'/areas/{id}/vacancies/delete/{vId}'(id=${area.id}, vId=${vacancy.id}, size=${vacancies.size}, page=${vacancies.number + 1})}" sec:authorize="hasAuthority('DELETE_VACANCIES_PRIVILEGE')" style="display: initial;">
 							<a href="#" data-toggle="modal" data-target="#deleteVacancyModal" th:onclick="'setDeleteVacancyId(' + ${vacancy.id} + ')'">
-								<i class="fas fa-times row-table-icons"></i>
+								<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i>
 							</a>
 						</form>
 					</div>
@@ -120,7 +119,8 @@
 		</div>
 		
 		<div th:replace="/private/areas/vacancies/createvacancy.html :: createvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
-		<div th:replace="/private/areas/vacancies/editvacancy2.html :: editvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
+		<div th:replace="/private/areas/vacancies/editvacancy.html :: editvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
+		<div th:replace="/private/areas/vacancies/detachvacancy.html :: detachvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
 		<div th:replace="/private/areas/vacancies/deletevacancy.html :: deletevacancy" sec:authorize="hasAuthority('DELETE_VACANCIES_PRIVILEGE')"></div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>

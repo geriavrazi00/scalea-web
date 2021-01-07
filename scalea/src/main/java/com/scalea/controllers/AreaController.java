@@ -31,7 +31,6 @@ import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.AlterVacancyDTO;
 import com.scalea.models.dto.AreaDTO;
-import com.scalea.models.dto.VacancyDTO;
 import com.scalea.repositories.EmployeeRepository;
 import com.scalea.repositories.ProcessRepository;
 import com.scalea.services.AreaService;
@@ -128,7 +127,7 @@ public class AreaController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.area.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-		return "redirect:/areas";
+		return "redirect:/areas" + paginationParameters(page, size);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_AREAS_PRIVILEGE + "'")
@@ -211,7 +210,7 @@ public class AreaController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.area.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-		return "redirect:/areas";
+		return "redirect:/areas" + paginationParameters(page, size);
 	}
 	
 	/*
@@ -219,7 +218,8 @@ public class AreaController {
 	 */
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_AREAS_PRIVILEGE + "'")
 	@PostMapping("/delete/{id}")
-	public String deleteArea(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws GenericException {
+	public String deleteArea(@PathVariable("id") Long id, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size,
+			RedirectAttributes redirectAttributes) throws GenericException {
 		log.info("Method deleteArea()");
 		
 		Optional<Area> area = areaService.findById(id);
@@ -254,7 +254,7 @@ public class AreaController {
 		    this.areaService.save(foundArea);
 		}
 		
-		return "redirect:/areas";
+		return "redirect:/areas" + paginationParameters(page, size);
 	}
 	
 	/*************************************** Vacancies ***************************************************/
@@ -281,7 +281,6 @@ public class AreaController {
 		model.addAttribute("employees", employees);
 		
 		if (model.getAttribute("alterVacancyDTO") == null) model.addAttribute("alterVacancyDTO", new AlterVacancyDTO());
-		if (model.getAttribute("vacancyDTO") == null) model.addAttribute("vacancyDTO", new VacancyDTO());
 		model.addAttribute("pageNumbers", vacancyService.getPageNumbersList(vacancies.getTotalPages()));
 		return "private/areas/vacancies/vacancylist";
 	}
@@ -316,12 +315,71 @@ public class AreaController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.vacancies.and.codes.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-		return "redirect:/areas/" + id + "/vacancies";
+		return "redirect:/areas/" + id + "/vacancies" + paginationParameters(page, size);
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "'")
+	@PostMapping("/{id}/vacancies/update")
+	public String updateVacancy(@PathVariable("id") Long id, @RequestParam("edit-vacancy-id") Long vId, @RequestParam("employee") Long employeeId,
+			@RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size, RedirectAttributes redirectAttributes) throws GenericException {
+		log.info("Method updateVacancy()");
+		
+		Optional<Area> optionalArea = areaService.findById(id);
+		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		
+		Optional<Vacancy> optionalVacancy = vacancyService.findById(vId);
+		if (!optionalVacancy.isPresent()) throw new GenericException(messages.get("messages.vacancy.not.found"));
+		
+		if (!vacancyService.existsByIdAndArea(vId, optionalArea.get())) throw new GenericException(messages.get("messages.vacancy.not.found"));
+		
+		Optional<Employee> optionalEmployee = employeeRepo.findById(employeeId);
+		
+		if (optionalEmployee.isPresent()) {
+			// We first check if the vacancy and employee are still not associated with anything. Otherwise we throw an exception
+			Vacancy vacancy = optionalVacancy.get();
+			Employee employee = optionalEmployee.get();
+			
+			if (vacancy.getEmployee() != null) throw new GenericException(messages.get("messages.vacancy.occupied"));
+			if (employee.getVacancy() != null) throw new GenericException(messages.get("messages.employee.occupied"));
+			
+			vacancy.setEmployee(employee);
+			this.vacancyService.save(vacancy);
+		}
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.vacancy.updated"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+	    return "redirect:/areas/" + id + "/vacancies" + paginationParameters(page, size);
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "'")
+	@PostMapping("/{id}/vacancies/detach/{vId}")
+	public String detachVacancy(@PathVariable("id") Long id, @PathVariable("vId") Long vId, @RequestParam("page") Optional<Integer> page, 
+			@RequestParam("size") Optional<Integer> size, RedirectAttributes redirectAttributes) throws GenericException {
+		log.info("Method detachVacancy()");
+		
+		Optional<Area> optionalArea = areaService.findById(id);
+		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		
+		Optional<Vacancy> optionalVacancy = vacancyService.findById(vId);
+		if (!optionalVacancy.isPresent()) throw new GenericException(messages.get("messages.vacancy.not.found"));
+		
+		if (!vacancyService.existsByIdAndArea(vId, optionalArea.get())) throw new GenericException(messages.get("messages.vacancy.not.found"));
+		
+		Vacancy vacancy = optionalVacancy.get();
+		
+		// To detach an employee, we set it to null
+		vacancy.setEmployee(null);
+		this.vacancyService.save(vacancy);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.vacancy.detached"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+	    return "redirect:/areas/" + id + "/vacancies" + paginationParameters(page, size);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_VACANCIES_PRIVILEGE + "'")
 	@PostMapping("/{id}/vacancies/delete/{vId}")
-	public String deleteVacancy(@PathVariable("id") Long id, @PathVariable("vId") Long vId, RedirectAttributes redirectAttributes) throws GenericException {
+	public String deleteVacancy(@PathVariable("id") Long id, @PathVariable("vId") Long vId, @RequestParam("page") Optional<Integer> page, 
+			@RequestParam("size") Optional<Integer> size, RedirectAttributes redirectAttributes) throws GenericException {
 		log.info("Method deleteVacancy()");
 		
 		Optional<Area> optionalArea = areaService.findById(id);
@@ -347,6 +405,10 @@ public class AreaController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.vacancy.deleted"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-	    return "redirect:/areas/" + id + "/vacancies";
+	    return "redirect:/areas/" + id + "/vacancies" + paginationParameters(page, size);
+	}
+	
+	private String paginationParameters(Optional<Integer> page, Optional<Integer> size) {
+		return "?page=" + page.orElse(DEFAULT_PAGE) + "&size=" + size.orElse(DEFAULT_SIZE);
 	}
 }

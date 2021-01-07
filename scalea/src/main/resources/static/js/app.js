@@ -8,6 +8,11 @@ $(document).ready(function() {
     });
 });
 
+// Enabling tooltips
+$(function () {
+  	$('[data-toggle="tooltip"]').tooltip()
+})
+
 window.setTimeout(function() {
     $(".alert").fadeTo(500, 0).slideUp(500, function(){
         $(this).remove(); 
@@ -139,6 +144,15 @@ function submitVacancyDeleteForm() {
 	$("#deleteVacancyForm" + id).submit(); // Submit the form
 }
 
+function setDetachVacancyId(id) {
+	$("#detach-vacancy-id").val(id);
+}
+
+function submitVacancyDetachForm() {
+	id = $("#detach-vacancy-id").val();
+	$("#detachVacancyForm" + id).submit(); // Submit the form
+}
+
 function incrementNumber(id) {
   	var value = document.getElementById(id).value;
   	
@@ -165,22 +179,12 @@ function decrementNumber(id) {
 
 // Vacancies
 
-function loadVacancy(e, id, employeeId, employeesSize) {
+function loadVacancy(e, vacancyId, employeesSize) {
 	e.preventDefault();
 	
-	if (employeeId == null) {
-		document.getElementById("editName").style.display = "none";
-		document.getElementById("editDetach").style.display = "none";
-		if (document.getElementById("employee") != null) document.getElementById("employee").disabled = false;
-		if (employeesSize == 0) document.getElementById("updateVacancy").disabled = true;
-	} else {
-		document.getElementById("editName").style.display = "block";
-		document.getElementById("editDetach").style.display = "block";
-		if (document.getElementById("employee") != null) document.getElementById("employee").disabled = true;
-		if (document.getElementById("modalSubTitle") != null) document.getElementById("modalSubTitle").style.display = "none";
-		var name = document.getElementById("employeeName").innerHTML;
-		document.getElementById("editEmployeeName").innerHTML = name;
-	}
+	document.getElementById("edit-vacancy-id").value = vacancyId;
+	if (employeesSize == 0) document.getElementById("updateVacancy").disabled = true;
+	else document.getElementById("updateVacancy").disabled = false;
 	
 	$('#editVacancyModal').modal('show');
 }

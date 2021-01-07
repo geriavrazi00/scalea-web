@@ -3,7 +3,7 @@
 	xmlns:sec="http://www.thymeleaf.org">
 
 	<div th:fragment="createvacancy">
-		<form method="POST" th:action="@{/areas/{id}/vacancies/create(id=${area.id}, size=${vacancies.size}, page=${pageNumber})}" th:object="${alterVacancyDTO}">	
+		<form method="POST" th:action="@{/areas/{id}/vacancies/create(id=${area.id}, size=${vacancies.size}, page=${vacancies.number + 1})}" th:object="${alterVacancyDTO}">	
 			<div class="modal fade" id="createVacancyModal" tabindex="-1" role="dialog" aria-labelledby="createVacancyModal" aria-hidden="true">
 				<div class="modal-dialog" role="document" style="width: max-content; margin-top: 200px;">
 					<div class="modal-content">

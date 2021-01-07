@@ -34,12 +34,12 @@
 					
 					<div class="col">
 						<a th:id="'editAreaHref' + ${area.id}" th:href="@{'/areas/{id}'(id=${area.id})}" sec:authorize="hasAuthority('UPSERT_AREAS_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadArea(event, ' + ${area.id} + ')'">
-							<i class="fas fa-pen row-table-icons"></i>
+							<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
 						</a>
 							
-						<form th:id="'deleteAreaForm' + ${area.id}" method="POST" th:action="@{'/areas/delete/{id}'(id=${area.id})}" sec:authorize="hasAuthority('DELETE_AREAS_PRIVILEGE')" style="display: initial;">
+						<form th:id="'deleteAreaForm' + ${area.id}" method="POST" th:action="@{'/areas/delete/{id}'(id=${area.id}, size=${areas.size}, page=${areas.number + 1})}" sec:authorize="hasAuthority('DELETE_AREAS_PRIVILEGE')" style="display: initial;">
 							<a href="#" data-toggle="modal" data-target="#deleteAreaModal" th:onclick="'setDeleteAreaId(' + ${area.id} + ')'">
-								<i class="fas fa-times row-table-icons"></i>
+								<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i>
 							</a>
 						</form>
 					</div>

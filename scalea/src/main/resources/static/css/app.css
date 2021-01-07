@@ -196,6 +196,13 @@ input[type=number] {
     border-color: #1e887a;
 }
 
+.btn-primary.disabled, .btn-primary:disabled {
+	color: #fff;
+    background-color: #1f9583;
+    border-color: #1f9583;
+    cursor: not-allowed;
+}
+
 .filter-row {
 	display: flex;
     -ms-flex-wrap: wrap;

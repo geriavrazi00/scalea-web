@@ -17,26 +17,37 @@
       						<br/>
       						
 							<h5 class="modal-title" th:text="#{messages.vacancy.edit}" style="width: 100%;"></h5>
-							<h6 class="modal-sub-title" th:text="#{messages.free.employees}" style="width: 100%;" th:if="${employees.size() > 0}"></h6>
+							<h6 id="modalSubTitle" class="modal-sub-title" th:text="#{messages.free.employees}" style="width: 100%;" th:if="${employees.size() > 0}"></h6>
     					</div>
     					
 						<div class="modal-body" style="padding-top: 0;">
-							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px; text-align: center; display: block; padding-top: 0;" th:if="*{employee == null}">
-								<select name="employee" th:field="*{employee}" th:if="${employees.size() > 0}" class="modal-select">
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px; text-align: center; display: block; padding-top: 0;">
+								<div id="editName">
+									<label th:text="#{messages.current.employee} + ': '"></label>
+									<span id="editEmployeeName"></span>
+									<br/>
+								</div>
+								
+								<div id="editDetach">
+									<label for="detach" th:text="#{messages.detach.employee}"></label>
+									<input type="checkbox" id="detach" name="detach" th:field="*{detach}" onchange="changeEmployees()"/>
+									<br/>
+								</div>
+								
+								<select id="employee" name="employee" th:field="*{employee}" th:if="${employees.size() > 0}" class="modal-select">
 									<option th:text="#{messages.none}" value=""></option>
 									<option th:each="employee : ${employees}" th:value="${employee.id}" th:text="${employee.firstName + ' ' + employee.lastName}"/>
 								</select>
 								
-								<!-- <div th:if="${employees.size() == 0}">
-									<p th:text="#{messages.no.free.employee}"></p>
-									<br />
-								</div> -->
+								<div th:if="${employees.size() == 0}">
+									<b><span th:text="#{messages.no.free.employee}"></span></b>
+								</div>
 							</div>
 						</div>
 						
 						<div class="modal-footer">
 							<div class="col">
-								<button type="submit" class="btn btn-primary" th:text="#{messages.update}"></button>
+								<input id="updateVacancy" type="submit" class="btn btn-primary" th:value="#{messages.update}"/>
 							</div>
 						</div>
 					</div>

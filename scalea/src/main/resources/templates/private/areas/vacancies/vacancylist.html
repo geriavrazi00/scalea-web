@@ -65,13 +65,13 @@
 					
 					<div class="col">
 						<span class="row-table-text" th:text="#{messages.employee}"></span>
-						<span class="row-table-value" th:if="${vacancy.employee != null}" th:text="${vacancy.employee.firstName + ' ' + vacancy.employee.lastName}"></span>
+						<span id="employeeName" class="row-table-value" th:if="${vacancy.employee != null}" th:text="${vacancy.employee.firstName + ' ' + vacancy.employee.lastName}"></span>
 						<span class="row-table-value" th:if="${vacancy.employee == null}">-</span>
 					</div>
 					
 					<div class="col">
 						<span class="row-table-text" th:text="#{messages.status}"></span>
-						<span class="row-table-value" th:text="${vacancy.enabled} ? #{messages.active} : #{messages.not.active}" th:style="${area.enabled} ? 'color: #1f9583;' : 'color: #f1818c;'"></span>
+						<span class="row-table-value" th:text="${vacancy.enabled} ? #{messages.active} : #{messages.not.active}" th:style="${vacancy.enabled} ? 'color: #1f9583;' : 'color: #f1818c;'"></span>
 					</div>
 					
 					<!--  
@@ -82,7 +82,7 @@
 					</form>-->
 					
 					<div class="col">
-						<a th:id="'editVacancyHref' + ${vacancy.id}" th:href="@{'/vacancies/{id}'(id=${vacancy.id})}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadVacancy(event, ' + ${vacancy.id} + ')'">
+						<a th:id="'editVacancyHref' + ${vacancy.id}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadVacancy(event, ' + ${vacancy.id} + ', ' + ${vacancy.employee != null ? vacancy.employee.id : null} + ', ' + ${employees.size()} + ')'">
 							<i class="fas fa-pen row-table-icons"></i>
 						</a>
 							

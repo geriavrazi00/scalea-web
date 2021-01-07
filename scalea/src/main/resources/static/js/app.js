@@ -23,18 +23,22 @@ function changeVacancies() {
 }
 
 function changeEmployees() {
-	if (document.getElementById("employee").disabled == true) {
-		document.getElementById("employee").disabled = false;
-	} else {
-		document.getElementById("employee").disabled = true;
+	if (document.getElementById("employee") != null) {
+		if (document.getElementById("employee").disabled == true) {
+			document.getElementById("employee").disabled = false;
+		} else {
+			document.getElementById("employee").disabled = true;
+		}
 	}
 }
 
 function changeProductPrice() {
-	if (document.getElementById("price").disabled == true) {
-		document.getElementById("price").disabled = false;
-	} else {
-		document.getElementById("price").disabled = true;
+	if (document.getElementById("price") != null) {
+		if (document.getElementById("price").disabled == true) {
+			document.getElementById("price").disabled = false;
+		} else {
+			document.getElementById("price").disabled = true;
+		}
 	}
 }
 
@@ -161,14 +165,22 @@ function decrementNumber(id) {
 
 // Vacancies
 
-function loadVacancy(e, id) {
+function loadVacancy(e, id, employeeId, employeesSize) {
 	e.preventDefault();
 	
-	var href = $("#editVacancyHref" + id).attr('href');
-	
-	$.get(href, function(vacancy) {
-		$("#edit-vacancy-id").val(vacancy.id);
-	});
+	if (employeeId == null) {
+		document.getElementById("editName").style.display = "none";
+		document.getElementById("editDetach").style.display = "none";
+		if (document.getElementById("employee") != null) document.getElementById("employee").disabled = false;
+		if (employeesSize == 0) document.getElementById("updateVacancy").disabled = true;
+	} else {
+		document.getElementById("editName").style.display = "block";
+		document.getElementById("editDetach").style.display = "block";
+		if (document.getElementById("employee") != null) document.getElementById("employee").disabled = true;
+		if (document.getElementById("modalSubTitle") != null) document.getElementById("modalSubTitle").style.display = "none";
+		var name = document.getElementById("employeeName").innerHTML;
+		document.getElementById("editEmployeeName").innerHTML = name;
+	}
 	
 	$('#editVacancyModal').modal('show');
 }

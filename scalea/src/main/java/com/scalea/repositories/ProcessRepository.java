@@ -2,6 +2,8 @@ package com.scalea.repositories;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 import com.scalea.entities.Area;
@@ -11,4 +13,5 @@ public interface ProcessRepository extends CrudRepository<Process, Long> {
 	Iterable<Process> findByStatusIn(int[] statuses);
 	Optional<Process> findByStatusAndArea(int status, Area area);
 	Optional<Process> findFirstByAreaOrderByStartedAtDesc(Area area);
+	Page<Process> findByArea(Area area, Pageable pageable);
 }

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	
+	<body>
+		<div th:replace="/commons/template.html :: menu"></div>
+		
+		<div class="main-container">
+			<h1 th:text="${area.name}" class="page-title"></h1>
+			
+			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			
+			<div class="filter-row">
+				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
+					<a th:href="@{'/areas/{id}/vacancies'(id=${area.id})}" th:text="#{messages.vacancies}" class="inactive-tab"></a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a th:href="@{'/areas/{id}/historic'(id=${area.id})}" th:text="#{messages.history}" class="active-tab"></a>
+				</div>
+				
+				<div class="col-lg-3" style="padding-left: 0px; text-align: left;"></div>
+				
+				<div class="col-lg-6" style="padding-right: 0px;">
+					<div class="row info-row">
+						<div class="col-md-3">
+							<span class="row-table-text-2" th:text="#{messages.capacity}"></span>
+							<span class="row-table-value-2" th:text="${area.employeeNumber + '/' + area.capacity}"></span>
+						</div>
+						
+						<div class="col-md-6" th:if="${process.isPresent()}" style="text-align: center;">
+							<span class="row-table-text-2" th:text="#{messages.latest.process}"></span>
+							<span class="row-table-value-2" th:text="${process.get().product.name}"></span>
+						</div>
+						
+						<div class="col-md-3" th:if="${process.isPresent() && process.get().status == 0}">
+							<span class="row-table-text-2" th:text="#{messages.status}"></span>
+							<span class="row-table-value-2" th:text="#{messages.active}" style="color: #1f9583;"></span>
+						</div>
+						
+						<div class="col-md-3" th:if="${process.isPresent() && process.get().status == 1}">
+							<span class="row-table-text-2" th:text="#{messages.status}"></span>
+							<span class="row-table-value-2" th:text="#{messages.paused}" style="color: #f1818c;"></span>
+						</div>
+						
+						<div class="col-md-3" th:if="${process.isPresent() && process.get().status == 2}">
+							<span class="row-table-text-2" th:text="#{messages.elapsed}"></span>
+							<span class="row-table-value-2" th:text="${process.get().elapsedTimeToString}"></span>
+						</div>
+						
+						<div class="col-md-6" th:if="${!process.isPresent()}" style="text-align: center;">
+							<span class="row-table-text-2" th:text="#{messages.no.process.for.area}"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-lg-7 table-container">
+				<div th:if="${processes.content.size() > 0}" th:each="pr, iter : ${processes.content}" th:class="${iter.index == iter.size - 1 ? 'table-container-rows' : 'table-container-rows bottom-border'}">
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.vacancy}"></span>
+						<span class="row-table-value" th:text="${pr.product.name}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.employee}"></span>
+						<span class="row-table-value" th:text="${pr.elapsedTimeToString}"></span>
+					</div>
+				</div>
+			</div>
+			
+			<div th:if="${processes.totalPages > 1 && processes.content.size() > 0}">
+				<ul class="pagination">
+					<li th:class="${processes.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${processes.number})}">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+					<li th:if="${processes.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+					    <a th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${pageNumber})}" th:text=${pageNumber} 
+					    	th:class="${pageNumber == processes.number + 1} ? 'page-link active' : 'page-link'"></a>
+					</li>
+					<li th:class="${(processes.number + 1) == processes.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${processes.number + 2})}">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			
+			<div th:if="${processes.content.size() == 0}">
+				<p th:text="#{messages.no.processes}"></p>
+			</div>
+		</div>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

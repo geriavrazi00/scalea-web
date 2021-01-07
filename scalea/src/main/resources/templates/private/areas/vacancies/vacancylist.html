@@ -15,7 +15,7 @@
 				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
 					<a th:href="@{'/areas/{id}/vacancies'(id=${area.id})}" th:text="#{messages.vacancies}" class="active-tab"></a>
 					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="#" th:text="#{messages.history}" class="inactive-tab"></a>
+					<a th:href="@{'/areas/{id}/historic'(id=${area.id})}" th:text="#{messages.history}" class="inactive-tab"></a>
 				</div>
 				
 				<div class="col-lg-3">

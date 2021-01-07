@@ -80,7 +80,7 @@ public class AreaController {
 		model.addAttribute("areas", areas);
 		if (model.getAttribute("area") == null) model.addAttribute("area", new Area());
 		if (model.getAttribute("areaDTO") == null) model.addAttribute("areaDTO", new AreaDTO());
-		model.addAttribute("pageNumbers", areaService.getPageNumbersList(areas.getTotalPages()));
+		model.addAttribute("pageNumbers", Utils.getPageNumbersList(areas.getTotalPages()));
 		return "private/areas/arealist";
 	}
 	
@@ -281,7 +281,7 @@ public class AreaController {
 		model.addAttribute("employees", employees);
 		
 		if (model.getAttribute("alterVacancyDTO") == null) model.addAttribute("alterVacancyDTO", new AlterVacancyDTO());
-		model.addAttribute("pageNumbers", vacancyService.getPageNumbersList(vacancies.getTotalPages()));
+		model.addAttribute("pageNumbers", Utils.getPageNumbersList(vacancies.getTotalPages()));
 		return "private/areas/vacancies/vacancylist";
 	}
 	
@@ -410,5 +410,30 @@ public class AreaController {
 	
 	private String paginationParameters(Optional<Integer> page, Optional<Integer> size) {
 		return "?page=" + page.orElse(DEFAULT_PAGE) + "&size=" + size.orElse(DEFAULT_SIZE);
+	}
+	
+	/*************************************** Historic ***************************************************/
+	
+	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_VACANCIES_PRIVILEGE + "', '" + Constants.UPSERT_VACANCIES_PRIVILEGE + "', '" + Constants.DELETE_VACANCIES_PRIVILEGE + "')")
+	@GetMapping("/{id}/historic")
+	public String showHistoric(Model model, @PathVariable("id") Long id, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws GenericException {
+		log.info("Method showHistoric()");
+		
+		int currentPage = page.orElse(DEFAULT_PAGE);
+        int pageSize = size.orElse(DEFAULT_SIZE);
+        
+        Optional<Area> optionalArea = areaService.findById(id);
+		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		Area area = optionalArea.get();
+		area.calculateEmployeeNumber();
+		
+		Page<Process> processes = processRepo.findByArea(area, PageRequest.of(currentPage - 1, pageSize));
+		Optional<Process> latestProcess = processRepo.findFirstByAreaOrderByStartedAtDesc(area);
+		
+		model.addAttribute("area", area);
+		model.addAttribute("processes", processes);
+		model.addAttribute("process", latestProcess);
+		model.addAttribute("pageNumbers", Utils.getPageNumbersList(processes.getTotalPages()));
+		return "private/areas/historic/historiclist";
 	}
 }

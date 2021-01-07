@@ -238,6 +238,11 @@ input[type=number] {
 	padding-right: 5px;
 }
 
+.row-table-text-3 {
+	font-size: 14px;
+	color: #707C94;
+}
+
 .row-table-value {
 	background-color: #f4f7fe;
 	padding: 5px 10px;
@@ -250,13 +255,18 @@ input[type=number] {
 	font-weight: bold;
 }
 
+.row-table-value-3 {
+	color: #272D3B;
+	font-weight: bold;
+}
+
 .row-table-icons {
 	color: black;
 }
 
 .active-tab {
 	color: #75a0fd;
-    font-size: 25px;
+    font-size: 26px;
     font-weight: bold;
     text-decoration: underline;
 }
@@ -302,6 +312,11 @@ input[type=number] {
 
 .info-row {
 	box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1), 0 0 10px 0 rgba(0, 0, 0, 0.19);
+}
+
+.history-title {
+	font-size: 26px;
+	color: #759FFD;
 }
 
 /* Pagination */

@@ -13,5 +13,5 @@ public interface ProcessRepository extends CrudRepository<Process, Long> {
 	Iterable<Process> findByStatusIn(int[] statuses);
 	Optional<Process> findByStatusAndArea(int status, Area area);
 	Optional<Process> findFirstByAreaOrderByStartedAtDesc(Area area);
-	Page<Process> findByArea(Area area, Pageable pageable);
+	Page<Process> findByAreaOrderByCreatedAtDesc(Area area, Pageable pageable);
 }

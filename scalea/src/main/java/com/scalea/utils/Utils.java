@@ -1,9 +1,12 @@
 package com.scalea.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
@@ -46,6 +49,11 @@ public class Utils {
 	public static String millisToString(long millis) {
 		Duration timeLeft = Duration.ofMillis(millis);
 		return String.format("%02d:%02d:%02d", timeLeft.toHours(), timeLeft.toMinutesPart(), timeLeft.toSecondsPart());
+	}
+	
+	public static String albanianDateFormat(Date date) {
+		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");  
+		return dateFormat.format(date);  
 	}
 	
 	public static List<Integer> getPageNumbersList(int totalPages) {

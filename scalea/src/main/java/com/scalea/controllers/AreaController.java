@@ -427,7 +427,7 @@ public class AreaController {
 		Area area = optionalArea.get();
 		area.calculateEmployeeNumber();
 		
-		Page<Process> processes = processRepo.findByArea(area, PageRequest.of(currentPage - 1, pageSize));
+		Page<Process> processes = processRepo.findByAreaOrderByCreatedAtDesc(area, PageRequest.of(currentPage - 1, pageSize));
 		Optional<Process> latestProcess = processRepo.findFirstByAreaOrderByStartedAtDesc(area);
 		
 		model.addAttribute("area", area);

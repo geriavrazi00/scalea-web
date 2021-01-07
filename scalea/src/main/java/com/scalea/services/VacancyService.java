@@ -1,10 +1,7 @@
 package com.scalea.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,16 +39,6 @@ public class VacancyService {
 	
 	public Page<Vacancy> findByAreaAndEnabled(Area area, boolean enabled, Pageable pageable) {
 		return this.vacancyRepo.findByAreaAndEnabledOrderByNumber(area, enabled, pageable);
-	}
-	
-	public List<Integer> getPageNumbersList(int totalPages) {
-		List<Integer> pageNumbers = new ArrayList<>();
-		
-		if (totalPages > 0) {
-            pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
-        }
-		
-		return pageNumbers;
 	}
 	
 	public Vacancy save(Vacancy vacancy) {

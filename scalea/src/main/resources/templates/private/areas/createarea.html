@@ -3,7 +3,7 @@
 	xmlns:sec="http://www.thymeleaf.org">
 
 	<div th:fragment="createarea">
-		<form method="POST" th:action="@{/areas/create(size=${areas.size}, page=${pageNumber})}" th:object="${area}">	
+		<form method="POST" th:action="@{/areas/create(size=${areas.size}, page=${areas.number + 1})}" th:object="${area}">	
 			<div class="modal fade" id="createAreaModal" tabindex="-1" role="dialog" aria-labelledby="createAreaModal" aria-hidden="true">
 				<div class="modal-dialog area" role="document">
 					<div class="modal-content">

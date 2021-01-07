@@ -2,9 +2,13 @@ package com.scalea.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -42,5 +46,15 @@ public class Utils {
 	public static String millisToString(long millis) {
 		Duration timeLeft = Duration.ofMillis(millis);
 		return String.format("%02d:%02d:%02d", timeLeft.toHours(), timeLeft.toMinutesPart(), timeLeft.toSecondsPart());
+	}
+	
+	public static List<Integer> getPageNumbersList(int totalPages) {
+		List<Integer> pageNumbers = new ArrayList<>();
+		
+		if (totalPages > 0) {
+            pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+        }
+		
+		return pageNumbers;
 	}
 }

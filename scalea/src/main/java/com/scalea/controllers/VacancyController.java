@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
@@ -23,7 +22,6 @@ import com.scalea.entities.Area;
 import com.scalea.entities.Employee;
 import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
-import com.scalea.models.dto.VacancyDTO;
 import com.scalea.repositories.AreaRepository;
 import com.scalea.repositories.EmployeeRepository;
 import com.scalea.repositories.VacancyRepository;
@@ -103,19 +101,6 @@ public class VacancyController {
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
 		return "redirect:/vacancies";
-	}
-	
-	@PreAuthorize("hasAnyAuthority('" + Constants.UPSERT_AREAS_PRIVILEGE + "')")
-	@GetMapping("/{id}")
-	public @ResponseBody VacancyDTO getVacancy(@PathVariable("id") Long id) throws GenericException {
-		log.info("Method getVacancy()");
-		
-		Optional<Vacancy> vacancy = vacancyRepo.findById(id);
-		if (!vacancy.isPresent()) throw new GenericException(messages.get("messages.vacancy.not.found"));
-		
-		VacancyDTO newVacancy = new VacancyDTO();
-		newVacancy.toDTO(vacancy.get());
-		return newVacancy;
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "'")

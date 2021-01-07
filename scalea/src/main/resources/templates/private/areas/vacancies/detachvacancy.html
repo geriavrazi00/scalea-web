@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+	<div th:fragment="detachvacancy">
+		<div id="detachVacancyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="detachVacancyModal" aria-hidden="true">
+			<div class="modal-dialog" role="document" style="margin-top: 200px;">
+				<div class="modal-content">
+					<div class="modal-body">
+						<input type="hidden" id="detach-vacancy-id" />
+						
+						<span data-dismiss="modal" class="close" title="Close Modal">x</span>
+						
+						<div class="container">
+							<h1 th:text="#{messages.vacancy.detach}"></h1>
+							<p th:text="#{messages.vacancy.detach.confirmation}"></p>
+			
+							<div class="clearfix">
+								<button type="button" data-dismiss="modal" class="btn btn-light" th:text="#{messages.cancel}"></button>
+								<button type="button" onclick="submitVacancyDetachForm();" class="btn btn-cancel" th:text="#{messages.detach}"></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</html>

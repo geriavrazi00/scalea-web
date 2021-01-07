@@ -3,7 +3,7 @@
 	xmlns:sec="http://www.thymeleaf.org">
 
 	<div th:fragment="editarea">
-		<form method="POST" th:action="@{/areas/update(size=${areas.size}, page=${pageNumber})}" th:object="${areaDTO}">
+		<form method="POST" th:action="@{/areas/update(size=${areas.size}, page=${areas.number + 1})}" th:object="${areaDTO}">
 			<input type="hidden" id="edit-area-id" name="id" th:field="*{id}"/>
 			
 			<div class="modal fade" id="editAreaModal" tabindex="-1" role="dialog" aria-labelledby="editAreaModal" aria-hidden="true">

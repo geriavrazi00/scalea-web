@@ -27,12 +27,14 @@ import com.scalea.configurations.Messages;
 import com.scalea.entities.Area;
 import com.scalea.entities.Employee;
 import com.scalea.entities.Process;
+import com.scalea.entities.Product;
 import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.AlterVacancyDTO;
 import com.scalea.models.dto.AreaDTO;
 import com.scalea.repositories.EmployeeRepository;
 import com.scalea.repositories.ProcessRepository;
+import com.scalea.repositories.ProductRepository;
 import com.scalea.services.AreaService;
 import com.scalea.services.VacancyService;
 import com.scalea.utils.Constants;
@@ -46,6 +48,7 @@ public class AreaController {
 	private VacancyService vacancyService;
 	private ProcessRepository processRepo;
 	private EmployeeRepository employeeRepo;
+	private ProductRepository productRepo;
 	private Logger log;
 	private Messages messages;
 	
@@ -54,11 +57,12 @@ public class AreaController {
 	
 	@Autowired
 	public AreaController(AreaService areaService, VacancyService vacancyService, ProcessRepository processRepo, EmployeeRepository employeeRepo,
-			Messages messages) {
+			ProductRepository productRepo, Messages messages) {
 		this.areaService = areaService;
 		this.vacancyService = vacancyService;
 		this.processRepo = processRepo;
 		this.employeeRepo = employeeRepo;
+		this.productRepo = productRepo;
 		this.log = LoggerFactory.getLogger(AreaController.class);
 		this.messages = messages;
 	}
@@ -429,10 +433,16 @@ public class AreaController {
 		
 		Page<Process> processes = processRepo.findByAreaOrderByCreatedAtDesc(area, PageRequest.of(currentPage - 1, pageSize));
 		Optional<Process> latestProcess = processRepo.findFirstByAreaOrderByStartedAtDesc(area);
+		Iterable<Product> products = this.productRepo.findByEnabledIsTrueAndWithSubProductsIsFalse();
+		
+		// Filters
+		//Date date = null;
+		
 		
 		model.addAttribute("area", area);
 		model.addAttribute("processes", processes);
 		model.addAttribute("process", latestProcess);
+		model.addAttribute("products", products);
 		model.addAttribute("pageNumbers", Utils.getPageNumbersList(processes.getTotalPages()));
 		return "private/areas/historic/historiclist";
 	}

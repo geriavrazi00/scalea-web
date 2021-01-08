@@ -49,7 +49,11 @@ public class EmployeeController {
 		
 		// We only show the enabled employees at the moment
 		Iterable<Employee> employees = employeeRepo.findByEnabled(true);
+		Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+		
+		if (model.getAttribute("employee") == null) model.addAttribute("employee", new Employee());
 		model.addAttribute("employees", employees);
+		model.addAttribute("vacancies", vacancies);
 		return "private/employees/employeelist";
 	}
 	
@@ -71,17 +75,19 @@ public class EmployeeController {
 		log.info("Method createEmployee()");
 		
 		if (errors.hasErrors()) {
-			Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
-			model.addAttribute("vacancies", vacancies);
-			return "private/employees/createemployee";
+			//Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+			//model.addAttribute("vacancies", vacancies);
+			
+			//this.allEmployees(model);
+			return this.allEmployees(model);
 		}
 		
 		if (employeeRepo.existsByPersonalNumber(employee.getPersonalNumber())) {
-			Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
-			model.addAttribute("vacancies", vacancies);
+//			Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+//			model.addAttribute("vacancies", vacancies);
 			model.addAttribute("message", this.messages.get("messages.employee.exists", employee.getPersonalNumber()));
 			model.addAttribute("alertClass", "alert-danger");
-			return "private/employees/createemployee";
+			return this.allEmployees(model);
 		}
 		
 		employee = this.employeeRepo.save(employee);

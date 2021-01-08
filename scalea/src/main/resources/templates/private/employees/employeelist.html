@@ -11,11 +11,10 @@
 			
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 			<div class="filter-row">
-			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="@{/employees/create}" th:text="#{messages.employee.create}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></button>
-			<a th:href="@{/employees/create}" th:text="#{messages.employee.create}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></a> 
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createEmployeeModal" th:text="#{messages.employee.create}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></button>
 			</div>
 	<div class="table-container">
-		<div class="table-container-rows bottom-border" th:if="${employees.size() > 0}" th:each="employee : ${employees}">
+		<div th:if="${employees.size() > 0}" th:each="employee, iter : ${employees}" th:class="${iter.index == iter.size - 1 ? 'table-container-rows' : 'table-container-rows bottom-border'}">
 			
 		<div class="col">
 			<span class="row-table-text" th:text="#{messages.name}"></span>
@@ -59,7 +58,7 @@
 			</div>
 			
 			<div class="col" style="display:inline;">
-				<a style="display:inline;" class="row-table-text" th:href="@{'/employees/edit/{id}'(id=${employee.id})}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')">
+				<a style="display:inline;" class="row-table-text" href="#" data-toggle="modal" data-target="#editEmployeeModal" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')">
 				<i class="fas fa-pen row-table-icons"></i></a>
 				
 				
@@ -77,6 +76,9 @@
 				<p th:text="#{messages.no.employees}"></p>
 			</div>
 		</div>
+		
+		<div th:replace="/private/employees/createemployeemodal.html :: createemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
+		<div th:replace="/private/employees/editemployeemodal.html :: editemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>

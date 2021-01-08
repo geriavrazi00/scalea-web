@@ -19,17 +19,13 @@
 				</div>
 				
 				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
-					<select>
-						<option>data</option>
-						<option>data</option>
-						<option>data</option>
-					</select>
-					
-					<select>
-						<option>produkti</option>
-						<option>produkti</option>
-						<option>produkti</option>
-					</select>
+					<form style="display: initial;">
+						<input id="date" name="date" type="date" class="filter-calendar" style="margin-top: 10px;"/>
+						&nbsp;&nbsp;
+						<select id="product" name="product" th:if="${products.size() > 0}" class="filter-field" style="margin-top: 10px;">
+							<option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"/>
+						</select>
+					</form>
 				</div>
 				
 				<div class="col-lg-6" style="padding-right: 0px;">
@@ -100,6 +96,10 @@
 						<span class="row-table-value-3" th:text="${pr.formattedCreatedDate}"></span>
 					</div>
 				</div>
+				
+				<div th:if="${processes.content.size() == 0}">
+					<p th:text="#{messages.no.results.found}"></p>
+				</div>
 			</div>
 			
 			<div th:if="${processes.totalPages > 1 && processes.content.size() > 0}">
@@ -119,10 +119,6 @@
 						</a>
 					</li>
 				</ul>
-			</div>
-			
-			<div th:if="${processes.content.size() == 0}">
-				<p th:text="#{messages.no.processes}"></p>
 			</div>
 		</div>
 		

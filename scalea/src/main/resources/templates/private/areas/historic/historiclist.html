@@ -19,11 +19,12 @@
 				</div>
 				
 				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
-					<form style="display: initial;">
-						<input id="date" name="date" type="date" class="filter-calendar" style="margin-top: 10px;"/>
+					<form id="processFilterForm" method="GET" th:action="@{'/areas/{id}/historic'(id=${area.id}, size=${processes.size}, page=${processes.number + 1})}" style="display: initial;">
+						<input id="date" name="date" type="date" class="filter-calendar" style="margin-top: 10px; width: 137px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.date}" onchange="document.getElementById('processFilterForm').submit();" th:value="${selectedDate.isPresent() ? selectedDate.get() : null}"/>
 						&nbsp;&nbsp;
-						<select id="product" name="product" th:if="${products.size() > 0}" class="filter-field" style="margin-top: 10px;">
-							<option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"/>
+						<select id="product" name="product" th:if="${products.size() > 0}" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.products}" onchange="document.getElementById('processFilterForm').submit();">
+							<option th:text="#{messages.all}" value=""></option>
+							<option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}" th:selected="${selectedProduct.isPresent() && selectedProduct.get() == product.id ? 'true' : 'false'}"/>
 						</select>
 					</form>
 				</div>
@@ -105,16 +106,16 @@
 			<div th:if="${processes.totalPages > 1 && processes.content.size() > 0}">
 				<ul class="pagination">
 					<li th:class="${processes.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
-						<a class="page-link" th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${processes.number})}">
+						<a class="page-link" th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${processes.number}, date=${selectedDate.isPresent() ? selectedDate.get() : ''}, product=${selectedProduct.isPresent() ? selectedProduct.isPresent().get() : ''})}">
 							<span aria-hidden="true">&laquo;</span>
 						</a>
 					</li>
 					<li th:if="${processes.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
-					    <a th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${pageNumber})}" th:text=${pageNumber} 
+					    <a th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${pageNumber}, date=${selectedDate.isPresent() ? selectedDate.get() : ''}, product=${selectedProduct.isPresent() ? selectedProduct.isPresent().get() : ''})}" th:text=${pageNumber} 
 					    	th:class="${pageNumber == processes.number + 1} ? 'page-link active' : 'page-link'"></a>
 					</li>
 					<li th:class="${(processes.number + 1) == processes.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
-						<a class="page-link" th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${processes.number + 2})}">
+						<a class="page-link" th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${processes.number + 2}, date=${selectedDate.isPresent() ? selectedDate.get() : ''}, product=${selectedProduct.isPresent() ? selectedProduct.isPresent().get() : ''})}">
 							<span aria-hidden="true">&raquo;</span>
 						</a>
 					</li>

@@ -2,10 +2,12 @@ package com.scalea.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -52,8 +54,12 @@ public class Utils {
 	}
 	
 	public static String albanianDateFormat(Date date) {
-		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");  
+		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		return dateFormat.format(date);  
+	}
+	
+	public static Date inputDateStringToDate(String dateString) throws ParseException {
+		return (dateString != null && !dateString.isBlank()) ? new SimpleDateFormat("yyyy-MM-dd").parse(dateString) : null;  
 	}
 	
 	public static List<Integer> getPageNumbersList(int totalPages) {
@@ -64,5 +70,12 @@ public class Utils {
         }
 		
 		return pageNumbers;
+	}
+	
+	public static Date addOrRemoveDaysToDate(Date date, int days) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.add(Calendar.DATE, days);  	// number of days to add or remove
+		return c.getTime();  		// dt is now the new date
 	}
 }

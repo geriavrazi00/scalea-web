@@ -416,6 +416,15 @@ input[type=number] {
     border-color: white;
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: rgba(0, 0, 0, 0);
+    opacity: 1;
+    display: block;
+    /*background: url(https://mywildalberta.ca/images/GFX-MWA-Parks-Reservations.png) no-repeat;*/
+    margin-left: 0px;
+    border-width: thin;
+}
+
 /* Media queries */
 
 @media screen and (max-height: 450px) {

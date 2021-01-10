@@ -49,7 +49,7 @@
 			  	
 			  	<hr class="hr-style">
 
-			  	<a href="#" th:class="${#httpServletRequest.requestURI.contains('/settings') ? 'active' : ''}">
+			  	<a href="/profile" th:class="${#httpServletRequest.requestURI.contains('/settings') ? 'active' : ''}">
 			  		<i class="fas fa-cogs sidenav-icons"></i> <span th:text="#{messages.settings}"></span>
 			  	</a>
 			  	

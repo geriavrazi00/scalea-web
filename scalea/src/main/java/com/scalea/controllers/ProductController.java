@@ -1,9 +1,6 @@
 package com.scalea.controllers;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Base64;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -29,33 +26,29 @@ import com.scalea.configurations.Messages;
 import com.scalea.entities.Product;
 import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.SubProductDTO;
-import com.scalea.repositories.ProductRepository;
-import com.scalea.services.ConfigurationService;
+import com.scalea.services.ProductService;
 import com.scalea.utils.Constants;
-import com.scalea.utils.FileUploadUtil;
 
 @Controller
 @RequestMapping("/products")
 public class ProductController {
 
-	private ProductRepository productRepo;
-	private ConfigurationService configService;
+	private ProductService productService;
 	private Logger log;
 	private Messages messages;
 	
 	@Autowired
-	public ProductController(ProductRepository productRepo, ConfigurationService configService, Messages messages) {
-		this.productRepo = productRepo;
-		this.configService = configService;
+	public ProductController(ProductService productService, Messages messages) {
+		this.productService = productService;
 		this.log = LoggerFactory.getLogger(ProductController.class);
 		this.messages = messages;
 	}
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_PRODUCTS_PRIVILEGE + "', '" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "', '" + Constants.DELETE_PRODUCTS_PRIVILEGE + "')")
 	@GetMapping
-	public String allProducts(Model model) {
+	public String allProducts(Model model) throws IOException {
 		log.info("Method allProducts()");
-		Iterable<Product> products = productRepo.findByFatherProductIsNullAndEnabledIsTrue();
+		Iterable<Product> products = productService.findByFatherProductIsNullAndEnabledIsTrue();
 		
 		model.addAttribute("products", products);
 		return "private/products/productlist";
@@ -85,11 +78,11 @@ public class ProductController {
 		String storedFileName = Constants.PRODUCTS_DEFAULT_IMAGE;
 		
 		if (fileName != null && !fileName.isEmpty()) {
-			storedFileName = this.savePhotoToDisk(multipartFile, fileName, product.getName());
+			storedFileName = productService.savePhotoToDisk(multipartFile, fileName, product.getName());
 		}
 		
 		product.setImage(storedFileName);
-		this.productRepo.save(product);
+		this.productService.save(product);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.product.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
@@ -102,12 +95,12 @@ public class ProductController {
 	public String editProduct(@PathVariable("id") Long id, Model model) throws Exception {
 		log.info("Method editProduct()");
 		
-		Optional<Product> product = productRepo.findById(id);
+		Optional<Product> product = productService.findById(id);
 		if (!product.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
 		if (product.get().getFatherProduct() != null) throw new GenericException(messages.get("messages.product.not.found"));
 		
 		String image = null;
-		if (product.get().getImage() != null) image = this.getBase64ImageString(product.get().getImage());
+		if (product.get().getImage() != null) image = productService.getBase64ImageString(product.get().getImage());
 		
 		model.addAttribute("imageSrc", image); 
 		model.addAttribute("product", product.get());
@@ -122,13 +115,13 @@ public class ProductController {
 		
 		if (errors.hasErrors()) {
 			String image = null;
-			if (product.getImage() != null) image = this.getBase64ImageString(product.getImage());
+			if (product.getImage() != null) image = productService.getBase64ImageString(product.getImage());
 			
 			model.addAttribute("imageSrc", image); 
 			return "private/products/editproduct";
 		}
 		
-		Optional<Product> existingOptionalProduct = productRepo.findById(product.getId());
+		Optional<Product> existingOptionalProduct = productService.findById(product.getId());
 		if (!existingOptionalProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
 		Product existingProduct = existingOptionalProduct.get();
 		
@@ -141,8 +134,8 @@ public class ProductController {
 		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 		
 		if (fileName != null && !fileName.isEmpty()) {
-			if (existingProduct.getImage() != null && !existingProduct.getImage().equals(Constants.PRODUCTS_DEFAULT_IMAGE)) this.deletePhotoFromDisk(existingProduct.getImage());
-			String storedFileName = this.savePhotoToDisk(multipartFile, fileName, product.getName());
+			if (existingProduct.getImage() != null && !existingProduct.getImage().equals(Constants.PRODUCTS_DEFAULT_IMAGE)) productService.deletePhotoFromDisk(existingProduct.getImage());
+			String storedFileName = productService.savePhotoToDisk(multipartFile, fileName, product.getName());
 			product.setImage(storedFileName);
 		} else {
 			product.setImage(existingProduct.getImage());
@@ -163,7 +156,7 @@ public class ProductController {
 		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		}
 		
-		productRepo.save(product);
+		productService.save(product);
 	    return "redirect:/products";
 	}
 	
@@ -172,19 +165,19 @@ public class ProductController {
 	public String deleteProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws Exception {
 		log.info("Method deleteProduct()");
 		
-		Optional<Product> optionalProduct = productRepo.findById(id);
+		Optional<Product> optionalProduct = productService.findById(id);
 		if (!optionalProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
 		Product product = optionalProduct.get();
 		
 		if (product.isWithSubProducts() && product.getChildrenProducts() != null && product.getChildrenProducts().size() > 0) {
 			for (Product childProduct: product.getChildrenProducts()) {
 				childProduct.setEnabled(false);
-				productRepo.save(childProduct);
+				productService.save(childProduct);
 			}
 		}
 		
 		product.setEnabled(false);
-		productRepo.save(product);
+		productService.save(product);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.product.deleted"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
@@ -196,7 +189,7 @@ public class ProductController {
 	public String newSubProduct(@PathVariable("id") Long id, Model model) throws GenericException {
 		log.info("Method newSubProduct()");
 		
-		Optional<Product> fatherProduct = productRepo.findById(id);
+		Optional<Product> fatherProduct = productService.findById(id);
 		if (!fatherProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
 		if (!fatherProduct.get().isWithSubProducts()) throw new GenericException(messages.get("messages.product.not.with.subprdocuts"));
 		SubProductDTO newProduct = new SubProductDTO();
@@ -221,11 +214,11 @@ public class ProductController {
 		String storedFileName = Constants.PRODUCTS_DEFAULT_IMAGE;
 		
 		if (fileName != null && !fileName.isEmpty()) {
-			storedFileName = this.savePhotoToDisk(multipartFile, fileName, subProduct.getName());
+			storedFileName = productService.savePhotoToDisk(multipartFile, fileName, subProduct.getName());
 		}
 		
 		subProduct.setImage(storedFileName);
-		this.productRepo.save(subProduct.toNewProduct());
+		this.productService.save(subProduct.toNewProduct());
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
@@ -238,12 +231,12 @@ public class ProductController {
 	public String editSubProduct(@PathVariable("id") Long id, Model model) throws Exception {
 		log.info("Method editSubProduct()");
 		
-		Optional<Product> subProduct = productRepo.findById(id);
+		Optional<Product> subProduct = productService.findById(id);
 		if (!subProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
 		if (subProduct.get().getFatherProduct() == null) throw new GenericException(messages.get("messages.product.not.found"));
 		
 		String image = null;
-		if (subProduct.get().getImage() != null) image = this.getBase64ImageString(subProduct.get().getImage());
+		if (subProduct.get().getImage() != null) image = productService.getBase64ImageString(subProduct.get().getImage());
 		
 		SubProductDTO subProductDTO = new SubProductDTO();
 		subProductDTO.toDTO(subProduct.get());
@@ -261,13 +254,13 @@ public class ProductController {
 		
 		if (errors.hasErrors()) {
 			String image = null;
-			if (subProduct.getImage() != null) image = this.getBase64ImageString(subProduct.getImage());
+			if (subProduct.getImage() != null) image = productService.getBase64ImageString(subProduct.getImage());
 			
 			model.addAttribute("imageSrc", image); 
 			return "private/products/subproducts/editsubproduct";
 		}
 		
-		Optional<Product> existingOptionalProduct = productRepo.findById(subProduct.getId());
+		Optional<Product> existingOptionalProduct = productService.findById(subProduct.getId());
 		if (!existingOptionalProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
 		if (existingOptionalProduct.get().getFatherProduct() == null) throw new GenericException(messages.get("messages.product.not.found"));
 		Product existingProduct = existingOptionalProduct.get();
@@ -281,14 +274,14 @@ public class ProductController {
 		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 		
 		if (fileName != null && !fileName.isEmpty()) {
-			if (existingProduct.getImage() != null && !existingProduct.getImage().equals(Constants.PRODUCTS_DEFAULT_IMAGE)) this.deletePhotoFromDisk(existingProduct.getImage());
-			String storedFileName = this.savePhotoToDisk(multipartFile, fileName, subProduct.getName());
+			if (existingProduct.getImage() != null && !existingProduct.getImage().equals(Constants.PRODUCTS_DEFAULT_IMAGE)) productService.deletePhotoFromDisk(existingProduct.getImage());
+			String storedFileName = productService.savePhotoToDisk(multipartFile, fileName, subProduct.getName());
 			subProduct.setImage(storedFileName);
 		} else {
 			subProduct.setImage(existingProduct.getImage());
 		}
 		
-		productRepo.save(subProduct.toExistingProduct());
+		productService.save(subProduct.toExistingProduct());
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
@@ -300,47 +293,16 @@ public class ProductController {
 	public String deleteSubProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws Exception {
 		log.info("Method deleteSubProduct()");
 		
-		Optional<Product> optionalSubProduct = productRepo.findById(id);
+		Optional<Product> optionalSubProduct = productService.findById(id);
 		if (!optionalSubProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
 		Product subProduct = optionalSubProduct.get();
 		if (subProduct.getFatherProduct() == null) throw new GenericException(messages.get("messages.product.not.found"));
 		
 		subProduct.setEnabled(false);
-		productRepo.save(subProduct);
+		productService.save(subProduct);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.deleted"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 	    return "redirect:/products";
-	}
-	
-	private String savePhotoToDisk(MultipartFile multipartFile, String fileName, String desiredName) throws IOException {
-		String fileExtension = fileName.substring(fileName.lastIndexOf('.'));
-		String storedFileName = desiredName.toLowerCase() + "_" + System.currentTimeMillis() + fileExtension;
-		
-		String uploadDir = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH;
-        FileUploadUtil.saveFile(uploadDir, storedFileName, multipartFile);
-        return storedFileName;
-	}
-	
-	private void deletePhotoFromDisk(String fileName) {
-		String fullFilePath = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + fileName;
-		File file = new File(fullFilePath); 
-	    if (file.exists() && file.delete()) { 
-	      log.info("Deleted the file: " + file.getName());
-	    } else {
-	    	log.info("Failed to delete the file.");
-	    }
-	}
-	
-	private String getBase64ImageString(String imageName) throws IOException {
-		String pathName = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + imageName;
-		try {
-			File file = new File(pathName);
-			byte[] fileContent = Files.readAllBytes(file.toPath());
-	        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(fileContent);
-		} catch (IOException e) {
-			log.error("File " + pathName + " not found!");
-			return null;
-		}
 	}
 }

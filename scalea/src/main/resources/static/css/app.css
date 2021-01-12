@@ -156,6 +156,12 @@ input[type=number] {
 /* Main container */
 .page-title {
 	color: #272d3b;
+	font-size: 36px;
+	font-weight: bold;
+}
+
+.smaller-page-title {
+	color: #1F9584;
 	font-size: 28px;
 	font-weight: bold;
 }
@@ -238,6 +244,16 @@ input[type=number] {
     margin-right: -15px;
 }
 
+.row-container {
+	margin-left: 0px;
+	width: 100%;
+	margin-bottom: 10px;
+	display: -ms-flexbox;
+	display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
 .row.area {
     padding: 0px;
     margin-bottom: 00px;
@@ -307,6 +323,7 @@ input[type=number] {
     border-radius: 8px;
     margin-top: 20px;
     margin-bottom: 20px;
+    height: fit-content;
 }
 
 .table-container-rows {
@@ -423,6 +440,52 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     /*background: url(https://mywildalberta.ca/images/GFX-MWA-Parks-Reservations.png) no-repeat;*/
     margin-left: 0px;
     border-width: thin;
+}
+
+.setting-menu-item {
+	text-align: center;
+	padding: 8px;
+}
+
+.setting-menu-item.active {
+	background-color: rgb(117, 159, 253, 0.1);
+	border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 2px;
+    border-top-left-radius: 2px;
+    border-left: 7px solid #759ffd;
+    padding: 8px;
+}
+
+.black-and-bold {
+	color: black;
+	font-weight: bold;
+}
+
+.product-containers {
+	background-color: white;
+	border-radius: 8px;
+	box-shadow: 0px 0px 8px #272D3B33;
+	margin-right: 15px;
+	padding: 15px;
+	margin-top: 5px;
+}
+
+.product-name {
+	color: #272D3B;
+	font-size: 18px;
+}
+
+.product-img {
+	height: 200px;
+	width: 100%;
+	border-radius: 8px;
+	border: 1px solid #dcdcdc;
+}
+
+.sub-product-label {
+	color: #1F9584;
+	font-size: 20px;
 }
 
 /* Media queries */

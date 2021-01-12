@@ -7,39 +7,48 @@
 		<div th:replace="/commons/template.html :: menu"></div>
 		
 		<div class="main-container">
-			<h1 th:text="#{messages.product.list}"></h1>
+			<h1 th:text="#{messages.products}" class="page-title"></h1>
 			
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 			
-			<a th:href="@{/products/create}" th:text="#{messages.product.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
+			<div class="filter-row">
+				<a th:href="@{/products/create}" th:text="#{messages.product.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"  class="btn btn-primary"></a>
+			</div>
 			
-			<div th:if="${products.size() > 0}" th:each="product : ${products}">
-				<span th:text="${product.name}"></span><br/>
-				<a th:href="@{'/products/subproduct/create/{id}'(id=${product.id})}" th:text="#{messages.subproduct.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"
-					th:if="${product.withSubProducts}"></a>
-				<a th:href="@{'/products/edit/{id}'(id=${product.id})}" th:text="#{messages.product.edit}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
-				
-				<form method="POST" th:action="@{'/products/delete/{id}'(id=${product.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')">
-					<input type="submit" th:value="#{messages.product.delete}"/>
-				</form>
-				<br/>
-				
-				<b><span th:text="#{messages.subproducts}" th:if="${product.childrenProducts != null && product.childrenProducts.size() > 0}"></span></b>
-				<div th:if="${product.childrenProducts != null && product.childrenProducts.size() > 0}" th:each="child : ${product.childrenProducts}">
-					<a th:href="@{'/products/subproduct/edit/{id}'(id=${child.id})}" th:text="${child.name}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
-				
-					<form method="POST" th:action="@{'/products/subproduct/delete/{id}'(id=${child.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')">
-						<input type="submit" th:value="#{messages.subproduct.delete}"/>
+			<br/>
+			
+			<div class="row-container">
+				<div th:if="${products.size() > 0}" th:each="product : ${products}" class="product-containers col-lg-3">
+					<span class="product-name" th:text="${product.name}"></span><br/><br/>
+					
+					<img th:src="${product.base64Image}" class="img-fluid product-img"/>
+					
+					<span class="sub-product-label" th:text="#{messages.subproducts}"></span><br/>
+					
+					<a th:href="@{'/products/subproduct/create/{id}'(id=${product.id})}" th:text="#{messages.subproduct.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"
+						th:if="${product.withSubProducts}"></a>
+					<a th:href="@{'/products/edit/{id}'(id=${product.id})}" th:text="#{messages.product.edit}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
+					
+					<form method="POST" th:action="@{'/products/delete/{id}'(id=${product.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')">
+						<input type="submit" th:value="#{messages.product.delete}"/>
 					</form>
+					<br/>
+					
+					<b><span th:text="#{messages.subproducts}" th:if="${product.childrenProducts != null && product.childrenProducts.size() > 0}"></span></b>
+					<div th:if="${product.childrenProducts != null && product.childrenProducts.size() > 0}" th:each="child : ${product.childrenProducts}">
+						<a th:href="@{'/products/subproduct/edit/{id}'(id=${child.id})}" th:text="${child.name}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
+					
+						<form method="POST" th:action="@{'/products/subproduct/delete/{id}'(id=${child.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')">
+							<input type="submit" th:value="#{messages.subproduct.delete}"/>
+						</form>
+					</div>
+					
+					<div th:if="${products.size() == 0}">
+						<p th:text="#{messages.no.product}"></p>
+					</div>
 				</div>
-				
-				<br/>
 			</div>
-			
-			<div th:if="${products.size() == 0}">
-				<p th:text="#{messages.no.product}"></p>
-			</div>
-		</div>
+		</div>		
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>

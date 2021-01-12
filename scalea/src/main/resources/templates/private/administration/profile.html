@@ -5,9 +5,17 @@
 		<div th:replace="/commons/template.html :: menu"></div>
 		
 		<div class="main-container">
-			<h1 th:text="#{messages.profile}" class="page-title"></h1>
+			<h1 th:text="#{messages.settings}" class="page-title"></h1>
 			
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			
+			<div class="row-container">
+				<div th:replace="/commons/settingsmenu.html :: settingsmenu"></div>
+				
+				<div class="table-container col-lg-8 offset-lg-1">
+					<h1 th:text="#{messages.my.data}" class="smaller-page-title"></h1>
+				</div>
+			</div>
 		</div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>

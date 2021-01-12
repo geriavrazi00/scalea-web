@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -60,6 +61,9 @@ public class Product {
 	@Where(clause="enabled = true")
 	@OneToMany(mappedBy="fatherProduct")
     private Collection<Product> childrenProducts;
+	
+	@Transient
+	private String base64Image;
 
 	@Override
 	public String toString() {

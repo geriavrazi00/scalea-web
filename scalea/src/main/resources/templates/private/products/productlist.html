@@ -18,7 +18,7 @@
 			<br/>
 			
 			<div class="row-container">
-				<div th:if="${products.size() > 0}" th:each="product : ${products}" class="product-containers col-lg-2">
+				<div th:if="${products.content.size() > 0}" th:each="product : ${products.content}" class="product-containers col-lg-2">
 					<div class="row-container">
 						<div class="col" style="padding-left: 0px;">
 							<span class="product-name" th:text="${product.name}"></span>
@@ -58,8 +58,8 @@
 							
 						<br/><br/>
 						
-						<div style="overflow-y: scroll;">
-							<div th:if="${product.childrenProducts != null && product.childrenProducts.size() > 0}" th:each="child : ${product.childrenProducts}" class="row-container bottom-border" style="padding-bottom: 12px;">
+						<div style="overflow: auto;" th:class="${product.childrenProducts != null && product.childrenProducts.size() > 0 ? 'product-container-height' : ''}">
+							<div th:if="${product.childrenProducts != null && product.childrenProducts.size() > 0}" th:each="child : ${product.childrenProducts}" class="row-container bottom-border" style="padding-bottom: 12px; padding-right: 8px;">
 								<div class="col-8" style="padding-left: 0px;">
 									<span class="sub-product-name" th:text="${child.name}"></span>
 								</div>
@@ -86,12 +86,30 @@
 							<p th:text="#{messages.no.subproduct}"></p>
 						</div>
 					</div>
-					
 				</div>
 				
-				<div th:if="${products.size() == 0}">
+				<div th:if="${products.content.size() == 0}">
 					<p th:text="#{messages.no.product}"></p>
 				</div>
+			</div>
+			
+			<div th:if="${products.totalPages > 1 && products.content.size() > 0}">
+				<ul class="pagination">
+					<li th:class="${products.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/products(size=${products.size}, page=${products.number})}">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+					<li th:if="${products.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+					    <a th:href="@{/products(size=${products.size}, page=${pageNumber})}" th:text=${pageNumber} 
+					    	th:class="${pageNumber == products.number + 1} ? 'page-link active' : 'page-link'"></a>
+					</li>
+					<li th:class="${(products.number + 1) == products.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/products(size=${products.size}, page=${products.number + 2})}">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
 			</div>
 		</div>		
 		

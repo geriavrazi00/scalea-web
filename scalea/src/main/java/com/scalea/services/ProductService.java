@@ -7,6 +7,8 @@ import java.util.Base64;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,8 +32,8 @@ public class ProductService {
 		return productRepo.findByEnabled(enabled);
 	}
 	
-	public Iterable<Product> findByFatherProductIsNullAndEnabledIsTrue() throws IOException {
-		Iterable<Product> products = productRepo.findByFatherProductIsNullAndEnabledIsTrue();
+	public Page<Product> findByFatherProductIsNullAndEnabledIsTrue(Pageable pageable) throws IOException {
+		Page<Product> products = productRepo.findByFatherProductIsNullAndEnabledIsTrueOrderByName(pageable);
 		
 		for (Product product: products) {
 			product.setBase64Image(this.getBase64ImageString(product.getImage()));

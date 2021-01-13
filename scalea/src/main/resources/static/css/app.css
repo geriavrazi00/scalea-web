@@ -4,6 +4,187 @@
 	color: red;
 }
 
+/* Font */
+@font-face {
+  	font-family: "ttcommons-black";
+  	src: url("../fonts/eot/TTCommons-Black.eot");
+  	src: url("../fonts/eot/TTCommons-Black.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Black.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Black.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Black.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-black-italic";
+  	src: url("../fonts/eot/TTCommons-BlackItalic.eot");
+  	src: url("../fonts/eot/TTCommons-BlackItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-BlackItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-BlackItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-BlackItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-bold";
+  	src: url("../fonts/eot/TTCommons-Bold.eot");
+  	src: url("../fonts/eot/TTCommons-Bold.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Bold.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Bold.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-bold-italic";
+  	src: url("../fonts/eot/TTCommons-BoldItalic.eot");
+  	src: url("../fonts/eot/TTCommons-BoldItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-BoldItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-BoldItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-BoldItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-demi-bold";
+  	src: url("../fonts/eot/TTCommons-DemiBold.eot");
+  	src: url("../fonts/eot/TTCommons-DemiBold.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-DemiBold.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-DemiBold.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-DemiBold.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-demi-bold-italic";
+  	src: url("../fonts/eot/TTCommons-DemiBoldItalic.eot");
+  	src: url("../fonts/eot/TTCommons-DemiBoldItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-DemiBoldItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-DemiBoldItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-DemiBoldItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-extra-bold";
+  	src: url("../fonts/eot/TTCommons-ExtraBold.eot");
+  	src: url("../fonts/eot/TTCommons-ExtraBold.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-ExtraBold.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-ExtraBold.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-ExtraBold.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-extra-bold-italic";
+  	src: url("../fonts/eot/TTCommons-ExtraBoldItalic.eot");
+  	src: url("../fonts/eot/TTCommons-ExtraBoldItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-ExtraBoldItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-ExtraBoldItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-ExtraBoldItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-extra-light";
+  	src: url("../fonts/eot/TTCommons-ExtraLight.eot");
+  	src: url("../fonts/eot/TTCommons-ExtraLight.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-ExtraLight.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-ExtraLight.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-ExtraLight.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-extra-light-italic";
+  	src: url("../fonts/eot/TTCommons-ExtraLightItalic.eot");
+  	src: url("../fonts/eot/TTCommons-ExtraLightItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-ExtraLightItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-ExtraLightItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-ExtraLightItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-italic";
+  	src: url("../fonts/eot/TTCommons-Italic.eot");
+  	src: url("../fonts/eot/TTCommons-Italic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Italic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Italic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Italic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-light";
+  	src: url("../fonts/eot/TTCommons-Light.eot");
+  	src: url("../fonts/eot/TTCommons-Light.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Light.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Light.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Light.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-light-italic";
+  	src: url("../fonts/eot/TTCommons-LightItalic.eot");
+  	src: url("../fonts/eot/TTCommons-LightItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-LightItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-LightItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-LightItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-medium";
+  	src: url("../fonts/eot/TTCommons-Medium.eot");
+  	src: url("../fonts/eot/TTCommons-Medium.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Medium.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Medium.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-medium-italic";
+  	src: url("../fonts/eot/TTCommons-MediumItalic.eot");
+  	src: url("../fonts/eot/TTCommons-MediumItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-MediumItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-MediumItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-MediumItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-regular";
+  	src: url("../fonts/eot/TTCommons-Regular.eot");
+  	src: url("../fonts/eot/TTCommons-Regular.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Regular.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Regular.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-thin";
+  	src: url("../fonts/eot/TTCommons-Thin.eot");
+  	src: url("../fonts/eot/TTCommons-Thin.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Thin.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Thin.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Thin.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-thin-italic";
+  	src: url("../fonts/eot/TTCommons-ThinItalic.eot");
+  	src: url("../fonts/eot/TTCommons-ThinItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-ThinItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-ThinItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-ThinItalic.ttf") format("truetype");
+}
+
 /* Main stuff */
 body {
 	background-color: #f4f7fe;
@@ -506,6 +687,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	font-size: 14px;
 }
 
+.product-container-height {
+	height: 220px;
+	width: inherit;
+}
+
 /* Media queries */
 
 @media screen and (max-height: 450px) {
@@ -517,4 +703,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	.row-table-text {
 		padding-right: 0px;
 	}
+}
+
+/* Scroll bar */
+/* width */
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }

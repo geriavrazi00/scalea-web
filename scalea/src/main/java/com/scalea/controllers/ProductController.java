@@ -8,6 +8,8 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +30,7 @@ import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.SubProductDTO;
 import com.scalea.services.ProductService;
 import com.scalea.utils.Constants;
+import com.scalea.utils.Utils;
 
 @Controller
 @RequestMapping("/products")
@@ -36,6 +39,9 @@ public class ProductController {
 	private ProductService productService;
 	private Logger log;
 	private Messages messages;
+	
+	private static final int DEFAULT_PAGE = 1;
+	private static final int DEFAULT_SIZE = 5;
 	
 	@Autowired
 	public ProductController(ProductService productService, Messages messages) {
@@ -46,11 +52,15 @@ public class ProductController {
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_PRODUCTS_PRIVILEGE + "', '" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "', '" + Constants.DELETE_PRODUCTS_PRIVILEGE + "')")
 	@GetMapping
-	public String allProducts(Model model) throws IOException {
+	public String allProducts(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws IOException {
 		log.info("Method allProducts()");
-		Iterable<Product> products = productService.findByFatherProductIsNullAndEnabledIsTrue();
+		
+		int currentPage = page.orElse(DEFAULT_PAGE);
+        int pageSize = size.orElse(DEFAULT_SIZE);
+        Page<Product> products = productService.findByFatherProductIsNullAndEnabledIsTrue(PageRequest.of(currentPage - 1, pageSize));
 		
 		model.addAttribute("products", products);
+		model.addAttribute("pageNumbers", Utils.getPageNumbersList(products.getTotalPages()));
 		return "private/products/productlist";
 	}
 	

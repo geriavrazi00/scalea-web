@@ -467,17 +467,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	border-radius: 8px;
 	box-shadow: 0px 0px 8px #272D3B33;
 	margin-right: 15px;
-	padding: 15px;
+	padding: 10px;
 	margin-top: 5px;
+	height: 500px;
 }
 
 .product-name {
 	color: #272D3B;
 	font-size: 18px;
+	font-weight: bold;
 }
 
 .product-img {
-	height: 200px;
+	height: 145px;
 	width: 100%;
 	border-radius: 8px;
 	border: 1px solid #dcdcdc;
@@ -486,6 +488,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .sub-product-label {
 	color: #1F9584;
 	font-size: 20px;
+}
+
+.product-price {
+	color: #759FFD;
+	font-size: 16px;
+}
+
+.sub-product-name {
+	color: #292A2F;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.sub-product-price {
+	color: #759FFD;
+	font-size: 14px;
 }
 
 /* Media queries */

@@ -79,7 +79,11 @@ public class ProductService {
 	        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(fileContent);
 		} catch (IOException e) {
 			System.err.println("File " + pathName + " not found!");
-			return null;
+			
+			pathName = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + Constants.PRODUCTS_DEFAULT_IMAGE;
+			File file = new File(pathName);
+			byte[] fileContent = Files.readAllBytes(file.toPath());
+	        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(fileContent);
 		}
 	}
 }

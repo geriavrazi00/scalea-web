@@ -1,47 +1,68 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head th:replace="/commons/template.html :: headerfiles"></head>
-	<body>
-		<div th:replace="/commons/template.html :: menu"></div>
-		
-		<div class="main-container">
-			<h1 th:text="#{messages.product.edit}"></h1>
-			
-			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
-			
-			<form method="POST" th:action="@{'/products/edit/{id}'(id=${product.id})}" th:object="${product}" enctype="multipart/form-data">
-				<div th:if="${#fields.hasErrors()}">
-					<span class="validationError" th:text="#{messages.correct.problems}"></span>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+	<div th:fragment="editproduct">
+		<form method="POST" th:action="@{/products/update(size=${products.size}, page=${products.number + 1})}" th:object="${productDTO}" enctype="multipart/form-data">
+			<input type="hidden" id="edit-product-id" name="edit-product-id" th:field="*{id}"/>
+			<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModal" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="custom-modal-header" style="display: unset;">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        						<span aria-hidden="true">&times;</span>
+      						</button>
+      						
+      						<br/>
+      						
+							<h5 class="modal-title" th:text="#{messages.product.edit}" style="width: 100%;"></h5>
+    					</div>
+						<div class="modal-body" style="padding-top: 0;">
+							<div class="row">
+								<div class="col-lg-12">
+									<span class="row-table-text" th:text="#{messages.name} + ' *'"></span>
+									<input id="edit-product-name"  class="text-input" type="text" name="name" th:field="*{name}" required/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+								</div>
+								
+								<div class="col-lg-12" style="margin-top: 10px;">
+									<img id="edit-product-current-image" class="img-fluid product-img"/>
+								</div>
+								
+								<div class="col-lg-12" style="margin-top: 10px;">
+									<label for="img" th:text="#{messages.image}"></label>
+									<input id="edit-product-img" type="file" name="img" accept="image/png, image/jpeg, image/jpg" />
+								</div>
+								
+								<div class="col-lg-12" style="margin-top: 10px;">
+									<span class="row-table-text" th:text="#{messages.has.subproducts}"></span>
+									<input type="checkbox" id="edit-product-subproducts" name="edit-product-subproducts" th:field="*{withSubProducts}" onchange="changeEditProductPrice()"/>
+								</div>
+								
+								<div class="col-lg-12" style="margin-top: 10px;">
+									<span class="row-table-text" th:text="#{messages.price.per.kg}"></span>
+									<input type="number" id="edit-product-price" class="text-input" name="edit-product-price" th:field="*{price}" step=".0001" required/>
+									<br />
+									<span class="validationError" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+								</div>
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<div class="col">
+								<input class="btn btn-primary" type="submit" th:value="#{messages.save}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"/>
+							</div>
+						</div>
+					</div>
 				</div>
-				
-				<input type="hidden" th:field="*{image}"/>
-				
-				<label for="name" th:text="#{messages.name}"></label>
-				<input type="text" name="name" th:field="*{name}"/>
-				<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
-				<br />
-				
-				<label for="subproduct" th:text="#{messages.has.subproducts}"></label>
-				<input type="checkbox" id="subproduct" name="subproduct" th:field="*{withSubProducts}" onchange="changeProductPrice()"/>
-				<br />
-				
-				<label for="price" th:text="#{messages.price.per.kg}"></label>
-				<input type="number" id="price" name="price" th:field="*{price}" step=".0001" th:disabled="*{withSubProducts}"/>
-				<span class="validationError" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
-				<br />
-				
-				<label for="current_img" th:text="#{messages.image}" th:if="${imageSrc != null}"></label>
-				<img th:src="${imageSrc}" th:if="${imageSrc != null}" style="height: 200px; width: auto;">
-				<br />
-				
-				<label for="img" th:text="#{messages.image}"></label>
-				<input type="file" name="img" accept="image/png, image/jpeg, image/jpg" />
-				<br />
-				
-				<input type="submit" th:value="#{messages.save}" />
-			</form>
-		</div>
-		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
-	</body>
+			</div>
+			
+			<div th:if="${#fields.hasErrors()}">
+				<script type="text/javascript">
+					$('#editProductModal').modal('show');
+				</script>
+			</div>
+		</form>
+	</div>
 </html>

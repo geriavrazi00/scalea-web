@@ -293,6 +293,8 @@ input[type=number] {
   padding-top: 150px;
   background-color: #1f9583;
   box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  font-family: ttcommons-demi-bold;
+  font-size: 16px;
 }
 
 .sidenav a {
@@ -339,7 +341,7 @@ input[type=number] {
 .page-title {
 	color: #272d3b;
 	font-size: 36px;
-	font-weight: bold;
+	font-family: ttcommons-bold;
 }
 
 .smaller-page-title {
@@ -354,8 +356,8 @@ input[type=number] {
     background-color: #1f9583;
     border-color: #1f9583;
     font-size: 14px;
-    font-weight: bold;
     border-radius: 8px;
+    font-family: ttcommons-demi-bold;
 }
 
 .btn-primary:hover {
@@ -443,7 +445,7 @@ input[type=number] {
 
 .row-table-text {
 	padding-right: 20px;
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .row-table-text-2 {
@@ -460,6 +462,8 @@ input[type=number] {
 	background-color: #f4f7fe;
 	padding: 5px 10px;
 	border-radius: 5px;
+	font-size: 18px;
+	padding-top: 9px;
 }
 
 .row-table-value-2 {
@@ -657,7 +661,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .product-name {
 	color: #272D3B;
 	font-size: 18px;
-	font-weight: bold;
+	font-family: ttcommons-medium;
 }
 
 .product-img {
@@ -670,22 +674,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .sub-product-label {
 	color: #1F9584;
 	font-size: 20px;
+	font-family: ttcommons-medium;
 }
 
 .product-price {
 	color: #759FFD;
 	font-size: 16px;
+	font-family: ttcommons-medium;
 }
 
 .sub-product-name {
 	color: #292A2F;
 	font-size: 16px;
-	font-weight: bold;
+	font-family: ttcommons-medium;
 }
 
 .sub-product-price {
 	color: #759FFD;
 	font-size: 14px;
+	font-family: ttcommons-medium;
 }
 
 .product-container-height {

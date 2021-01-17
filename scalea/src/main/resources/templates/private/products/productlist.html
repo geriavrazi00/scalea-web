@@ -12,7 +12,7 @@
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 			
 			<div class="filter-row">
-				<a th:href="@{/products/create}" th:text="#{messages.product.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')" class="btn btn-primary"></a>
+				<a href="#" th:text="#{messages.product.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')" class="btn btn-primary" data-toggle="modal" data-target="#createProductModal"></a>
 			</div>
 			
 			<br/>
@@ -25,12 +25,12 @@
 						</div>
 						
 						<div class="col" style="text-align: end; padding-right: 0px;">
-							<a th:href="@{'/products/edit/{id}'(id=${product.id})}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')" style="margin-right: 15%;">
+							<a th:id="'editProductHref' + ${product.id}" th:href="@{'/products/{id}'(id=${product.id})}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')" style="margin-right: 15%;" th:onclick="'loadProduct(event, ' + ${product.id} + ')'">
 								<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
 							</a>
 							
-							<form method="POST" th:action="@{'/products/delete/{id}'(id=${product.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')" style="display: initial;">
-								<a href="#" data-toggle="modal">
+							<form th:id="'deleteProductForm' + ${product.id}" method="POST" th:action="@{'/products/delete/{id}'(id=${product.id}, size=${products.size}, page=${products.number + 1})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')" style="display: initial;">
+								<a href="#" data-toggle="modal" data-target="#deleteProductModal" th:onclick="'setDeleteProductId(' + ${product.id} + ')'">
 									<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i>
 								</a>
 							</form>
@@ -68,6 +68,10 @@
 									<a th:href="@{'/products/subproduct/edit/{id}'(id=${child.id})}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')" style="margin-right: 15%;">
 										<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
 									</a>
+									
+									<!-- <a th:id="'editVacancyHref' + ${vacancy.id}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadVacancy(event, ' + ${vacancy.id} + ', ' + ${employees.size()} + ')'" th:if="${vacancy.employee == null}">
+										<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
+									</a> -->
 									
 									<form method="POST" th:action="@{'/products/subproduct/delete/{id}'(id=${child.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')" style="display: initial;">
 										<a href="#" data-toggle="modal">
@@ -111,7 +115,11 @@
 					</li>
 				</ul>
 			</div>
-		</div>		
+		</div>
+		
+		<div th:replace="/private/products/createproduct.html :: createproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
+		<div th:replace="/private/products/editproduct.html :: editproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
+		<div th:replace="/private/products/deleteproduct.html :: deleteproduct" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')"></div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>

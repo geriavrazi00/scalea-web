@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Product;
 import com.scalea.exceptions.GenericException;
+import com.scalea.models.dto.ProductDTO;
 import com.scalea.models.dto.SubProductDTO;
 import com.scalea.services.ProductService;
 import com.scalea.utils.Constants;
@@ -60,27 +62,34 @@ public class ProductController {
         Page<Product> products = productService.findByFatherProductIsNullAndEnabledIsTrue(PageRequest.of(currentPage - 1, pageSize));
 		
 		model.addAttribute("products", products);
+		if (model.getAttribute("product") == null) model.addAttribute("product", new Product());
+		if (model.getAttribute("productDTO") == null) model.addAttribute("productDTO", new ProductDTO());
 		model.addAttribute("pageNumbers", Utils.getPageNumbersList(products.getTotalPages()));
 		return "private/products/productlist";
 	}
 	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
-	@GetMapping("/create")
-	public String newProduct(Model model) {
-		log.info("Method newProduct()");
+	@PreAuthorize("hasAnyAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "')")
+	@GetMapping("/{id}")
+	public @ResponseBody ProductDTO getProduct(@PathVariable("id") Long id) throws GenericException, IOException {
+		log.info("Method getProduct()");
 		
-		model.addAttribute("product", new Product());
-		return "private/products/createproduct";
+		Optional<Product> product = productService.findById(id);
+		if (!product.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
+		
+		ProductDTO newProduct = new ProductDTO();
+		newProduct.toDTO(product.get());
+		newProduct.setBase64Image(productService.getBase64ImageString(newProduct.getImage()));
+		return newProduct;
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
 	@PostMapping("/create")
 	public String createProduct(@Valid Product product, Errors errors, Model model, RedirectAttributes redirectAttributes, 
-			@RequestParam("img") MultipartFile multipartFile) throws IOException {
+			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws IOException {
 		log.info("Method createProduct()");
 		
 		if (errors.hasErrors()) {
-			return "private/products/createproduct";
+			return this.allProducts(model, page, size);
 		}
 		
 		// While creating the image, we check if one was selected to upload. If so, we save it in the storage of the system. If not, we simply set the default image value and not write anything in the storage
@@ -97,30 +106,13 @@ public class ProductController {
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.product.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
-		return "redirect:/products";
+		return "redirect:/products" + paginationParameters(page, size);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
-	@GetMapping("/edit/{id}")
-	public String editProduct(@PathVariable("id") Long id, Model model) throws Exception {
-		log.info("Method editProduct()");
-		
-		Optional<Product> product = productService.findById(id);
-		if (!product.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
-		if (product.get().getFatherProduct() != null) throw new GenericException(messages.get("messages.product.not.found"));
-		
-		String image = null;
-		if (product.get().getImage() != null) image = productService.getBase64ImageString(product.get().getImage());
-		
-		model.addAttribute("imageSrc", image); 
-		model.addAttribute("product", product.get());
-		return "private/products/editproduct";
-	}
-	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
-	@PostMapping("/edit/{id}")
-	public String updateProduct(@Valid Product product, Errors errors, Model model, RedirectAttributes redirectAttributes, 
-			@RequestParam("img") MultipartFile multipartFile) throws GenericException, IOException {
+	@PostMapping("/update")
+	public String updateProduct(@Valid ProductDTO product, Errors errors, Model model, RedirectAttributes redirectAttributes, 
+			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws GenericException, IOException {
 		log.info("Method updateProduct()");
 		
 		if (errors.hasErrors()) {
@@ -128,7 +120,7 @@ public class ProductController {
 			if (product.getImage() != null) image = productService.getBase64ImageString(product.getImage());
 			
 			model.addAttribute("imageSrc", image); 
-			return "private/products/editproduct";
+			return this.allProducts(model, page, size);
 		}
 		
 		Optional<Product> existingOptionalProduct = productService.findById(product.getId());
@@ -166,13 +158,14 @@ public class ProductController {
 		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		}
 		
-		productService.save(product);
-	    return "redirect:/products";
+		productService.save(product.toExistingProduct());
+	    return "redirect:/products" + paginationParameters(page, size);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_PRODUCTS_PRIVILEGE + "'")
 	@PostMapping("/delete/{id}")
-	public String deleteProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws Exception {
+	public String deleteProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, @RequestParam("page") Optional<Integer> page, 
+			@RequestParam("size") Optional<Integer> size) throws Exception {
 		log.info("Method deleteProduct()");
 		
 		Optional<Product> optionalProduct = productService.findById(id);
@@ -191,7 +184,7 @@ public class ProductController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.product.deleted"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-	    return "redirect:/products";
+	    return "redirect:/products" + paginationParameters(page, size);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
@@ -314,5 +307,9 @@ public class ProductController {
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.deleted"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 	    return "redirect:/products";
+	}
+	
+	private String paginationParameters(Optional<Integer> page, Optional<Integer> size) {
+		return "?page=" + page.orElse(DEFAULT_PAGE) + "&size=" + size.orElse(DEFAULT_SIZE);
 	}
 }

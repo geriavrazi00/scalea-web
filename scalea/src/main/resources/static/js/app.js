@@ -144,6 +144,15 @@ function submitVacancyDeleteForm() {
 	$("#deleteVacancyForm" + id).submit(); // Submit the form
 }
 
+function setDeleteProductId(id) {
+	$("#delete-product-id").val(id);
+}
+
+function submitProductDeleteForm() {
+	id = $("#delete-product-id").val();
+	$("#deleteProductForm" + id).submit(); // Submit the form
+}
+
 function setDetachVacancyId(id) {
 	$("#detach-vacancy-id").val(id);
 }
@@ -187,4 +196,41 @@ function loadVacancy(e, vacancyId, employeesSize) {
 	else document.getElementById("updateVacancy").disabled = false;
 	
 	$('#editVacancyModal').modal('show');
+}
+
+// Products
+function loadProduct(e, id) {
+	e.preventDefault();
+	
+	var href = $("#editProductHref" + id).attr('href');
+	
+	$.get(href, function(product) {
+		$("#edit-product-id").val(product.id);
+		$("#edit-product-name").val(product.name);
+		$("#edit-product-current-image").attr("src", product.base64Image);
+		// $("#edit-product-img").val(product.image);
+		
+		var withSubProducts = product.withSubProducts;
+		$("#edit-product-subproducts").prop('checked', withSubProducts);
+		
+		if (withSubProducts) {
+			document.getElementById("edit-product-price").disabled = true;
+			$("#edit-product-price").val(0.0);
+		} else {
+			document.getElementById("edit-product-price").disabled = false;
+			$("#edit-product-price").val(product.price);
+		}
+	});
+	
+	$('#editProductModal').modal('show');
+}
+
+function changeEditProductPrice() {
+	if (document.getElementById("edit-product-price") != null) {
+		if (document.getElementById("edit-product-price").disabled == true) {
+			document.getElementById("edit-product-price").disabled = false;
+		} else {
+			document.getElementById("edit-product-price").disabled = true;
+		}
+	}
 }

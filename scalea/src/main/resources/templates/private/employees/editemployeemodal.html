@@ -5,8 +5,8 @@
 	<div th:fragment="editemployee">
 		<form method="POST" th:action="@{/employees/update}" th:object="${employee}">	
 			<div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModal" aria-hidden="true">
-				<div class="modal-dialog" role="document" style="width: max-content;">
-					<div class="modal-content">
+				<div class="modal-dialog" role="document" >
+					<div class="modal-content" style="border-radius: 15px";>
 						<div class="custom-modal-header" style="display: unset;">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
         						<span aria-hidden="true">&times;</span>
@@ -18,19 +18,24 @@
     					</div>
     					
 						<div class="modal-body" style="padding-top: 0;">
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px; text-align: center; display: block; padding-top: 0;">
+							
+							</div>
+							
 							<div class="row">
 								<div class="col">
 									<div>
-										<label for="firstName" th:text="#{messages.name}"></label>
+										<label class="modal-text-labels" for="firstName" th:text="#{messages.name}"></label>
 									</div>
-										<input type="text" name="firstName" th:field="*{firstName}"/>
+										<input class="text-input"  type="text" name="firstName" th:field="*{firstName}"/>
 										<span class="validationError" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
 								</div>
+								
 								<div class="col">
 									<div>
-										<label for="lastName" th:text="#{messages.lastname}"></label>
+										<label class="modal-text-labels" for="lastName" th:text="#{messages.lastname}"></label>
 									</div>
-										<input type="text" name="lastName" th:field="*{lastName}"/>
+										<input class="text-input" type="text" name="lastName" th:field="*{lastName}"/>
 										<span class="validationError" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
 								</div>
 							</div>
@@ -38,16 +43,16 @@
 							<div class="row">
 								<div class="col">
 									<div>
-										<label for="accountNumber" th:text="#{messages.account.number}"></label>
+										<label class="modal-text-labels" for="accountNumber" th:text="#{messages.account.number}"></label>
 									</div>
-										<input type="text" name="accountNumber" th:field="*{accountNumber}"/>
+										<input class="text-input" type="text" name="accountNumber" th:field="*{accountNumber}"/>
 										<span class="validationError" th:if="${#fields.hasErrors('accountNumber')}" th:errors="*{accountNumber}"></span>
 								</div>
 								<div class="col">
 									<div>
-										<label for="birthday" th:text="#{messages.birthday}"></label>
+										<label class="modal-text-labels" for="birthday" th:text="#{messages.birthday}"></label>
 									</div>
-										<input type="date" name="birthday" th:field="*{birthday}"/>
+										<input 	class="text-input"  type="date" name="birthday" th:field="*{birthday}"/>
 									<span class="validationError" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></span>
 								</div>
 							</div>
@@ -57,7 +62,7 @@
 									<div>
 										<label for="personalNumber" th:text="#{messages.personal.number}"></label>
 									</div>
-										<input type="text" name="personalNumber" th:field="*{personalNumber}"/>
+										<input class="text-input" type="text" name="personalNumber" th:field="*{personalNumber}"/>
 										<span class="validationError" th:if="${#fields.hasErrors('personalNumber')}" th:errors="*{personalNumber}"></span>
 									</div>
 								
@@ -65,7 +70,7 @@
 									<div>
 										<label for="email" th:text="#{messages.email}"></label>
 									</div>
-										<input type="text" name="email" th:field="*{email}"/>
+										<input class="text-input" type="text" name="email" th:field="*{email}"/>
 										<span class="validationError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
 								</div>
 							</div>
@@ -73,15 +78,15 @@
 							<div class="row">	
 								<div class="col">
 									<div>
-										<label for="phoneNumber" th:text="#{messages.phonenumber}"></label>
+										<label class="modal-text-labels" for="phoneNumber" th:text="#{messages.phonenumber}"></label>
 									</div>
-										<input type="text" name="phoneNumber" th:field="*{phoneNumber}"/>
+										<input class="text-input" type="text" name="phoneNumber" th:field="*{phoneNumber}"/>
 										<span class="validationError" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
 								</div>
 										
 								<div class="col">
 									<div>
-										<label for="supervisor" th:text="#{messages.supervisor}"></label>
+										<label class="modal-text-labels" for="supervisor" th:text="#{messages.supervisor}"></label>
 									</div>
 										<input type="checkbox" id="supervisor" name="supervisor" th:field="*{supervisor}"/>
 								</div>
@@ -90,22 +95,22 @@
 							<div class="row">
 								<div class="col" th:if="*{vacancy != null}">
 									
-										<label th:text="#{messages.current.vacancy} + ': '"></label>
+										<label class="modal-text-labels"  th:text="#{messages.current.vacancy} + ': '"></label>
 									
 									
-										<label th:text="*{vacancy.area.name + ' - ' + vacancy.number}"></label>
+										<label class="modal-text-labels" th:text="*{vacancy.area.name + ' - ' + vacancy.number}"></label>
 									
 									
 									
-										<label for="detach" th:text="#{messages.detach.vacancy}"></label>
+										<label class="modal-text-labels" for="detach" th:text="#{messages.detach.vacancy}"></label>
 									
 										<input type="checkbox" id="detach" name="detach" th:field="*{detach}" onchange="changeVacancies()"/>
 										
 									
 									
-										<label for="vacancy" th:text="#{messages.new.vacancy}" th:if="${vacancies.size() > 0}"></label>
+										<label class="modal-text-labels" for="vacancy" th:text="#{messages.new.vacancy}" th:if="${vacancies.size() > 0}"></label>
 									
-										<select id="vacancy" name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}" disabled>
+										<select class="text-input" id="vacancy" name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}" disabled>
 											<option th:text="#{messages.none}" value=""></option>
 											<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
 										</select>
@@ -114,9 +119,9 @@
 									
 								<div class="col" th:if="*{vacancy == null}">
 									<div>
-										<label for="vacancy" th:text="#{messages.vacancy}" th:if="${vacancies.size() > 0}"></label>
+										<label class="modal-text-labels" for="vacancy" th:text="#{messages.vacancy}" th:if="${vacancies.size() > 0}"></label>
 									</div>
-										<select name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}">
+										<select class="text-input" name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}">
 											<option th:text="#{messages.none}" value=""></option>
 											<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
 										</select>

@@ -4,9 +4,192 @@
 	color: red;
 }
 
+/* Font */
+@font-face {
+  	font-family: "ttcommons-black";
+  	src: url("../fonts/eot/TTCommons-Black.eot");
+  	src: url("../fonts/eot/TTCommons-Black.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Black.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Black.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Black.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-black-italic";
+  	src: url("../fonts/eot/TTCommons-BlackItalic.eot");
+  	src: url("../fonts/eot/TTCommons-BlackItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-BlackItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-BlackItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-BlackItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-bold";
+  	src: url("../fonts/eot/TTCommons-Bold.eot");
+  	src: url("../fonts/eot/TTCommons-Bold.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Bold.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Bold.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-bold-italic";
+  	src: url("../fonts/eot/TTCommons-BoldItalic.eot");
+  	src: url("../fonts/eot/TTCommons-BoldItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-BoldItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-BoldItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-BoldItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-demi-bold";
+  	src: url("../fonts/eot/TTCommons-DemiBold.eot");
+  	src: url("../fonts/eot/TTCommons-DemiBold.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-DemiBold.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-DemiBold.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-DemiBold.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-demi-bold-italic";
+  	src: url("../fonts/eot/TTCommons-DemiBoldItalic.eot");
+  	src: url("../fonts/eot/TTCommons-DemiBoldItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-DemiBoldItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-DemiBoldItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-DemiBoldItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-extra-bold";
+  	src: url("../fonts/eot/TTCommons-ExtraBold.eot");
+  	src: url("../fonts/eot/TTCommons-ExtraBold.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-ExtraBold.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-ExtraBold.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-ExtraBold.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-extra-bold-italic";
+  	src: url("../fonts/eot/TTCommons-ExtraBoldItalic.eot");
+  	src: url("../fonts/eot/TTCommons-ExtraBoldItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-ExtraBoldItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-ExtraBoldItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-ExtraBoldItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-extra-light";
+  	src: url("../fonts/eot/TTCommons-ExtraLight.eot");
+  	src: url("../fonts/eot/TTCommons-ExtraLight.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-ExtraLight.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-ExtraLight.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-ExtraLight.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-extra-light-italic";
+  	src: url("../fonts/eot/TTCommons-ExtraLightItalic.eot");
+  	src: url("../fonts/eot/TTCommons-ExtraLightItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-ExtraLightItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-ExtraLightItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-ExtraLightItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-italic";
+  	src: url("../fonts/eot/TTCommons-Italic.eot");
+  	src: url("../fonts/eot/TTCommons-Italic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Italic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Italic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Italic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-light";
+  	src: url("../fonts/eot/TTCommons-Light.eot");
+  	src: url("../fonts/eot/TTCommons-Light.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Light.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Light.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Light.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-light-italic";
+  	src: url("../fonts/eot/TTCommons-LightItalic.eot");
+  	src: url("../fonts/eot/TTCommons-LightItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-LightItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-LightItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-LightItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-medium";
+  	src: url("../fonts/eot/TTCommons-Medium.eot");
+  	src: url("../fonts/eot/TTCommons-Medium.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Medium.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Medium.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-medium-italic";
+  	src: url("../fonts/eot/TTCommons-MediumItalic.eot");
+  	src: url("../fonts/eot/TTCommons-MediumItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-MediumItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-MediumItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-MediumItalic.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-regular";
+  	src: url("../fonts/eot/TTCommons-Regular.eot");
+  	src: url("../fonts/eot/TTCommons-Regular.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Regular.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Regular.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-thin";
+  	src: url("../fonts/eot/TTCommons-Thin.eot");
+  	src: url("../fonts/eot/TTCommons-Thin.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-Thin.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-Thin.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-Thin.ttf") format("truetype");
+}
+
+@font-face {
+  	font-family: "ttcommons-thin-italic";
+  	src: url("../fonts/eot/TTCommons-ThinItalic.eot");
+  	src: url("../fonts/eot/TTCommons-ThinItalic.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/woff2/TTCommons-ThinItalic.woff2") format("woff2"),
+    url("../fonts/woff/TTCommons-ThinItalic.woff") format("woff"),
+    url("../fonts/ttf/TTCommons-ThinItalic.ttf") format("truetype");
+}
+
 /* Main stuff */
+
 body {
 	background-color: #f4f7fe;
+	font-family: ttcommons-regular;
 }
 
 .main-container {
@@ -102,7 +285,7 @@ input[type=number] {
 /* Sidenav */
 .sidenav {
   height: 100%;
-  width: 200px;
+  width: 180px;
   position: fixed;
   z-index: 1;
   top: 0;
@@ -111,6 +294,8 @@ input[type=number] {
   padding-top: 150px;
   background-color: #1f9583;
   box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  font-family: ttcommons-demi-bold;
+  font-size: 16px;
 }
 
 .sidenav a {
@@ -146,6 +331,11 @@ input[type=number] {
     padding-right: 10px;
 }
 
+.sidenav-text{
+	font-size: 15px;
+	
+}
+
 .hr-style {
 	height: 0.4px;
 	border-width: 0;
@@ -156,6 +346,12 @@ input[type=number] {
 /* Main container */
 .page-title {
 	color: #272d3b;
+	font-size: 36px;
+	font-family: ttcommons-bold;
+}
+
+.smaller-page-title {
+	color: #1F9584;
 	font-size: 28px;
 	font-weight: bold;
 }
@@ -166,8 +362,8 @@ input[type=number] {
     background-color: #1f9583;
     border-color: #1f9583;
     font-size: 14px;
-    font-weight: bold;
     border-radius: 8px;
+    font-family: ttcommons-demi-bold;
 }
 
 .btn-primary:hover {
@@ -238,6 +434,16 @@ input[type=number] {
     margin-right: -15px;
 }
 
+.row-container {
+	margin-left: 0px;
+	width: 100%;
+	margin-bottom: 10px;
+	display: -ms-flexbox;
+	display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
 .row.area {
     padding: 0px;
     margin-bottom: 00px;
@@ -245,7 +451,7 @@ input[type=number] {
 
 .row-table-text {
 	padding-right: 20px;
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .row-table-text-2 {
@@ -262,6 +468,8 @@ input[type=number] {
 	background-color: #f4f7fe;
 	padding: 5px 10px;
 	border-radius: 5px;
+	font-size: 18px;
+	padding-top: 9px;
 }
 
 .row-table-value-2 {
@@ -276,7 +484,7 @@ input[type=number] {
 }
 
 .row-table-icons {
-	color: black;
+	color: #8A8D90;
 }
 
 .active-tab {
@@ -307,6 +515,7 @@ input[type=number] {
     border-radius: 8px;
     margin-top: 20px;
     margin-bottom: 20px;
+    height: fit-content;
 }
 
 .table-container-rows {
@@ -416,6 +625,87 @@ input[type=number] {
     border-color: white;
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: rgba(0, 0, 0, 0);
+    opacity: 1;
+    display: block;
+    /*background: url(https://mywildalberta.ca/images/GFX-MWA-Parks-Reservations.png) no-repeat;*/
+    margin-left: 0px;
+    border-width: thin;
+}
+
+.setting-menu-item {
+	text-align: center;
+	padding: 8px;
+}
+
+.setting-menu-item.active {
+	background-color: rgb(117, 159, 253, 0.1);
+	border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 2px;
+    border-top-left-radius: 2px;
+    border-left: 7px solid #759ffd;
+    padding: 8px;
+}
+
+.black-and-bold {
+	color: black;
+	font-weight: bold;
+}
+
+.product-containers {
+	background-color: white;
+	border-radius: 8px;
+	box-shadow: 0px 0px 8px #272D3B33;
+	margin-right: 15px;
+	padding: 10px;
+	margin-top: 5px;
+	height: 500px;
+}
+
+.product-name {
+	color: #272D3B;
+	font-size: 18px;
+	font-family: ttcommons-medium;
+}
+
+.product-img {
+	height: 145px;
+	width: 100%;
+	border-radius: 8px;
+	border: 1px solid #dcdcdc;
+}
+
+.sub-product-label {
+	color: #1F9584;
+	font-size: 20px;
+	font-family: ttcommons-medium;
+}
+
+.product-price {
+	color: #759FFD;
+	font-size: 16px;
+	font-family: ttcommons-medium;
+}
+
+.sub-product-name {
+	color: #292A2F;
+	font-size: 16px;
+	font-family: ttcommons-medium;
+}
+
+.sub-product-price {
+	color: #759FFD;
+	font-size: 14px;
+	font-family: ttcommons-medium;
+}
+
+.product-container-height {
+	height: 220px;
+	width: inherit;
+}
+
 /* Media queries */
 
 @media screen and (max-height: 450px) {
@@ -427,4 +717,35 @@ input[type=number] {
 	.row-table-text {
 		padding-right: 0px;
 	}
+}
+
+/* Scroll bar */
+/* width */
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+.row-table-textnew{
+	font-size: 14px;
+}
+.delete-button{
+	background: none;
+    outline: white;
+    border: none;
+
 }

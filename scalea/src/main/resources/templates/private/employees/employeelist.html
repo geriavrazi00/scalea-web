@@ -17,53 +17,55 @@
 		<div th:if="${employees.size() > 0}" th:each="employee, iter : ${employees}" th:class="${iter.index == iter.size - 1 ? 'table-container-rows' : 'table-container-rows bottom-border'}">
 			
 		<div class="col">
-			<span class="row-table-text" th:text="#{messages.name}"></span>
+			<span class="row-table-textnew" th:text="#{messages.name}"></span>
 			<span class="row-table-value" th:text="${employee.firstName}"></span>
 		</div>	
 		<div class="col">
-		 	<span class="row-table-text" th:text="#{messages.lastname}"></span>
+		 	<span class="row-table-textnew" th:text="#{messages.lastname}"></span>
 		 	<span class="row-table-value" th:text="${employee.lastName}"></span>
 		 </div>
 		 <div class="col" >	
-			<span class="row-table-text" th:text="#{messages.personal.number}"></span>
+		 <span class="row-table-textnew">ID</span>
+		<!-- <span class="row-table-textnew" th:text="#{messages.personal.number}"></span> -->	
 			<span class="row-table-value" th:text="${employee.personalNumber}"></span>
 		</div>
 		<div class="col">
-			<span class="row-table-text" th:text="#{messages.status}"></span>
+			<span class="row-table-textnew" th:text="#{messages.status}"></span>
 			<span class="row-table-value" th:text="${employee.enabled} ? #{messages.active} : #{messages.not.active}" th:style="${employee.enabled} ? 'color: #1f9583;' : 'color: #f1818c;'"></span>
 		</div>
+
 		 	
 			
 		<div th:if="${employee.vacancy != null}">
 				
 			<span class="col">
-					<span class="row-table-text" th:text="#{messages.areas}"></span>
+					<span class="row-table-textnew" th:text="#{messages.areas}"></span>
 					<span class="row-table-value" th:text="${employee.vacancy.area.name}"></span>
 			</span>
 			<span class="col">
-					<span class="row-table-text" th:text="#{messages.vacancy}"></span>
+					<span class="row-table-textnew" th:text="#{messages.vacancy}"></span>
 					<span class="row-table-value" th:text="${employee.vacancy.number}"></span>
 			</span>
 		</div>
 			
 			<div  style="display:inline;" th:if="${employee.vacancy == null}">
-				<div class="col">
-					<span class="row-table-text" th:text="#{messages.areas}"></span>
+				<div style="display:inline;" class="col">
+					<span class="row-table-textnew" th:text="#{messages.areas}"></span>
 					<span class="row-table-value">-</span>
 				</div>
-				<div class="col">
-					<span class="row-table-text" th:text="#{messages.vacancy}"></span>
+				<div style="display:inline;" class="col">
+					<span class="row-table-textnew" th:text="#{messages.vacancy}"></span>
 					<span class="row-table-value">-</span>
 				</div>
 			</div>
 			
-			<div class="col" style="display:inline;">
-				<a style="display:inline;" class="row-table-text" href="#" data-toggle="modal" data-target="#editEmployeeModal" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')">
-				<i class="fas fa-pen row-table-icons"></i></a>
+			<div class="col-sm-1" style="display:inline;">
+				<a style="display:inline; padding-right: 10px;" class="row-table-textnew" href="#" data-toggle="modal" data-target="#editEmployeeModal" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')">
+				<i class="fas fa-pen-alt row-table-icons"></i></a>
 				
 				
 				<form style="display:inline;" method="POST" th:action="@{'/employees/delete/{id}'(id=${employee.id})}" sec:authorize="hasAuthority('DELETE_EMPLOYEES_PRIVILEGE')">
-				  <button type="submit" th:value="#{messages.employee.delete}">
+				  <button class="delete-button" type="submit" th:value="#{messages.employee.delete}">
 				  <i class="fas fa-times row-table-icons"></i> 
 				  </button>
 				</form>

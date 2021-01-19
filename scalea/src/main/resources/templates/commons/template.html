@@ -20,42 +20,42 @@
 		<div th:fragment="menu" sec:authorize="isAuthenticated()">
 		    <div class="sidenav">
 				<a href="/areas" sec:authorize="hasAnyAuthority('VIEW_AREAS_PRIVILEGE', 'UPSERT_AREAS_PRIVILEGE', 'DELETE_AREAS_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/areas') ? 'active' : ''}">
-					<i class="fas fa-door-open sidenav-icons"></i> <span th:text="#{messages.areas}"></span>
+					<i class="fas fa-door-open sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.areas}"></span>
 				</a>
 				
 			  	<a href="/employees" sec:authorize="hasAnyAuthority('VIEW_EMPLOYEES_PRIVILEGE', 'UPSERT_EMPLOYEES_PRIVILEGE', 'DELETE_EMPLOYEES_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/employees') ? 'active' : ''}">
-			  		<i class="fas fa-suitcase sidenav-icons"></i> <span th:text="#{messages.employees}"></span>
+			  		<i class="fas fa-suitcase sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.employees}"></span>
 			  	</a>
 			  	
 			  	<a href="#" th:class="${#httpServletRequest.requestURI.contains('/statistics') ? 'active' : ''}">
-			  		<i class="fas fa-chart-line sidenav-icons"></i> <span th:text="#{messages.statistics}"></span>
+			  		<i class="fas fa-chart-line sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.statistics}"></span>
 			  	</a>
 			  	
 			  	<a href="/products" sec:authorize="hasAnyAuthority('VIEW_PRODUCTS_PRIVILEGE', 'UPSERT_PRODUCTS_PRIVILEGE', 'DELETE_PRODUCTS_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/products') ? 'active' : ''}">
-			  		<i class="fas fa-shopping-bag sidenav-icons"></i> <span th:text="#{messages.products}"></span>
+			  		<i class="fas fa-shopping-bag sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.products}"></span>
 			  	</a>
 			  	
 			  	<a href="#" th:class="${#httpServletRequest.requestURI.contains('/finance') ? 'active' : ''}">
-			  		<i class="fas fa-calculator sidenav-icons"></i> <span th:text="#{messages.finance}"></span>
+			  		<i class="fas fa-calculator sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.finance}"></span>
 			  	</a>
 			  	
 			  	<a href="/users" sec:authorize="hasAnyAuthority('VIEW_USERS_PRIVILEGE', 'UPSERT_USERS_PRIVILEGE', 'DELETE_USERS_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/users') ? 'active' : ''}">
-			  		<i class="fas fa-users sidenav-icons"></i> <span th:text="#{messages.users}"></span>
+			  		<i class="fas fa-users sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.users}"></span>
 			  	</a>
 			  	
 		    	<a href="/roles" sec:authorize="hasAnyAuthority('VIEW_ROLES_PRIVILEGE', 'UPSERT_ROLES_PRIVILEGE', 'DELETE_ROLES_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/roles') ? 'active' : ''}">
-		    		<i class="fas fa-user-tag sidenav-icons"></i> <span th:text="#{messages.roles}"></span>
+		    		<i class="fas fa-user-tag sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.roles}"></span>
 		    	</a>
 			  	
 			  	<hr class="hr-style">
 
 			  	<a href="#" th:class="${#httpServletRequest.requestURI.contains('/settings') ? 'active' : ''}">
-			  		<i class="fas fa-cogs sidenav-icons"></i> <span th:text="#{messages.settings}"></span>
+			  		<i class="fas fa-cogs sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.settings}"></span>
 			  	</a>
 			  	
 			  	<form method="POST" th:action="@{/logout}">
 			  		<a href="#" onclick="$(this).closest('form').submit();">
-			  			<i class="fas fa-sign-out-alt sidenav-icons"></i> <span th:text="#{messages.logout}"></span>
+			  			<i class="fas fa-sign-out-alt sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.logout}"></span>
 			  		</a>
 				</form>
 			</div>

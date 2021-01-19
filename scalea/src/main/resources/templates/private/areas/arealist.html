@@ -16,7 +16,7 @@
 			</div>
 			
 			<div class="row-table">
-				<div th:if="${areas.content.size() > 0}" th:each="area : ${areas.content}" class="row">
+				<div th:if="${areas.content.size() > 0}" th:each="area : ${areas.content}" class="singular-row">
 					<div class="col">
 						<span class="row-table-text" th:text="#{messages.name}"></span>
 						<a class="row-table-value" th:href="@{'/areas/{id}/vacancies'(id=${area.id})}" th:text="${area.name}"></a>

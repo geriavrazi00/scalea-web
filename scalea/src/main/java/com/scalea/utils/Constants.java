@@ -45,6 +45,11 @@ public interface Constants {
 	public static final String UPSERT_PRODUCTS_PRIVILEGE = "UPSERT_PRODUCTS_PRIVILEGE";
 	public static final String DELETE_PRODUCTS_PRIVILEGE = "DELETE_PRODUCTS_PRIVILEGE";
 	
+	public static final String VIEW_PROCESSES_HISTORIC_PRIVELEGE = "VIEW_PROCESSES_HISTORIC_PRIVELEGE";
+	
+	public static final String VIEW_PROFILE_PRIVILEGE = "VIEW_PROFILE_PRIVILEGE";
+	public static final String UPDATE_PROFILE_PRIVILEGE = "UPDATE_PROFILE_PRIVILEGE";
+	
 	// Configuration options
 	public static final String IMAGE_PATH = "image_path";
 	public static final String PRODUCTS_IMAGE_SYSTEM_PATH = "products\\";

@@ -7,39 +7,119 @@
 		<div th:replace="/commons/template.html :: menu"></div>
 		
 		<div class="main-container">
-			<h1 th:text="#{messages.product.list}"></h1>
+			<h1 th:text="#{messages.products}" class="page-title"></h1>
 			
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 			
-			<a th:href="@{/products/create}" th:text="#{messages.product.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
+			<div class="filter-row">
+				<a href="#" th:text="#{messages.product.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')" class="btn btn-primary" data-toggle="modal" data-target="#createProductModal"></a>
+			</div>
 			
-			<div th:if="${products.size() > 0}" th:each="product : ${products}">
-				<span th:text="${product.name}"></span><br/>
-				<a th:href="@{'/products/subproduct/create/{id}'(id=${product.id})}" th:text="#{messages.subproduct.create}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"
-					th:if="${product.withSubProducts}"></a>
-				<a th:href="@{'/products/edit/{id}'(id=${product.id})}" th:text="#{messages.product.edit}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
-				
-				<form method="POST" th:action="@{'/products/delete/{id}'(id=${product.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')">
-					<input type="submit" th:value="#{messages.product.delete}"/>
-				</form>
-				<br/>
-				
-				<b><span th:text="#{messages.subproducts}" th:if="${product.childrenProducts != null && product.childrenProducts.size() > 0}"></span></b>
-				<div th:if="${product.childrenProducts != null && product.childrenProducts.size() > 0}" th:each="child : ${product.childrenProducts}">
-					<a th:href="@{'/products/subproduct/edit/{id}'(id=${child.id})}" th:text="${child.name}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></a>
-				
-					<form method="POST" th:action="@{'/products/subproduct/delete/{id}'(id=${child.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')">
-						<input type="submit" th:value="#{messages.subproduct.delete}"/>
-					</form>
+			<br/>
+			
+			<div class="row-container">
+				<div th:if="${products.content.size() > 0}" th:each="product : ${products.content}" class="product-containers col-lg-2">
+					<div class="row-container">
+						<div class="col" style="padding-left: 0px;">
+							<span class="product-name" th:text="${product.name}"></span>
+						</div>
+						
+						<div class="col" style="text-align: end; padding-right: 0px;">
+							<a th:id="'editProductHref' + ${product.id}" th:href="@{'/products/{id}'(id=${product.id})}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')" style="margin-right: 15%;" th:onclick="'loadProduct(event, ' + ${product.id} + ')'">
+								<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
+							</a>
+							
+							<form th:id="'deleteProductForm' + ${product.id}" method="POST" th:action="@{'/products/delete/{id}'(id=${product.id}, size=${products.size}, page=${products.number + 1})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')" style="display: initial;">
+								<a href="#" data-toggle="modal" data-target="#deleteProductModal" th:onclick="'setDeleteProductId(' + ${product.id} + ')'">
+									<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i>
+								</a>
+							</form>
+						</div>
+					</div>
+					
+					<img th:src="${product.base64Image}" class="img-fluid product-img"/>
+					<br/><br/>
+					
+					<div th:if="${!product.withSubProducts}">
+						<span class="sub-product-label" th:text="#{messages.price.per.kg}"></span><br/>
+						<span class="product-price" th:text="${product.price} + ' ' + #{messages.all.per.kg}"></span><br/>
+					</div>
+					
+					<div th:if="${product.withSubProducts}" class="row-container">
+						<div class="col" style="padding-left: 0px;">
+							<span class="sub-product-label" th:text="#{messages.subproducts}"></span>
+						</div>
+						
+						<div class="col" style="text-align: end;">
+							<a th:href="@{'/products/subproduct/create/{id}'(id=${product.id})}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')">
+								<i class="fas fa-plus row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.subproduct.create}"></i>
+							</a>
+						</div>
+							
+						<br/><br/>
+						
+						<div style="overflow: auto;" th:class="${product.childrenProducts != null && product.childrenProducts.size() > 0 ? 'product-container-height' : ''}">
+							<div th:if="${product.childrenProducts != null && product.childrenProducts.size() > 0}" th:each="child : ${product.childrenProducts}" class="row-container bottom-border" style="padding-bottom: 12px; padding-right: 8px;">
+								<div class="col-8" style="padding-left: 0px;">
+									<span class="sub-product-name" th:text="${child.name}"></span>
+								</div>
+							 
+								 <div class="col-4" style="text-align: end; padding-right: 0px;">
+									<a th:href="@{'/products/subproduct/edit/{id}'(id=${child.id})}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')" style="margin-right: 15%;">
+										<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
+									</a>
+									
+									<!-- <a th:id="'editVacancyHref' + ${vacancy.id}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadVacancy(event, ' + ${vacancy.id} + ', ' + ${employees.size()} + ')'" th:if="${vacancy.employee == null}">
+										<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
+									</a> -->
+									
+									<form method="POST" th:action="@{'/products/subproduct/delete/{id}'(id=${child.id})}" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')" style="display: initial;">
+										<a href="#" data-toggle="modal">
+											<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i>
+										</a>
+									</form>
+								</div>
+								
+								<div>
+									<span class="sub-product-price" th:text="${child.price} + ' ' + #{messages.all.per.kg}"></span>
+								</div>
+							</div>
+						</div>
+						
+						<div th:if="${product.childrenProducts == null || product.childrenProducts.size() == 0}" style="width: 100%; text-align: center;">
+							<p th:text="#{messages.no.subproduct}"></p>
+						</div>
+					</div>
 				</div>
 				
-				<br/>
+				<div th:if="${products.content.size() == 0}">
+					<p th:text="#{messages.no.product}"></p>
+				</div>
 			</div>
 			
-			<div th:if="${products.size() == 0}">
-				<p th:text="#{messages.no.product}"></p>
+			<div th:if="${products.totalPages > 1 && products.content.size() > 0}">
+				<ul class="pagination">
+					<li th:class="${products.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/products(size=${products.size}, page=${products.number})}">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+					<li th:if="${products.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+					    <a th:href="@{/products(size=${products.size}, page=${pageNumber})}" th:text=${pageNumber} 
+					    	th:class="${pageNumber == products.number + 1} ? 'page-link active' : 'page-link'"></a>
+					</li>
+					<li th:class="${(products.number + 1) == products.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/products(size=${products.size}, page=${products.number + 2})}">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
 			</div>
 		</div>
+		
+		<div th:replace="/private/products/createproduct.html :: createproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
+		<div th:replace="/private/products/editproduct.html :: editproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
+		<div th:replace="/private/products/deleteproduct.html :: deleteproduct" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')"></div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>

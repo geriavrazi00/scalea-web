@@ -1,6 +1,8 @@
 package com.scalea.controllers;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,9 +35,9 @@ import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.AlterVacancyDTO;
 import com.scalea.models.dto.AreaDTO;
 import com.scalea.repositories.EmployeeRepository;
-import com.scalea.repositories.ProcessRepository;
 import com.scalea.repositories.ProductRepository;
 import com.scalea.services.AreaService;
+import com.scalea.services.ProcessService;
 import com.scalea.services.VacancyService;
 import com.scalea.utils.Constants;
 import com.scalea.utils.Utils;
@@ -46,7 +48,7 @@ public class AreaController {
 
 	private AreaService areaService;
 	private VacancyService vacancyService;
-	private ProcessRepository processRepo;
+	private ProcessService processService;
 	private EmployeeRepository employeeRepo;
 	private ProductRepository productRepo;
 	private Logger log;
@@ -56,11 +58,11 @@ public class AreaController {
 	private static final int DEFAULT_SIZE = 7;
 	
 	@Autowired
-	public AreaController(AreaService areaService, VacancyService vacancyService, ProcessRepository processRepo, EmployeeRepository employeeRepo,
+	public AreaController(AreaService areaService, VacancyService vacancyService, ProcessService processService, EmployeeRepository employeeRepo,
 			ProductRepository productRepo, Messages messages) {
 		this.areaService = areaService;
 		this.vacancyService = vacancyService;
-		this.processRepo = processRepo;
+		this.processService = processService;
 		this.employeeRepo = employeeRepo;
 		this.productRepo = productRepo;
 		this.log = LoggerFactory.getLogger(AreaController.class);
@@ -276,7 +278,7 @@ public class AreaController {
 		area.get().calculateEmployeeNumber();
 		
 		Page<Vacancy> vacancies = vacancyService.findByAreaAndEnabled(area.get(), true, PageRequest.of(currentPage - 1, pageSize));
-		Optional<Process> latestProcess = processRepo.findFirstByAreaOrderByStartedAtDesc(area.get());
+		Optional<Process> latestProcess = processService.findFirstByAreaOrderByStartedAtDesc(area.get());
 		Iterable<Employee> employees = employeeRepo.findByVacancyIsNullAndEnabledIsTrue();
 		
 		model.addAttribute("area", area.get());
@@ -418,31 +420,37 @@ public class AreaController {
 	
 	/*************************************** Historic ***************************************************/
 	
-	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_VACANCIES_PRIVILEGE + "', '" + Constants.UPSERT_VACANCIES_PRIVILEGE + "', '" + Constants.DELETE_VACANCIES_PRIVILEGE + "')")
+	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_PROCESSES_HISTORIC_PRIVELEGE + "')")
 	@GetMapping("/{id}/historic")
-	public String showHistoric(Model model, @PathVariable("id") Long id, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws GenericException {
+	public String showHistoric(Model model, @PathVariable("id") Long id, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size, 
+			@RequestParam("date") Optional<String> date, @RequestParam("product") Optional<Long> product) throws GenericException, ParseException {
 		log.info("Method showHistoric()");
 		
 		int currentPage = page.orElse(DEFAULT_PAGE);
         int pageSize = size.orElse(DEFAULT_SIZE);
+        Date startedAt = date.orElse(null) == null ? null : Utils.inputDateStringToDate(date.orElse(null));
+        Optional<Product> selectedProduct = productRepo.findById(product.orElse(0L));        
         
         Optional<Area> optionalArea = areaService.findById(id);
 		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
 		Area area = optionalArea.get();
 		area.calculateEmployeeNumber();
 		
-		Page<Process> processes = processRepo.findByAreaOrderByCreatedAtDesc(area, PageRequest.of(currentPage - 1, pageSize));
-		Optional<Process> latestProcess = processRepo.findFirstByAreaOrderByStartedAtDesc(area);
-		Iterable<Product> products = this.productRepo.findByEnabledIsTrueAndWithSubProductsIsFalse();
+		Optional<Process> latestProcess = processService.findFirstByAreaOrderByStartedAtDesc(area);
+		Iterable<Product> products = productRepo.findByEnabledIsTrueAndWithSubProductsIsFalse();
+		Page<Process> processes = processService.findFilteredProcesses(area, startedAt, selectedProduct, PageRequest.of(currentPage - 1, pageSize));
 		
-		// Filters
-		//Date date = null;
-		
+        if (product.isPresent() && selectedProduct.isEmpty()) {
+        	model.addAttribute("message", this.messages.get("messages.product.selected.not.exists"));
+        	model.addAttribute("alertClass", "alert-warning");
+        }
 		
 		model.addAttribute("area", area);
 		model.addAttribute("processes", processes);
 		model.addAttribute("process", latestProcess);
 		model.addAttribute("products", products);
+		model.addAttribute("selectedDate", date);
+		model.addAttribute("selectedProduct", product);
 		model.addAttribute("pageNumbers", Utils.getPageNumbersList(processes.getTotalPages()));
 		return "private/areas/historic/historiclist";
 	}

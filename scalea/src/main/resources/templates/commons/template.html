@@ -50,11 +50,7 @@
 			  	<hr class="hr-style">
 
 			  	<a href="/profile" th:class="${#httpServletRequest.requestURI.contains('/profile') || #httpServletRequest.requestURI.contains('/users') || #httpServletRequest.requestURI.contains('/roles') ? 'active' : ''}">
-<<<<<<< HEAD
 			  		<i class="fas fa-cogs sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.settings}"></span>
-=======
-			  		<i class="fas fa-cogs sidenav-icons"></i> <span th:text="#{messages.settings}"></span>
->>>>>>> branch 'main' of https://github.com/geriavrazi00/scalea-web.git
 			  	</a>
 			  	
 			  	<form method="POST" th:action="@{/logout}">

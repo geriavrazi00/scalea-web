@@ -738,7 +738,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555; 
-<<<<<<< HEAD
 }
 
 .row-table-textnew{
@@ -748,7 +747,4 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	background: none;
     outline: white;
     border: none;
-
-=======
->>>>>>> branch 'main' of https://github.com/geriavrazi00/scalea-web.git
 }

@@ -30,6 +30,8 @@ public class SubProductDTO {
 	@NotNull(message="{messages.no.product.for.subproduct}")
     private Product fatherProduct;
 	
+	private String base64Image;
+	
 	public Product toNewProduct() {
 		Product product = new Product();
 		this.toProduct(product);

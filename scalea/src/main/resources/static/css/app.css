@@ -706,6 +706,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	width: inherit;
 }
 
+/* Ellipsis text overflow */
+
+.ellipsis-text {
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* Media queries */
 
 @media screen and (max-height: 450px) {

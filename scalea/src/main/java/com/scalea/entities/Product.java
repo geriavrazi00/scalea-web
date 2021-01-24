@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
@@ -55,11 +56,12 @@ public class Product {
 	private boolean withSubProducts = true;
 	
 	@ManyToOne
-    @JoinColumn(name="sub_product_id")
+    @JoinColumn(name="father_product_id")
     private Product fatherProduct;
 	
 	@Where(clause="enabled = true")
 	@OneToMany(mappedBy="fatherProduct")
+	@OrderBy("name")
     private Collection<Product> childrenProducts;
 	
 	@Transient

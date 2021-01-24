@@ -153,6 +153,15 @@ function submitProductDeleteForm() {
 	$("#deleteProductForm" + id).submit(); // Submit the form
 }
 
+function setDeleteSubProductId(id) {
+	$("#delete-subproduct-id").val(id);
+}
+
+function submitSubProductDeleteForm() {
+	id = $("#delete-subproduct-id").val();
+	$("#deleteSubProductForm" + id).submit(); // Submit the form
+}
+
 function setDetachVacancyId(id) {
 	$("#detach-vacancy-id").val(id);
 }
@@ -208,6 +217,7 @@ function loadProduct(e, id) {
 		$("#edit-product-id").val(product.id);
 		$("#edit-product-name").val(product.name);
 		$("#edit-product-current-image").attr("src", product.base64Image);
+		$("#edit-product-image").val(product.image);
 		// $("#edit-product-img").val(product.image);
 		
 		var withSubProducts = product.withSubProducts;
@@ -225,6 +235,28 @@ function loadProduct(e, id) {
 	$('#editProductModal').modal('show');
 }
 
+function loadSubProduct(e, productId, subProductId) {
+	e.preventDefault();
+	
+	var href = $("#editSubProductHref" + subProductId).attr('href');
+	
+	$.get(href, function(product) {
+		console.log(product);
+		$("#edit-subproduct-id").val(product.id);
+		$("#edit-subproduct-name").val(product.name);
+		$("#edit-subproduct-image").val(product.image);
+		$("#edit-subproduct-current-image").attr("src", product.base64Image);
+		$("#edit-subproduct-price").val(product.price);
+		$("#edit-subproduct-father").val(productId);
+		
+		if (document.getElementsByClassName('validationError') !== null) {
+			document.getElementsByClassName('validationError').style.display = 'none';
+		}
+	});
+	
+	$('#editSubProductModal').modal('show');
+}
+
 function changeEditProductPrice() {
 	if (document.getElementById("edit-product-price") != null) {
 		if (document.getElementById("edit-product-price").disabled == true) {
@@ -233,4 +265,8 @@ function changeEditProductPrice() {
 			document.getElementById("edit-product-price").disabled = true;
 		}
 	}
+}
+
+function loadFatherProduct(id) {
+	$("#father-product-id").val(id);
 }

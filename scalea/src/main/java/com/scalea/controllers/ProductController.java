@@ -64,6 +64,8 @@ public class ProductController {
 		model.addAttribute("products", products);
 		if (model.getAttribute("product") == null) model.addAttribute("product", new Product());
 		if (model.getAttribute("productDTO") == null) model.addAttribute("productDTO", new ProductDTO());
+		if (model.getAttribute("subProduct") == null) model.addAttribute("subProduct", new SubProductDTO());
+		if (model.getAttribute("subProductDTO") == null) model.addAttribute("subProductDTO", new SubProductDTO());
 		model.addAttribute("pageNumbers", Utils.getPageNumbersList(products.getTotalPages()));
 		return "private/products/productlist";
 	}
@@ -116,10 +118,7 @@ public class ProductController {
 		log.info("Method updateProduct()");
 		
 		if (errors.hasErrors()) {
-			String image = null;
-			if (product.getImage() != null) image = productService.getBase64ImageString(product.getImage());
-			
-			model.addAttribute("imageSrc", image); 
+			product.setBase64Image(productService.getBase64ImageString(product.getImage()));
 			return this.allProducts(model, page, size);
 		}
 		
@@ -187,29 +186,16 @@ public class ProductController {
 	    return "redirect:/products" + paginationParameters(page, size);
 	}
 	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
-	@GetMapping("/subproduct/create/{id}")
-	public String newSubProduct(@PathVariable("id") Long id, Model model) throws GenericException {
-		log.info("Method newSubProduct()");
-		
-		Optional<Product> fatherProduct = productService.findById(id);
-		if (!fatherProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
-		if (!fatherProduct.get().isWithSubProducts()) throw new GenericException(messages.get("messages.product.not.with.subprdocuts"));
-		SubProductDTO newProduct = new SubProductDTO();
-		newProduct.setFatherProduct(fatherProduct.get());
-		
-		model.addAttribute("product", newProduct);
-		return "private/products/subproducts/createsubproduct";
-	}
+	/* SUBPRODUCTS */
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
-	@PostMapping("/subproduct/create/{id}")
-	public String createSubProduct(@Valid @ModelAttribute("product") SubProductDTO subProduct, Errors errors, Model model, RedirectAttributes redirectAttributes, 
-			@RequestParam("img") MultipartFile multipartFile) throws IOException, GenericException {
+	@PostMapping("/subproduct/create")
+	public String createSubProduct(@Valid @ModelAttribute("subProduct") SubProductDTO subProduct, Errors errors, Model model, RedirectAttributes redirectAttributes, 
+			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws IOException, GenericException {
 		log.info("Method createSubProduct()");
 		
 		if (errors.hasErrors()) {
-			return "private/products/subproducts/createsubproduct";
+			return this.allProducts(model, page, size);
 		}
 		
 		// While creating the image, we check if one was selected to upload. If so, we save it in the storage of the system. If not, we simply set the default image value and not write anything in the storage
@@ -226,41 +212,18 @@ public class ProductController {
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
-		return "redirect:/products";
+		return "redirect:/products" + paginationParameters(page, size);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
-	@GetMapping("/subproduct/edit/{id}")
-	public String editSubProduct(@PathVariable("id") Long id, Model model) throws Exception {
-		log.info("Method editSubProduct()");
-		
-		Optional<Product> subProduct = productService.findById(id);
-		if (!subProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
-		if (subProduct.get().getFatherProduct() == null) throw new GenericException(messages.get("messages.product.not.found"));
-		
-		String image = null;
-		if (subProduct.get().getImage() != null) image = productService.getBase64ImageString(subProduct.get().getImage());
-		
-		SubProductDTO subProductDTO = new SubProductDTO();
-		subProductDTO.toDTO(subProduct.get());
-		
-		model.addAttribute("imageSrc", image); 
-		model.addAttribute("product", subProductDTO);
-		return "private/products/subproducts/editsubproduct";
-	}
-	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
-	@PostMapping("/subproduct/edit/{id}")
-	public String updateSubProduct(@Valid @ModelAttribute("product") SubProductDTO subProduct, Errors errors, Model model, RedirectAttributes redirectAttributes, 
-			@RequestParam("img") MultipartFile multipartFile) throws GenericException, IOException {
+	@PostMapping("/subproduct/update")
+	public String updateSubProduct(@Valid @ModelAttribute("subProductDTO") SubProductDTO subProduct, Errors errors, Model model, RedirectAttributes redirectAttributes, 
+			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws GenericException, IOException {
 		log.info("Method updateSubProduct()");
 		
 		if (errors.hasErrors()) {
-			String image = null;
-			if (subProduct.getImage() != null) image = productService.getBase64ImageString(subProduct.getImage());
-			
-			model.addAttribute("imageSrc", image); 
-			return "private/products/subproducts/editsubproduct";
+			subProduct.setBase64Image(productService.getBase64ImageString(subProduct.getImage()));
+			return this.allProducts(model, page, size);
 		}
 		
 		Optional<Product> existingOptionalProduct = productService.findById(subProduct.getId());
@@ -288,12 +251,13 @@ public class ProductController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-	    return "redirect:/products";
+	    return "redirect:/products" + paginationParameters(page, size);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_PRODUCTS_PRIVILEGE + "'")
 	@PostMapping("/subproduct/delete/{id}")
-	public String deleteSubProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws Exception {
+	public String deleteSubProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, @RequestParam("page") Optional<Integer> page, 
+			@RequestParam("size") Optional<Integer> size) throws Exception {
 		log.info("Method deleteSubProduct()");
 		
 		Optional<Product> optionalSubProduct = productService.findById(id);
@@ -306,7 +270,7 @@ public class ProductController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.deleted"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-	    return "redirect:/products";
+	    return "redirect:/products" + paginationParameters(page, size);
 	}
 	
 	private String paginationParameters(Optional<Integer> page, Optional<Integer> size) {

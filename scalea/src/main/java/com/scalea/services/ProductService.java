@@ -32,7 +32,7 @@ public class ProductService {
 		return productRepo.findByEnabled(enabled);
 	}
 	
-	public Page<Product> findByFatherProductIsNullAndEnabledIsTrue(Pageable pageable) throws IOException {
+	public Page<Product> findByFatherProductIsNullAndEnabledIsTrue(Pageable pageable) throws Exception {
 		Page<Product> products = productRepo.findByFatherProductIsNullAndEnabledIsTrueOrderByName(pageable);
 		
 		for (Product product: products) {
@@ -54,7 +54,7 @@ public class ProductService {
 		return productRepo.findById(id);
 	}
 	
-	public String savePhotoToDisk(MultipartFile multipartFile, String fileName, String desiredName) throws IOException {
+	public String savePhotoToDisk(MultipartFile multipartFile, String fileName, String desiredName) throws Exception {
 		String fileExtension = fileName.substring(fileName.lastIndexOf('.'));
 		String storedFileName = desiredName.toLowerCase() + "_" + System.currentTimeMillis() + fileExtension;
 		
@@ -63,7 +63,7 @@ public class ProductService {
         return storedFileName;
 	}
 	
-	public void deletePhotoFromDisk(String fileName) {
+	public void deletePhotoFromDisk(String fileName) throws Exception {
 		String fullFilePath = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + fileName;
 		File file = new File(fullFilePath); 
 	    if (file.exists() && file.delete()) { 
@@ -73,7 +73,7 @@ public class ProductService {
 	    }
 	}
 	
-	public String getBase64ImageString(String imageName) throws IOException {
+	public String getBase64ImageString(String imageName) throws Exception {
 		String pathName = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + imageName;
 		try {
 			File file = new File(pathName);

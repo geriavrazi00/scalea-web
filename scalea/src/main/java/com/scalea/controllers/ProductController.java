@@ -1,6 +1,5 @@
 package com.scalea.controllers;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -54,7 +53,7 @@ public class ProductController {
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_PRODUCTS_PRIVILEGE + "', '" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "', '" + Constants.DELETE_PRODUCTS_PRIVILEGE + "')")
 	@GetMapping
-	public String allProducts(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws IOException {
+	public String allProducts(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws Exception {
 		log.info("Method allProducts()");
 		
 		int currentPage = page.orElse(DEFAULT_PAGE);
@@ -72,7 +71,7 @@ public class ProductController {
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "')")
 	@GetMapping("/{id}")
-	public @ResponseBody ProductDTO getProduct(@PathVariable("id") Long id) throws GenericException, IOException {
+	public @ResponseBody ProductDTO getProduct(@PathVariable("id") Long id) throws Exception {
 		log.info("Method getProduct()");
 		
 		Optional<Product> product = productService.findById(id);
@@ -87,7 +86,7 @@ public class ProductController {
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
 	@PostMapping("/create")
 	public String createProduct(@Valid Product product, Errors errors, Model model, RedirectAttributes redirectAttributes, 
-			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws IOException {
+			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws Exception {
 		log.info("Method createProduct()");
 		
 		if (errors.hasErrors()) {
@@ -114,7 +113,7 @@ public class ProductController {
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
 	@PostMapping("/update")
 	public String updateProduct(@Valid ProductDTO product, Errors errors, Model model, RedirectAttributes redirectAttributes, 
-			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws GenericException, IOException {
+			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws Exception {
 		log.info("Method updateProduct()");
 		
 		if (errors.hasErrors()) {
@@ -191,7 +190,7 @@ public class ProductController {
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
 	@PostMapping("/subproduct/create")
 	public String createSubProduct(@Valid @ModelAttribute("subProduct") SubProductDTO subProduct, Errors errors, Model model, RedirectAttributes redirectAttributes, 
-			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws IOException, GenericException {
+			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws Exception {
 		log.info("Method createSubProduct()");
 		
 		if (errors.hasErrors()) {
@@ -218,7 +217,7 @@ public class ProductController {
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "'")
 	@PostMapping("/subproduct/update")
 	public String updateSubProduct(@Valid @ModelAttribute("subProductDTO") SubProductDTO subProduct, Errors errors, Model model, RedirectAttributes redirectAttributes, 
-			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws GenericException, IOException {
+			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws Exception {
 		log.info("Method updateSubProduct()");
 		
 		if (errors.hasErrors()) {

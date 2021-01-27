@@ -50,9 +50,23 @@ public interface Constants {
 	public static final String VIEW_PROFILE_PRIVILEGE = "VIEW_PROFILE_PRIVILEGE";
 	public static final String UPDATE_PROFILE_PRIVILEGE = "UPDATE_PROFILE_PRIVILEGE";
 	
+	public static final String VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE = "VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE";
+	
 	// Configuration options
 	public static final String IMAGE_PATH = "image_path";
 	public static final String PRODUCTS_IMAGE_SYSTEM_PATH = "products\\";
+	public static final String TAP_LOW = "tap_low";
+	public static final String TAP_LOW_PERC = "tap_low_perc";
+	public static final String TAP_MED = "tap_med";
+	public static final String TAP_MED_PERC = "tap_med_perc";
+	public static final String TAP_MAX = "tap_max";
+	public static final String TAP_MAX_PERC = "tap_max_perc";
+	public static final String MINIMAL_PAY = "minimal_pay";
+	public static final String MAXIMUM_PAY = "maximum_pay";
+	public static final String HEALTH_INSURANCE_EMPLOYER_PERC = "health_insurance_employer_perc";
+	public static final String HEALTH_INSURANCE_EMPLOYEE_PERC = "health_insurance_employee_perc";
+	public static final String SOCIAL_INSURANCE_EMPLOYER_PERC = "social_insurance_employer_perc";
+	public static final String SOCIAL_INSURANCE_EMPLOYEE_PERC = "social_insurance_employee_perc";
 	
 	// Default files
 	public static final String PRODUCTS_DEFAULT_IMAGE = "default-product.jpg";

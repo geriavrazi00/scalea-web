@@ -1,6 +1,6 @@
 package com.scalea.services;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,14 +18,14 @@ public class ConfigurationService {
 		this.configRepo = configRepo;
 	}
 
-	public String findValueByName(String name) {
-		List<Configuration> config = this.configRepo.findByName(name);
+	public String findValueByName(String name) throws Exception {
+		Optional<Configuration> config = this.configRepo.findByName(name);
 		
-		if (config != null && config.size() == 1) {
-			return config.get(0).getValue();
+		if (config.isPresent()) {
+			return config.get().getValue();
 		}
 		
-		return null;
+		throw new Exception("There is a problem with the configuration of the project. The '" + name + "' parameter does not exit.");
 	}
 
 }

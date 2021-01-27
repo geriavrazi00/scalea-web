@@ -9,10 +9,12 @@
 					<div class="modal-body">
 						<input type="hidden" id="delete-subproduct-id" />
 						
-						<span data-dismiss="modal" class="close" title="Close Modal">x</span>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       						<span aria-hidden="true">&times;</span>
+     					</button>
 						
 						<div class="container">
-							<h1 th:text="#{messages.product.delete}"></h1>
+							<h1 th:text="#{messages.subproduct.delete}"></h1>
 							<p th:text="#{messages.subproduct.delete.confirmation}"></p>
 			
 							<div class="clearfix">

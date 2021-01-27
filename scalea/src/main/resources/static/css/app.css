@@ -193,7 +193,7 @@ body {
 }
 
 .main-container {
-	margin-left: 230px; /* Same as the width of the sidenav */
+	margin-left: 200px; /* Same as the width of the sidenav */
 	padding: 15px;
 }
 
@@ -704,6 +704,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .product-container-height {
 	height: 220px;
 	width: inherit;
+}
+
+.margin-bottom-zero {
+	margin-bottom: 0px!important;
+}
+
+.bold {
+	font-weight: bold;
 }
 
 /* Ellipsis text overflow */

@@ -33,7 +33,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		String[] adminRoutes = {"/barcode**", "/barcode/**", "/roles**", "/roles/**", "/users**", "/users/**"};
 		String[] sharedRoutes = {"/", "/home", "/areas**", "/areas/**", "/employees**", "/employees/**", "/vacancies**", "/vacancies/**", 
-			"/processes**", "/processes/**", "/products**", "/products/**", "/profile**", "/profile/**"};
+			"/processes**", "/processes/**", "/products**", "/products/**", "/profile**", "/profile/**", "/finances**", 
+			"/finances/**"};
 		
 		http.authorizeRequests()
 			.antMatchers(adminRoutes).access("hasRole('" + Constants.ROLE_ADMIN + "')")

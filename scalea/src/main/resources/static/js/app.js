@@ -270,3 +270,33 @@ function changeEditProductPrice() {
 function loadFatherProduct(id) {
 	$("#father-product-id").val(id);
 }
+
+// Finance
+function loadFinancialActivity(e, id) {
+	e.preventDefault();
+	
+	var href = $("#financialDetailsHref" + id).attr('href');
+	
+	$.get(href, function(activity) {
+		$("#employee-full-name").text(activity.employee.firstName + ' ' + activity.employee.lastName);
+		$("#employee-personal-number").text(activity.employee.personalNumber);
+		$("#gross-salary").text(activity.formattedGrossSalary + ' ALL');
+		$("#social-insurance-salary").text(activity.formattedSocialInsuranceSalary + ' ALL');
+		$("#health-insurance-salary").text(activity.formattedHealthInsuranceSalary + ' ALL');
+		$("#employer-social-insurance").text(activity.formattedEmployerSocialInsurance + ' ALL');
+		$("#employer-health-insurance").text(activity.formattedEmployerHealthInsurance + ' ALL');
+		$("#employee-social-insurance").text(activity.formattedEmployeeSocialInsurance + ' ALL');
+		$("#employee-health-insurance").text(activity.formattedEmployeeHealthInsurance + ' ALL');
+		$("#progressive-tax").text(activity.formattedProgressiveTax + ' ALL');
+		$("#employer-total-cost").text(activity.formattedTotalEmploymentCost + ' ALL');
+		$("#net-salary").text(activity.formattedNetSalary + ' ALL');
+		
+		if (activity.belowMinimalWage) {
+			$("#below-minimal-wage-message").css("display","block");
+		} else {
+			$("#below-minimal-wage-message").css("display","none");
+		}
+	});
+	
+	$('#financeDetailsModal').modal('show');
+}

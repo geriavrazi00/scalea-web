@@ -11,6 +11,8 @@
 		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 		<link th:href="@{/css/fa-all.css}" rel="stylesheet">
 		<link th:href="@{/css/app.css}" rel="stylesheet">
+		<link th:href="@{/css/app.css}" rel="stylesheet">
+		<link th:href="@{/css/app-2.css}" rel="stylesheet">
 		
 		<script type="text/javascript" th:src="@{/js/jquery-3.5.1.js}"></script>
 		<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
@@ -35,7 +37,7 @@
 			  		<i class="fas fa-shopping-bag sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.products}"></span>
 			  	</a>
 			  	
-			  	<a href="#" th:class="${#httpServletRequest.requestURI.contains('/finance') ? 'active' : ''}">
+			  	<a href="/finances" sec:authorize="hasAnyAuthority('VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/finances') ? 'active' : ''}">
 			  		<i class="fas fa-calculator sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.finance}"></span>
 			  	</a>
 			  	

@@ -2,6 +2,8 @@ package com.scalea.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -9,8 +11,10 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Formatter;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -77,5 +81,31 @@ public class Utils {
 		c.setTime(date);
 		c.add(Calendar.DATE, days);  	// number of days to add or remove
 		return c.getTime();  		// dt is now the new date
+	}
+	
+	/*
+	 * Months start from 0 (January) to 11 (December)
+	 */
+	public static int getMonthFromDate(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal.get(Calendar.MONTH) + 1;
+	}
+	
+	public static int getYearFromDate(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal.get(Calendar.YEAR);
+	}
+	
+	public static double twoDecimalPlacesDouble(double number) {
+		DecimalFormat df = new DecimalFormat("#.##");
+		String formattedNumber = df.format(number);
+		return Double.valueOf(formattedNumber);
+	}
+	
+	public static String thousandSeparatorDouble(double number) {
+		NumberFormat formatter = NumberFormat.getInstance(new Locale("en_US"));
+		return formatter.format(number);
 	}
 }

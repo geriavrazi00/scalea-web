@@ -49,7 +49,10 @@ public enum ApplicationPrivileges {
 	
 	// Profile
 	VIEW_PROFILE_PRIVILEGE(Constants.VIEW_PROFILE_PRIVILEGE, true),
-	UPDATE_PROFILE_PRIVILEGE(Constants.UPDATE_PROFILE_PRIVILEGE, true);
+	UPDATE_PROFILE_PRIVILEGE(Constants.UPDATE_PROFILE_PRIVILEGE, true), 
+	
+	// Financial activities
+	VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE(Constants.VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE, true);
 	
 	private String name;
 	private boolean forUsers;

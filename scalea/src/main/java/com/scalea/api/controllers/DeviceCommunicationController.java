@@ -68,6 +68,8 @@ public class DeviceCommunicationController {
 		if (!optionalVacancy.isPresent()) return new ResponseEntity<>("Vacancy not found.", HttpStatus.NOT_FOUND);
 		Vacancy vacancy = optionalVacancy.get();
 		
+		if (vacancy.getEmployee() == null) return new ResponseEntity<>("No employee attached to the vacancy.", HttpStatus.NOT_FOUND);
+		
 		Optional<Process> optionalProcess = processRepo.findByStatusAndArea(ProcessStatus.STARTED.getStatus(), vacancy.getArea());
 		if (!optionalProcess.isPresent()) return new ResponseEntity<>("Not active process for the vacancy.", HttpStatus.INTERNAL_SERVER_ERROR);
 		Process activeProcess = optionalProcess.get();
@@ -76,6 +78,7 @@ public class DeviceCommunicationController {
 		activity.setVacancy(vacancy);
 		activity.setWeight(weight);
 		activity.setProduct(activeProcess.getProduct());
+		activity.setEmployee(vacancy.getEmployee());
 		
 		activityRepo.save(activity);
 		

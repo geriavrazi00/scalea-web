@@ -52,7 +52,10 @@ public enum ApplicationPrivileges {
 	UPDATE_PROFILE_PRIVILEGE(Constants.UPDATE_PROFILE_PRIVILEGE, true), 
 	
 	// Financial activities
-	VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE(Constants.VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE, true);
+	VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE(Constants.VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE, true),
+	
+	// Statistics
+	VIEW_GENERAL_STATISTICS_PRIVILEGE(Constants.VIEW_GENERAL_STATISTICS_PRIVILEGE, true);
 	
 	private String name;
 	private boolean forUsers;

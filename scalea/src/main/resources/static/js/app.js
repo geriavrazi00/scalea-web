@@ -300,3 +300,29 @@ function loadFinancialActivity(e, id) {
 	
 	$('#financeDetailsModal').modal('show');
 }
+
+// Employees
+function loadEmployee(e, id) {
+	e.preventDefault();
+	
+	var href = $("#editEmployeeHref" + id).attr('href');
+	
+	$.get(href, function(employee) {
+		$("#edit-employee-id").val(employee.id);
+		$("#edit-employee-firstname").val(employee.firstName);
+		$("#edit-employee-lastname").val(employee.lastName);
+		$("#edit-employee-account-number").val(employee.accountNumber);
+		$("#edit-employee-birthday").val(employee.birthday);
+		$("#edit-employee-personal-number").val(employee.personalNumber);
+		$("#edit-employee-email").val(employee.email);
+		$("#edit-employee-phone-number").val(employee.phoneNumber);
+		
+		if (employee.supervisor) {
+			$("#edit-employee-supervisor").prop('checked', true);
+		} else {
+			$("#edit-employee-supervisor").prop('checked', false);
+		}
+	});
+	
+	$('#editEmployeeModal').modal('show');
+}

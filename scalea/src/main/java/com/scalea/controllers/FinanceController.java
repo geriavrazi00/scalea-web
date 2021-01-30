@@ -56,15 +56,8 @@ public class FinanceController {
 		int currentPage = page.orElse(DEFAULT_PAGE);
 		Date date = new Date();
 		
-		int month, year;
-		
-		try {
-			month = selectedMonth.orElse(Utils.getMonthFromDate(date));
-			year = selectedYear.orElse(Utils.getYearFromDate(date));
-		} catch (NumberFormatException e) {
-			month = 0;
-			year = 0;
-		}
+		int month = selectedMonth.orElse(Utils.getMonthFromDate(date));
+		int year = selectedYear.orElse(Utils.getYearFromDate(date));
 		
 		Page<ActivityAggregatorDTO> activities = activityService.findAllActivities(month, year, PageRequest.of(currentPage - 1, DEFAULT_SIZE));
 		List<FinanceDTO> finances = activityService.findAllFinancialActivities(activities.getContent());

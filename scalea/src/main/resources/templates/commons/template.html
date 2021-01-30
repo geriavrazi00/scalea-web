@@ -17,6 +17,7 @@
 		<script type="text/javascript" th:src="@{/js/jquery-3.5.1.js}"></script>
 		<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
 		<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+		<script type="text/javascript" th:src="@{/js/chart.js}"></script>
 	</head>
 	<body>
 		<div th:fragment="menu" sec:authorize="isAuthenticated()">
@@ -29,7 +30,7 @@
 			  		<i class="fas fa-suitcase sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.employees}"></span>
 			  	</a>
 			  	
-			  	<a href="#" th:class="${#httpServletRequest.requestURI.contains('/statistics') ? 'active' : ''}">
+			  	<a href="/statistics" sec:authorize="hasAnyAuthority('VIEW_GENERAL_STATISTICS_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/statistics') ? 'active' : ''}">
 			  		<i class="fas fa-chart-line sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.statistics}"></span>
 			  	</a>
 			  	
@@ -41,13 +42,13 @@
 			  		<i class="fas fa-calculator sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.finance}"></span>
 			  	</a>
 			  	
-			  	<!-- <a href="/users" sec:authorize="hasAnyAuthority('VIEW_USERS_PRIVILEGE', 'UPSERT_USERS_PRIVILEGE', 'DELETE_USERS_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/users') ? 'active' : ''}">
-			  		<i class="fas fa-users sidenav-icons"></i> <span th:text="#{messages.users}"></span>
+			  	<a href="/processes" sec:authorize="hasAnyAuthority('VIEW_PROCESSES_PRIVILEGE', 'MANAGE_PROCESSES_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/processes') ? 'active' : ''}">
+			  		<i class="fas fa-network-wired sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.processes}"></span>
 			  	</a>
 			  	
-		    	<a href="/roles" sec:authorize="hasAnyAuthority('VIEW_ROLES_PRIVILEGE', 'UPSERT_ROLES_PRIVILEGE', 'DELETE_ROLES_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/roles') ? 'active' : ''}">
-		    		<i class="fas fa-user-tag sidenav-icons"></i> <span th:text="#{messages.roles}"></span>
-		    	</a> -->
+			  	<a href="#">
+			  		<i class="fas fa-play-circle sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.control}"></span>
+			  	</a>
 			  	
 			  	<hr class="hr-style">
 
@@ -64,7 +65,6 @@
 		</div>
 		
 		<div th:fragment="js-scripts">
-			
 			<script type="text/javascript" th:src="@{/js/app.js}"></script>
 		</div>
 	</body>

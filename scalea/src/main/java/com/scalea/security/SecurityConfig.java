@@ -16,6 +16,7 @@ import com.scalea.utils.Constants;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+	
 	@Autowired
 	private UserDetailsService userDetailsService;
 	
@@ -31,14 +32,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		String[] adminRoutes = {"/barcode**", "/barcode/**", "/roles**", "/roles/**", "/users**", "/users/**"};
-		String[] sharedRoutes = {"/", "/home", "/areas**", "/areas/**", "/employees**", "/employees/**", "/vacancies**", "/vacancies/**", 
-			"/processes**", "/processes/**", "/products**", "/products/**", "/profile**", "/profile/**", "/finances**", 
-			"/finances/**"};
+//		String[] adminRoutes = {"/barcode**", "/barcode/**", "/roles**", "/roles/**", "/users**", "/users/**"};
+//		String[] sharedRoutes = {"/", "/home", "/areas**", "/areas/**", "/employees**", "/employees/**", "/vacancies**", "/vacancies/**", 
+//			"/processes**", "/processes/**", "/products**", "/products/**", "/profile**", "/profile/**", "/finances**", 
+//			"/finances/**", "/statistics**", "/statistics/**"};
 		
 		http.authorizeRequests()
-			.antMatchers(adminRoutes).access("hasRole('" + Constants.ROLE_ADMIN + "')")
-			.antMatchers(sharedRoutes).access("hasAnyRole('" + Constants.ROLE_ADMIN + "', '" + Constants.ROLE_USER + "')")
+			.antMatchers("/areas**", "/areas/**").access("hasAnyAuthority('" + Constants.VIEW_AREAS_PRIVILEGE + "', '" + Constants.UPSERT_AREAS_PRIVILEGE + "', '" + Constants.DELETE_AREAS_PRIVILEGE + "')")
+			.antMatchers("/employees**", "/employees/**").access("hasAnyAuthority('" + Constants.VIEW_EMPLOYEES_PRIVILEGE + "', '" + Constants.UPSERT_EMPLOYEES_PRIVILEGE + "', '" + Constants.DELETE_EMPLOYEES_PRIVILEGE + "')")
+			.antMatchers("/vacancies**", "/vacancies/**").access("hasAnyAuthority('" + Constants.VIEW_VACANCIES_PRIVILEGE + "', '" + Constants.UPSERT_VACANCIES_PRIVILEGE + "', '" + Constants.DELETE_VACANCIES_PRIVILEGE + "')")
+			.antMatchers("/processes**", "/processes/**").access("hasAnyAuthority('" + Constants.VIEW_PROCESSES_PRIVILEGE + "', '" + Constants.MANAGE_PROCESSES_PRIVILEGE + "')")
+			.antMatchers("/products**", "/products/**").access("hasAnyAuthority('" + Constants.VIEW_PRODUCTS_PRIVILEGE + "', '" + Constants.UPSERT_PRODUCTS_PRIVILEGE + "', '" + Constants.DELETE_PRODUCTS_PRIVILEGE + "')")
+			.antMatchers("/profile**", "/profile/**").access("hasAnyAuthority('" + Constants.VIEW_PROFILE_PRIVILEGE + "', '" + Constants.UPDATE_PROFILE_PRIVILEGE + "')")
+			.antMatchers("/finances**", "/finances/**").access("hasAnyAuthority('" + Constants.VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE + "')")
+			.antMatchers("/statistics**", "/statistics/**").access("hasAnyAuthority('" + Constants.VIEW_GENERAL_STATISTICS_PRIVILEGE + "')")
+			.antMatchers("/roles**", "/roles/**").access("hasAnyAuthority('" + Constants.VIEW_ROLES_PRIVILEGE + "', '" + Constants.UPSERT_ROLES_PRIVILEGE + "', '" + Constants.DELETE_ROLES_PRIVILEGE + "')")
+			.antMatchers("/users**", "/users/**").access("hasAnyAuthority('" + Constants.VIEW_USERS_PRIVILEGE + "', '" + Constants.UPSERT_USERS_PRIVILEGE + "', '" + Constants.DELETE_USERS_PRIVILEGE + "')")
+			.antMatchers("/", "/home").authenticated()
 			.antMatchers("/**").access("permitAll")
 			.and().formLogin().loginPage("/login")
 			.and().logout().logoutSuccessUrl("/");

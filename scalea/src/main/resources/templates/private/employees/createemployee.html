@@ -3,7 +3,7 @@
 	xmlns:sec="http://www.thymeleaf.org">
 
 	<div th:fragment="createemployee">
-		<form method="POST" th:action="@{/employees/create}" th:object="${employee}">	
+		<form method="POST" th:action="@{'/employees/create'(page=${employees.number + 1})}" th:object="${employee}">	
 			<div class="modal fade" id="createEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="createEmployeeModal" aria-hidden="true">
 				<div class="modal-dialog" role="document" style="max-width: 600px;">
 					<div class="modal-content" style="border-radius: 8px;">

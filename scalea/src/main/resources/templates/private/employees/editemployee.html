@@ -3,7 +3,7 @@
 	xmlns:sec="http://www.thymeleaf.org">
 
 	<div th:fragment="editemployee">
-		<form method="POST" th:action="@{/employees/update}" th:object="${employeeDTO}">
+		<form method="POST" th:action="@{'/employees/update'(page=${employees.number + 1})}" th:object="${employeeDTO}">
 			<input type="hidden" id="edit-employee-id" name="edit-employee-id" th:field="*{id}"/>
 			
 			<div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModal" aria-hidden="true">

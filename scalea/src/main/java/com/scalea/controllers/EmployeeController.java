@@ -84,18 +84,6 @@ public class EmployeeController {
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_EMPLOYEES_PRIVILEGE + "'")
-	@GetMapping("/create")
-	public String newEmployee(Model model) {
-		log.info("Method newEmployee()");
-		
-		Iterable<Vacancy> vacancies = vacancyService.findUnassociatedVacancies();
-		
-		model.addAttribute("employee", new Employee());
-		model.addAttribute("vacancies", vacancies);
-		return "private/employees/createemployee";
-	}
-	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_EMPLOYEES_PRIVILEGE + "'")
 	@PostMapping("/create")
 	public String createEmployee(@Valid Employee employee, Errors errors, Model model, RedirectAttributes redirectAttributes, 
 		@RequestParam("page") Optional<Integer> page) {
@@ -121,7 +109,7 @@ public class EmployeeController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-		return "redirect:/employees";
+		return "redirect:/employees" + paginationParameters(page);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_EMPLOYEES_PRIVILEGE + "'")
@@ -168,7 +156,7 @@ public class EmployeeController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-	    return "redirect:/employees";
+	    return "redirect:/employees" + paginationParameters(page);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_EMPLOYEES_PRIVILEGE + "'")
@@ -190,12 +178,12 @@ public class EmployeeController {
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.detached"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
-		return "redirect:/employees";
+		return "redirect:/employees" + paginationParameters(page);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_EMPLOYEES_PRIVILEGE + "'")
 	@PostMapping("/delete/{id}")
-	public String deleteEmployee(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws GenericException {
+	public String deleteEmployee(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, @RequestParam("page") Optional<Integer> page) throws GenericException {
 		log.info("Method deleteEmployee()");
 		
 		Optional<Employee> optionalEmployee = employeeService.findById(id);
@@ -214,18 +202,16 @@ public class EmployeeController {
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.deleted"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
-		return "redirect:/employees";
+		return "redirect:/employees" + paginationParameters(page);
 	}
-	
-//	private void attachEmployeeToVacancy(Employee employee) {
-//		Vacancy vacancy = employee.getVacancy();
-//		vacancy.setEmployee(employee);
-//		this.vacancyRepo.save(vacancy);
-//	}
 	
 	private void detachEmployeeFromVacancy(Employee employee) {
 		Vacancy vacancy = employee.getVacancy();
 		vacancy.setEmployee(null);
 		this.vacancyService.save(vacancy);
+	}
+	
+	private String paginationParameters(Optional<Integer> page) {
+		return "?page=" + page.orElse(DEFAULT_PAGE);
 	}
 }

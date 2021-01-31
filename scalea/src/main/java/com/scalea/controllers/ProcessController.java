@@ -85,7 +85,7 @@ public class ProcessController {
 	@PreAuthorize("hasAnyAuthority('" + Constants.MANAGE_PROCESSES_PRIVILEGE + "')")
 	@PostMapping("/start/{id}")
 	public String startProcess(@PathVariable("id") Long id, @RequestParam("products") Long productId, Principal principal, 
-			RedirectAttributes redirectAttributes) throws GenericException {
+			RedirectAttributes redirectAttributes, @RequestParam("page") Optional<Integer> page) throws GenericException {
 		log.info("Method startProcess()");
 		
 		Optional<Area> area = areaService.findById(id);
@@ -107,12 +107,12 @@ public class ProcessController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.process.started", area.get().getName()));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-	    return "redirect:/processes";
+	    return "redirect:/processes" + paginationParameters(page);
 	}
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.MANAGE_PROCESSES_PRIVILEGE + "')")
 	@PostMapping("/pause/{id}")
-	public String pauseProcess(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws GenericException {
+	public String pauseProcess(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, @RequestParam("page") Optional<Integer> page) throws GenericException {
 		log.info("Method pauseProcess()");
 		
 		Optional<Process> optionalProcess = processService.findById(id);
@@ -127,12 +127,12 @@ public class ProcessController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.process.paused", process.getArea().getName()));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-	    return "redirect:/processes";
+	    return "redirect:/processes" + paginationParameters(page);
 	}
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.MANAGE_PROCESSES_PRIVILEGE + "')")
 	@PostMapping("/resume/{id}")
-	public String resumeProcess(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws GenericException {
+	public String resumeProcess(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, @RequestParam("page") Optional<Integer> page) throws GenericException {
 		log.info("Method resumeProcess()");
 		
 		Optional<Process> optionalProcess = processService.findById(id);
@@ -147,12 +147,12 @@ public class ProcessController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.process.resumed", process.getArea().getName()));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-	    return "redirect:/processes";
+	    return "redirect:/processes" + paginationParameters(page);
 	}
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.MANAGE_PROCESSES_PRIVILEGE + "')")
 	@PostMapping("/finish/{id}")
-	public String finishProcess(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws GenericException {
+	public String finishProcess(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, @RequestParam("page") Optional<Integer> page) throws GenericException {
 		log.info("Method finishProcess()");
 		
 		Optional<Process> optionalProcess = processService.findById(id);
@@ -167,6 +167,10 @@ public class ProcessController {
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.process.finished", process.getArea().getName()));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-	    return "redirect:/processes";
+	    return "redirect:/processes" + paginationParameters(page);
+	}
+	
+	private String paginationParameters(Optional<Integer> page) {
+		return "?page=" + page.orElse(DEFAULT_PAGE);
 	}
 }

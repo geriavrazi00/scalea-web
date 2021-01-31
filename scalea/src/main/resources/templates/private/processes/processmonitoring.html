@@ -31,7 +31,7 @@
 						</div>
 						
 						<div class="col" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
-							<form th:id="'startProcess' + ${area.id}" method="POST" th:action="@{'/processes/start/{id}'(id=${area.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;" th:if="${products != null && products.size() > 0}">
+							<form th:id="'startProcess' + ${area.id}" method="POST" th:action="@{'/processes/start/{id}'(id=${area.id}, page=${areas.number + 1})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;" th:if="${products != null && products.size() > 0}">
 								<span class="row-table-text" th:text="#{messages.products}"></span>
 								<select id="products" name="products" th:if="${products.size() > 0}" class="modal-select ">
 									<option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"/>
@@ -87,7 +87,7 @@
 						</div>
 						
 						<div class="col" style="text-align: center;" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
-							<form method="POST" th:if="${area.activeProcess.status == 0}" th:action="@{'/processes/pause/{id}'(id=${area.activeProcess.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
+							<form method="POST" th:if="${area.activeProcess.status == 0}" th:action="@{'/processes/pause/{id}'(id=${area.activeProcess.id}, page=${areas.number + 1})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
 								<i class="fas fa-play row-table-icons not-allowed-cursor disabled-icon" style="padding-right: 20px;"></i>
 								
 								<button type="submit" class="delete-button" style="padding-right: 20px; padding-left: 0px;">
@@ -95,7 +95,7 @@
 								</button>
 							</form>
 							
-							<form method="POST" th:if="${area.activeProcess.status == 1}" th:action="@{'/processes/resume/{id}'(id=${area.activeProcess.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
+							<form method="POST" th:if="${area.activeProcess.status == 1}" th:action="@{'/processes/resume/{id}'(id=${area.activeProcess.id}, page=${areas.number + 1})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
 								<button type="submit" class="delete-button" style="padding-right: 20px; padding-left: 0px;">
 									<i class="fas fa-play row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.process.resume}"></i>
 								</button>
@@ -103,7 +103,7 @@
 								<i class="fas fa-pause row-table-icons not-allowed-cursor disabled-icon" style="padding-right: 20px;"></i>
 							</form>
 							
-							<form method="POST" th:action="@{'/processes/finish/{id}'(id=${area.activeProcess.id})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
+							<form method="POST" th:action="@{'/processes/finish/{id}'(id=${area.activeProcess.id}, page=${areas.number + 1})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
 								<button type="submit" class="delete-button" style="padding-left: 0px; padding-right: 0;">
 									<i class="fas fa-stop row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.process.finish}"></i>
 								</button>
@@ -127,11 +127,11 @@
 						</a>
 					</li>
 					<li th:if="${areas.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
-					    <a th:href="@{/areas(page=${pageNumber})}" th:text=${pageNumber} 
+					    <a th:href="@{/processes(page=${pageNumber})}" th:text=${pageNumber} 
 					    	th:class="${pageNumber == areas.number + 1} ? 'page-link active' : 'page-link'"></a>
 					</li>
 					<li th:class="${(areas.number + 1) == areas.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
-						<a class="page-link" th:href="@{/areas(page=${areas.number + 2})}">
+						<a class="page-link" th:href="@{/processes(page=${areas.number + 2})}">
 							<span aria-hidden="true">&raquo;</span>
 						</a>
 					</li>

@@ -23,6 +23,10 @@ public class ProcessService {
 		this.processRepo = processRepo;
 	}
 	
+	public Optional<Process> findById(Long id) {
+		return processRepo.findById(id);
+	}
+	
 	public Iterable<Process> findByStatusIn(int[] statuses) {
 		return processRepo.findByStatusIn(statuses);
 	}
@@ -51,5 +55,9 @@ public class ProcessService {
 		}
 		
 		return processes;
+	}
+	
+	public Process save(Process process) {
+		return processRepo.save(process);
 	}
 }

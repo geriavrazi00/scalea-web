@@ -43,7 +43,7 @@ public class ProductService {
 	}
 	
 	public Iterable<Product> findByEnabledIsTrueAndWithSubProductsIsFalse() {
-		return productRepo.findByEnabledIsTrueAndWithSubProductsIsFalse();
+		return productRepo.findByEnabledIsTrueAndWithSubProductsIsFalseOrderByName();
 	}
 	
 	public Product save(Product product) {

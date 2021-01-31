@@ -714,6 +714,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	font-weight: bold;
 }
 
+.disabled-icon {
+	opacity: 0.5;
+}
+
 /* Ellipsis text overflow */
 
 .ellipsis-text {

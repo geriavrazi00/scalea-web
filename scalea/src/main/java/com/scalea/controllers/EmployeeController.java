@@ -26,8 +26,8 @@ import com.scalea.entities.Employee;
 import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.EmployeeDTO;
-import com.scalea.repositories.VacancyRepository;
 import com.scalea.services.EmployeeService;
+import com.scalea.services.VacancyService;
 import com.scalea.utils.Constants;
 import com.scalea.utils.Utils;
 
@@ -36,7 +36,7 @@ import com.scalea.utils.Utils;
 public class EmployeeController {
 	
 	private EmployeeService employeeService;
-	private VacancyRepository vacancyRepo;
+	private VacancyService vacancyService;
 	private Logger log;
 	private Messages messages;
 	
@@ -44,9 +44,9 @@ public class EmployeeController {
 	private static final int DEFAULT_SIZE = 7;
 	
 	@Autowired
-	public EmployeeController(EmployeeService employeeService, VacancyRepository vacancyRepo, Messages messages) {
+	public EmployeeController(EmployeeService employeeService, VacancyService vacancyService, Messages messages) {
 		this.employeeService = employeeService;
-		this.vacancyRepo = vacancyRepo;
+		this.vacancyService = vacancyService;
 		this.log = LoggerFactory.getLogger(EmployeeController.class);
 		this.messages = messages;
 	}
@@ -60,7 +60,7 @@ public class EmployeeController {
 		
 		// We only show the enabled employees at the moment
 		Page<Employee> employees = employeeService.findByEnabledOrderByFirstName(true, PageRequest.of(currentPage - 1, DEFAULT_SIZE));
-		Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+		Iterable<Vacancy> vacancies = vacancyService.findUnassociatedVacancies();
 		
 		if (model.getAttribute("employee") == null) model.addAttribute("employee", new Employee());
 		if (model.getAttribute("employeeDTO") == null) model.addAttribute("employeeDTO", new EmployeeDTO());
@@ -88,7 +88,7 @@ public class EmployeeController {
 	public String newEmployee(Model model) {
 		log.info("Method newEmployee()");
 		
-		Iterable<Vacancy> vacancies = vacancyRepo.findUnassociatedVacancies();
+		Iterable<Vacancy> vacancies = vacancyService.findUnassociatedVacancies();
 		
 		model.addAttribute("employee", new Employee());
 		model.addAttribute("vacancies", vacancies);
@@ -116,7 +116,7 @@ public class EmployeeController {
 		if (employee.getVacancy() != null) {
 			Vacancy vacancy = employee.getVacancy();
 			vacancy.setEmployee(employee);
-			this.vacancyRepo.save(vacancy);
+			this.vacancyService.save(vacancy);
 		}
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.created"));
@@ -147,20 +147,50 @@ public class EmployeeController {
 			}
 		}
 		
-		// When the detach check box is checked, we detach the existing employee from the old vacancy. If a vacancy is selected we attach it the employee.
-//		if (employee.isDetach()) {
-//			this.detachEmployeeFromVacancy(existingEmployee);
-//			if (employee.getVacancy() != null) this.attachEmployeeToVacancy(employee);
-//		} else {
-//			if (employee.getVacancy() != null) this.attachEmployeeToVacancy(employee);
-//		}
-		
 		employee.mergeWithExistingEmployee(existingEmployee);
+		
+		if (employee.getVacancyId() != null) {
+			Optional<Vacancy> optionalVacancy = vacancyService.findById(employee.getVacancyId());
+			
+			if (optionalVacancy.isPresent()) {
+				// We first check if the vacancy and employee are still not associated with anything. Otherwise we throw an exception
+				Vacancy vacancy = optionalVacancy.get();
+				
+				if (vacancy.getEmployee() != null) throw new GenericException(messages.get("messages.vacancy.occupied"));
+				if (existingEmployee.getVacancy() != null) throw new GenericException(messages.get("messages.employee.occupied"));
+				
+				vacancy.setEmployee(existingEmployee);
+				this.vacancyService.save(vacancy);
+			}
+		}
+		
 		employeeService.save(existingEmployee);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 	    return "redirect:/employees";
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_EMPLOYEES_PRIVILEGE + "'")
+	@PostMapping("/detach/{id}")
+	public String detachEmployee(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, @RequestParam("page") Optional<Integer> page) throws GenericException {
+		log.info("Method detachEmployee()");
+		
+		Optional<Employee> optionalEmployee = employeeService.findById(id);
+		if (!optionalEmployee.isPresent()) throw new GenericException(messages.get("messages.employee.not.found"));
+		Employee employee = optionalEmployee.get();
+		
+		/*
+		 * To detach an employee from its vacancy, we just detach its vacancy if there is one
+		 */
+		if (employee.getVacancy() != null) this.detachEmployeeFromVacancy(employee);
+		employee.setVacancy(null);
+		employeeService.save(employee);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.detached"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+		
+		return "redirect:/employees";
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_EMPLOYEES_PRIVILEGE + "'")
@@ -187,15 +217,15 @@ public class EmployeeController {
 		return "redirect:/employees";
 	}
 	
-	private void attachEmployeeToVacancy(Employee employee) {
-		Vacancy vacancy = employee.getVacancy();
-		vacancy.setEmployee(employee);
-		this.vacancyRepo.save(vacancy);
-	}
+//	private void attachEmployeeToVacancy(Employee employee) {
+//		Vacancy vacancy = employee.getVacancy();
+//		vacancy.setEmployee(employee);
+//		this.vacancyRepo.save(vacancy);
+//	}
 	
 	private void detachEmployeeFromVacancy(Employee employee) {
 		Vacancy vacancy = employee.getVacancy();
 		vacancy.setEmployee(null);
-		this.vacancyRepo.save(vacancy);
+		this.vacancyService.save(vacancy);
 	}
 }

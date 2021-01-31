@@ -18,12 +18,8 @@
 					
 					<div class="col">
 						<span class="row-table-textnew" th:text="#{messages.name}"></span>
-						<span class="row-table-value" th:text="${employee.firstName}"></span>
-					</div>	
-					<div class="col">
-					 	<span class="row-table-textnew" th:text="#{messages.lastname}"></span>
-					 	<span class="row-table-value" th:text="${employee.lastName}"></span>
-					 </div>
+						<span class="row-table-value" th:text="${employee.firstName + ' ' + employee.lastName}"></span>
+					</div>
 					 <div class="col" >	
 					 <span class="row-table-textnew">ID</span>
 					<!-- <span class="row-table-textnew" th:text="#{messages.personal.number}"></span> -->	
@@ -33,49 +29,34 @@
 						<span class="row-table-textnew" th:text="#{messages.status}"></span>
 						<span class="row-table-value" th:text="${employee.enabled} ? #{messages.active} : #{messages.not.active}" th:style="${employee.enabled} ? 'color: #1f9583;' : 'color: #f1818c;'"></span>
 					</div>
-					
-					<div th:if="${employee.vacancy != null}">
-						<span class="col">
-							<span class="row-table-textnew" th:text="#{messages.areas}"></span>
-							<span class="row-table-value" th:text="${employee.vacancy.area.name}"></span>
-						</span>
-						<span class="col">
-							<span class="row-table-textnew" th:text="#{messages.vacancy}"></span>
-							<span class="row-table-value" th:text="${employee.vacancy.number}"></span>
-						</span>
+					<div class="col">
+						<span class="row-table-textnew" th:text="#{messages.areas}"></span>
+						<span class="row-table-value" th:text="${employee.vacancy.area.name}" th:if="${employee.vacancy != null}"></span>
+						<span class="row-table-value" th:if="${employee.vacancy == null}">-</span>
+					</div>
+					<div class="col">
+						<span class="row-table-textnew" th:text="#{messages.vacancy}"></span>
+						<span class="row-table-value" th:text="${employee.vacancy.number}" th:if="${employee.vacancy != null}"></span>
+						<span class="row-table-value" th:if="${employee.vacancy == null}">-</span>
 					</div>
 					
-					<div  style="display:inline;" th:if="${employee.vacancy == null}">
-						<div style="display:inline;" class="col">
-							<span class="row-table-textnew" th:text="#{messages.areas}"></span>
-							<span class="row-table-value">-</span>
-						</div>
-						<div style="display:inline;" class="col">
-							<span class="row-table-textnew" th:text="#{messages.vacancy}"></span>
-							<span class="row-table-value">-</span>
-						</div>
-					</div>
-					
-					<div class="col-sm-1" style="display:inline;">
-						<!-- <a style="display:inline; padding-right: 10px;" class="row-table-textnew" href="#" data-toggle="modal" data-target="#editEmployeeModal" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')">
-							<i class="fas fa-pen-alt row-table-icons"></i>
-						</a> -->
-						
-						<form th:id="'detachEmployeeForm' + ${employee.id}" method="POST" th:action="@{'/employees/{id}/detach'(id=${employee.id}, page=${employees.number + 1})}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')" style="display: initial;">
-							<a href="#" data-toggle="modal" data-target="#detachEmployeeModal" style="padding-right: 20px;" th:onclick="'setDetachVacancyId(' + ${employee.id} + ')'" th:disabled="${employee.vacancy == null}">
+					<div class="col" style="display:inline;">
+						<form th:id="'detachEmployeeForm' + ${employee.id}" method="POST" th:action="@{'/employees/detach/{id}'(id=${employee.id}, page=${employees.number + 1})}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')" style="display: initial;">
+							<a href="#" data-toggle="modal" data-target="#detachEmployeeModal" style="padding-right: 20px;" th:onclick="'setDetachEmployeeId(' + ${employee.id} + ')'" th:if="${employee.vacancy != null}">
 								<i class="fas fa-unlink row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.detach}"></i>
 							</a>
+							
+							<i class="fas fa-unlink row-table-icons not-allowed-cursor disabled-icon" style="padding-right: 20px;" th:if="${employee.vacancy == null}"></i>
 						</form>
 						
-						<a th:id="'editEmployeeHref' + ${employee.id}" th:href="@{'/employees/{id}'(id=${employee.id})}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')" style="margin-right: 15%;" th:onclick="'loadEmployee(event, ' + ${employee.id} + ')'">
+						<a th:id="'editEmployeeHref' + ${employee.id}" th:href="@{'/employees/{id}'(id=${employee.id})}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadEmployee(event, ' + ${employee.id} + ')'">
 							<i class="fas fa-pen-alt row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
 						</a>
 						
-						
-						<form style="display:inline;" method="POST" th:action="@{'/employees/delete/{id}'(id=${employee.id})}" sec:authorize="hasAuthority('DELETE_EMPLOYEES_PRIVILEGE')">
-						  <button class="delete-button" type="submit" th:value="#{messages.employee.delete}">
-						  <i class="fas fa-times row-table-icons"></i> 
-						  </button>
+						<form th:id="'deleteEmployeeForm' + ${employee.id}"  style="display:inline;" method="POST" th:action="@{'/employees/delete/{id}'(id=${employee.id}, page=${employees.number + 1})}" sec:authorize="hasAuthority('DELETE_EMPLOYEES_PRIVILEGE')">
+						  	<button data-toggle="modal" data-target="#deleteEmployeeModal" class="delete-button" type="button" th:value="#{messages.employee.delete}" th:onclick="'setDeleteEmployeeId(' + ${employee.id} + ')'" >
+						  		<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i> 
+						  	</button>
 						</form>
 						
 					</div>
@@ -107,7 +88,9 @@
 		</div>
 		
 		<div th:replace="/private/employees/createemployee.html :: createemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
-		<div th:replace="/private/employees/editemployeemodal.html :: editemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
+		<div th:replace="/private/employees/editemployee.html :: editemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
+		<div th:replace="/private/employees/detachemployee.html :: detachemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
+		<div th:replace="/private/employees/deleteemployee.html :: deleteemployee" sec:authorize="hasAuthority('DELETE_EMPLOYEES_PRIVILEGE')"></div>
 		
 		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>

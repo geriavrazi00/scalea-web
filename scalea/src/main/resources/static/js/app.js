@@ -317,6 +317,12 @@ function loadEmployee(e, id) {
 		$("#edit-employee-email").val(employee.email);
 		$("#edit-employee-phone-number").val(employee.phoneNumber);
 		
+		if (employee.vacancyId != null) {
+			$('#vacancies-div').hide();
+		} else {
+			$('#vacancies-div').show();
+		}
+		
 		if (employee.supervisor) {
 			$("#edit-employee-supervisor").prop('checked', true);
 		} else {
@@ -325,4 +331,22 @@ function loadEmployee(e, id) {
 	});
 	
 	$('#editEmployeeModal').modal('show');
+}
+
+function setDeleteEmployeeId(id) {
+	$("#delete-employee-id").val(id);
+}
+
+function submitEmployeeDeleteForm() {
+	id = $("#delete-employee-id").val();
+	$("#deleteEmployeeForm" + id).submit(); // Submit the form
+}
+
+function setDetachEmployeeId(id) {
+	$("#detach-employee-id").val(id);
+}
+
+function submitEmployeeDetachForm() {
+	id = $("#detach-employee-id").val();
+	$("#detachEmployeeForm" + id).submit(); // Submit the form
 }

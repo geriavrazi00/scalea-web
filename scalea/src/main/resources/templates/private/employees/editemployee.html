@@ -1,136 +1,137 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head th:replace="/commons/template.html :: headerfiles"></head>
-	<body>
-		<div th:replace="/commons/template.html :: menu"></div>
-		
-		<div class="main-container">
-			<h1 th:text="#{messages.employee.edit}"></h1>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+	<div th:fragment="editemployee">
+		<form method="POST" th:action="@{'/employees/update'(page=${employees.number + 1})}" th:object="${employeeDTO}">
+			<input type="hidden" id="edit-employee-id" name="edit-employee-id" th:field="*{id}"/>
 			
-			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			<div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editEmployeeModal" aria-hidden="true">
+				<div class="modal-dialog" role="document" style="max-width: 600px;">
+					<div class="modal-content" style="border-radius: 8px;">
+						<div class="custom-modal-header" style="display: unset;">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        						<span aria-hidden="true">&times;</span>
+      						</button>
+      						
+      						<br/>
+      						
+							<h5 class="modal-title" th:text="#{messages.employee.edit}" style="width: 100%; font-size: 28px; text-align: left; padding-left: 20px;"></h5>
+    					</div>
+    					
+						<div class="modal-body" style="padding-top: 0;">
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px; text-align: center; display: block; padding-top: 0;">
+							
+							</div>
+							
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px;">
+								<div class="col">
+									<div>
+										<label class="modal-text-labels" for="firstName" th:text="#{messages.name} + ' *'"></label>
+									</div>
+									<input id="edit-employee-firstname" class="text-input" type="text" name="firstName" th:field="*{firstName}" required/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+								</div>
+								
+								<div class="col">
+									<div>
+										<label class="modal-text-labels" for="lastName" th:text="#{messages.lastname} + ' *'"></label>
+									</div>
+									<input id="edit-employee-lastname" class="text-input" type="text" name="lastName" th:field="*{lastName}" required/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+								</div>
+							</div>
+							
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px;">
+								<div class="col">
+									<div>
+										<label class="modal-text-labels" for="accountNumber" th:text="#{messages.account.number}"></label>
+									</div>
+									<input id="edit-employee-account-number" class="text-input" type="text" name="accountNumber" th:field="*{accountNumber}"/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('accountNumber')}" th:errors="*{accountNumber}"></span>
+								</div>
+								<div class="col">
+									<div>
+										<label class="modal-text-labels" for="birthday" th:text="#{messages.birthday}"></label>
+									</div>
+									<input id="edit-employee-birthday" class="text-input" type="date" name="birthday" th:field="*{birthday}"/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></span>
+								</div>
+							</div>
+							
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px;">	
+								<div class="col">	
+									<div>
+										<label for="personalNumber" th:text="#{messages.personal.number} + ' *'"></label>
+									</div>
+									<input id="edit-employee-personal-number" class="text-input" type="text" name="personalNumber" th:field="*{personalNumber}" required/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('personalNumber')}" th:errors="*{personalNumber}"></span>
+								</div>
+								
+								<div class="col">
+									<div>
+										<label for="email" th:text="#{messages.email}"></label>
+									</div>
+									<input id="edit-employee-email" class="text-input" type="text" name="email" th:field="*{email}"/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+								</div>
+							</div>
+								
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px;">	
+								<div class="col">
+									<div>
+										<label class="modal-text-labels" for="phoneNumber" th:text="#{messages.phonenumber}"></label>
+									</div>
+									<input id="edit-employee-phone-number" class="text-input" type="text" name="phoneNumber" th:field="*{phoneNumber}"/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+								</div>
+										
+								<div class="col">
+									<div>
+										<label class="modal-text-labels" for="supervisor" th:text="#{messages.supervisor}"></label>
+									</div>
+									<input id="edit-employee-supervisor" type="checkbox" name="supervisor" th:field="*{supervisor}"/>
+								</div>
+							</div>
+							
+							<div id="vacancies-div" class="row" style="margin-bottom: 0px; padding-bottom: 0px;">	
+								<div class="col">
+									<div>
+										<label class="modal-text-labels" for="vacancy" th:text="#{messages.vacancy}" th:if="${vacancies.size() > 0}"></label>
+									</div>
+									<select class="text-input" name="vacancy" th:field="*{vacancyId}" th:if="${vacancies.size() > 0}">
+										<option th:text="#{messages.none}" value=""></option>
+										<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
+									</select>
+								</div>
+								<p th:if="${vacancies.size() == 0}" th:text="#{messages.no.vacancies}"></p>
+							</div>
+									
+							<div class="col" th:if="${vacancies.size() == 0}">
+								<p th:text="#{messages.no.vacancies}"></p>
+								<br />
+							</div>
+						</div>
+							
+						<div class="row" >
+							<button type="submit" th:text="#{messages.save}" class="btn btn-primary"></button>				
+						</div>
+					</div>
+				</div>
+			</div>
 			
-			<form method="POST" th:action="@{'/employees/edit/{id}'(id=${employee.id})}" th:object="${employee}">
-				<div th:if="${#fields.hasErrors()}">
-					<span class="validationError" th:text="#{messages.correct.problems}"></span>
-				</div>
-				
-	<div class="modal-content">
-		<div class="row">
-			<div class="col">
-				<div>
-					<label for="firstName" th:text="#{messages.name}"></label>
-				</div>
-					<input type="text" name="firstName" th:field="*{firstName}"/>
-					<span class="validationError" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+			<div th:if="${#fields.hasErrors()}">
+				<script type="text/javascript">
+					$('#editEmployeeModal').modal('show');
+				</script>
 			</div>
-			<div class="col">
-				<div>
-					<label for="lastName" th:text="#{messages.lastname}"></label>
-				</div>
-					<input type="text" name="lastName" th:field="*{lastName}"/>
-					<span class="validationError" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
-			</div>
-		</div>
-		
-		<div class="row">
-			<div class="col">
-				<div>
-					<label for="accountNumber" th:text="#{messages.account.number}"></label>
-				</div>
-					<input type="text" name="accountNumber" th:field="*{accountNumber}"/>
-					<span class="validationError" th:if="${#fields.hasErrors('accountNumber')}" th:errors="*{accountNumber}"></span>
-			</div>
-			<div class="col">
-				<div>
-					<label for="birthday" th:text="#{messages.birthday}"></label>
-				</div>
-					<input type="date" name="birthday" th:field="*{birthday}"/>
-				<span class="validationError" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></span>
-			</div>
-		</div>
-		
-		<div class="row">	
-			<div class="col">	
-				<div>
-					<label for="personalNumber" th:text="#{messages.personal.number}"></label>
-				</div>
-					<input type="text" name="personalNumber" th:field="*{personalNumber}"/>
-					<span class="validationError" th:if="${#fields.hasErrors('personalNumber')}" th:errors="*{personalNumber}"></span>
-				</div>
-			
-			<div class="col">
-				<div>
-					<label for="email" th:text="#{messages.email}"></label>
-				</div>
-					<input type="text" name="email" th:field="*{email}"/>
-					<span class="validationError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
-			</div>
-		</div>
-			
-		<div class="row">	
-			<div class="col">
-				<div>
-					<label for="phoneNumber" th:text="#{messages.phonenumber}"></label>
-				</div>
-					<input type="text" name="phoneNumber" th:field="*{phoneNumber}"/>
-					<span class="validationError" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
-			</div>
-					
-			<div class="col">
-				<div>
-					<label for="supervisor" th:text="#{messages.supervisor}"></label>
-				</div>
-					<input type="checkbox" id="supervisor" name="supervisor" th:field="*{supervisor}"/>
-			</div>
-		</div>
-		
-		<div class="row">
-			<div class="col" th:if="*{vacancy != null}">
-				
-					<label th:text="#{messages.current.vacancy} + ': '"></label>
-				
-				
-					<label th:text="*{vacancy.area.name + ' - ' + vacancy.number}"></label>
-				
-				
-				
-					<label for="detach" th:text="#{messages.detach.vacancy}"></label>
-				
-					<input type="checkbox" id="detach" name="detach" th:field="*{detach}" onchange="changeVacancies()"/>
-					
-				
-				
-					<label for="vacancy" th:text="#{messages.new.vacancy}" th:if="${vacancies.size() > 0}"></label>
-				
-					<select id="vacancy" name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}" disabled>
-						<option th:text="#{messages.none}" value=""></option>
-						<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
-					</select>
-					
-			</div>
-				
-			<div class="col" th:if="*{vacancy == null}">
-				<div>
-					<label for="vacancy" th:text="#{messages.vacancy}" th:if="${vacancies.size() > 0}"></label>
-				</div>
-					<select name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}">
-						<option th:text="#{messages.none}" value=""></option>
-						<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
-					</select>
-					<br />
-			</div>
-			</div>
-				
-			<div class="col" th:if="${vacancies.size() == 0}">
-					<p th:text="#{messages.no.vacancies}"></p>
-					<br />
-			</div>
-				
-				<input type="submit" th:value="#{messages.save}" />
-		</div>
-			</form>
-		</div>
-		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
-	</body>
+		</form>
+	</div>
 </html>

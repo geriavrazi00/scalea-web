@@ -57,6 +57,8 @@ public class EmployeeDTO {
 	
 	boolean supervisor;
 	
+	private Long vacancyId;
+	
 	public void toDTO(Employee employee) {
 		this.id = employee.getId();
 		this.firstName = employee.getFirstName();
@@ -67,6 +69,7 @@ public class EmployeeDTO {
 		this.email = employee.getEmail();
 		this.phoneNumber = employee.getPhoneNumber();
 		this.supervisor = employee.isSupervisor();
+		this.vacancyId = employee.getVacancy() != null ? employee.getVacancy().getId() : null;
 	}
 	
 	public void mergeWithExistingEmployee(Employee employee) {

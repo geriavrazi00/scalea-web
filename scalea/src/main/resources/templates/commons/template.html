@@ -46,7 +46,7 @@
 			  		<i class="fas fa-network-wired sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.processes}"></span>
 			  	</a>
 			  	
-			  	<a href="#">
+			  	<a href="/control" sec:authorize="hasAnyAuthority('MANAGE_CONTROL_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/control') ? 'active' : ''}">
 			  		<i class="fas fa-play-circle sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.control}"></span>
 			  	</a>
 			  	

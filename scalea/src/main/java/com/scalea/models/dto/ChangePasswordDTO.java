@@ -8,8 +8,10 @@ import javax.validation.constraints.Size;
 import com.scalea.annotations.FieldsMatch;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @FieldsMatch.List({ 
     @FieldsMatch(
       field = "password", 

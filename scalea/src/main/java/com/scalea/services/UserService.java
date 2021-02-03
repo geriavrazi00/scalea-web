@@ -33,4 +33,12 @@ public class UserService implements UserDetailsService {
 	public User findByUsername(String username) {
 		return userRepo.findByUsername(username);
 	}
+	
+	public boolean existsByUsernameAndNotById(String username, Long id) {
+		return userRepo.existsByUsernameAndIdNot(username, id);
+	}
+	
+	public User save(User user) {
+		return userRepo.save(user);
+	}
 }

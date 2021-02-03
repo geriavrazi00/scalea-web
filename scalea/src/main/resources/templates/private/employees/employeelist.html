@@ -7,7 +7,7 @@
 	 	<div th:replace="/commons/template.html :: menu"></div>
 	 
 	 	<div  class="main-container">
-			<h1 th:text="#{messages.employee.list}" class="page-title"></h1>
+			<h1 th:text="#{messages.employees}" class="page-title"></h1>
 			
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 			<div class="filter-row">
@@ -21,7 +21,7 @@
 						<span class="row-table-value" th:text="${employee.firstName + ' ' + employee.lastName}"></span>
 					</div>
 					 <div class="col" >	
-					 <span class="row-table-textnew">ID</span>
+					 <span class="row-table-textnew"></span>
 					<!-- <span class="row-table-textnew" th:text="#{messages.personal.number}"></span> -->	
 						<span class="row-table-value" th:text="${employee.personalNumber}"></span>
 					</div>

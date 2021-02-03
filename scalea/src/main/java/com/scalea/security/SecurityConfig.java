@@ -48,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/statistics**", "/statistics/**").access("hasAnyAuthority('" + Constants.VIEW_GENERAL_STATISTICS_PRIVILEGE + "')")
 			.antMatchers("/roles**", "/roles/**").access("hasAnyAuthority('" + Constants.VIEW_ROLES_PRIVILEGE + "', '" + Constants.UPSERT_ROLES_PRIVILEGE + "', '" + Constants.DELETE_ROLES_PRIVILEGE + "')")
 			.antMatchers("/users**", "/users/**").access("hasAnyAuthority('" + Constants.VIEW_USERS_PRIVILEGE + "', '" + Constants.UPSERT_USERS_PRIVILEGE + "', '" + Constants.DELETE_USERS_PRIVILEGE + "')")
+			.antMatchers("/control**", "/control/**").access("hasAnyAuthority('" + Constants.MANAGE_CONTROL_PRIVILEGE + "')")
 			.antMatchers("/", "/home").authenticated()
 			.antMatchers("/**").access("permitAll")
 			.and().formLogin().loginPage("/login")

@@ -1,5 +1,7 @@
 package com.scalea.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
@@ -11,4 +13,5 @@ public interface AreaRepository extends CrudRepository<Area, Long> {
 	Iterable<Area> findByEnabled(boolean enabled);
 	Iterable<Area> findByEnabledOrderByName(boolean enabled);
 	Page<Area> findByEnabledOrderByName(boolean enabled, Pageable pageable);
+	Optional<Area> findByIdAndEnabledIsTrue(Long id);
 }

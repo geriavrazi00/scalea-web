@@ -54,6 +54,8 @@ public interface Constants {
 	
 	public static final String VIEW_GENERAL_STATISTICS_PRIVILEGE = "VIEW_GENERAL_STATISTICS_PRIVILEGE";
 	
+	public static final String MANAGE_CONTROL_PRIVILEGE = "MANAGE_CONTROL_PRIVILEGE";
+	
 	// Configuration options
 	public static final String IMAGE_PATH = "image_path";
 	public static final String PRODUCTS_IMAGE_SYSTEM_PATH = "products\\";

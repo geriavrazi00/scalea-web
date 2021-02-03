@@ -54,6 +54,14 @@ public class ProductService {
 		return productRepo.findById(id);
 	}
 	
+	public Iterable<Product> findByFatherProductIsNullAndEnabledIsTrueOrderByName() {
+		return productRepo.findByFatherProductIsNullAndEnabledIsTrueOrderByName();
+	}
+	
+	public Optional<Product> findByIdAndFatherProductIsNullAndEnabledIsTrue(Long id) {
+		return productRepo.findByIdAndFatherProductIsNullAndEnabledIsTrue(id);
+	}
+	
 	public String savePhotoToDisk(MultipartFile multipartFile, String fileName, String desiredName) throws Exception {
 		String fileExtension = fileName.substring(fileName.lastIndexOf('.'));
 		String storedFileName = desiredName.toLowerCase() + "_" + System.currentTimeMillis() + fileExtension;

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
 xmlns:sec="http://www.thymeleaf.org">
 	<body>
-		<div class="table-container col-lg-3" th:fragment="settingsmenu">
+		<div class="table-container col-lg-3" th:fragment="settingsmenu" style="margin: 0px;">
 			<div th:class="${#httpServletRequest.requestURI.contains('/profile') ? 'setting-menu-item active' : 'setting-menu-item'}">
 				<a href="/profile" th:text="#{messages.my.data}" class="black-and-bold"></a>
 			</div>

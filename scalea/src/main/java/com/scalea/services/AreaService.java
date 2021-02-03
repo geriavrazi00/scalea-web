@@ -24,6 +24,10 @@ public class AreaService {
 	public Page<Area> findPaginatedByEnabledOrderByName(Pageable pageable) {
         return areaRepo.findByEnabledOrderByName(true, pageable);
     }
+	
+	public Iterable<Area> findByEnabledOrderByName() {
+		return areaRepo.findByEnabledOrderByName(true);
+	}
 
 	public Area updateById(long id, Area editedArea) throws GenericException {
 		Optional<Area> optionalArea = areaRepo.findById(id);
@@ -56,5 +60,9 @@ public class AreaService {
 	
 	public void delete(Area area) {
 		areaRepo.delete(area);
+	}
+	
+	public Optional<Area> findByIdAndEnabledIsTrue(Long id) {
+		return areaRepo.findByIdAndEnabledIsTrue(id);
 	}
 }

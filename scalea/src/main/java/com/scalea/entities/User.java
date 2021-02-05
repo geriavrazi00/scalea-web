@@ -18,7 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.scalea.annotations.FieldsMatch;
 import com.scalea.validators.groups.OnCreate;
 import com.scalea.validators.groups.OnUpdate;
-import com.sun.istack.NotNull;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -64,12 +63,10 @@ public class User implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
 	@Size(max=255, message="{messages.username.max}", groups = {OnCreate.class, OnUpdate.class})
 	@NotBlank(message="{messages.username.required}", groups = {OnCreate.class, OnUpdate.class})
 	private String username;
 	
-	@NotNull
 	@Size(max=255, message="{messages.password.max}", groups = {OnCreate.class})
 	@NotBlank(message="{messages.password.required}", groups = {OnCreate.class})
 	@Pattern(regexp="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$", message="{messages.password.format}", groups = {OnCreate.class})
@@ -78,13 +75,11 @@ public class User implements UserDetails {
 	@Transient
 	private String confirmPassword;
 	
-	@NotNull
 	@Size(max=255, message="{messages.name.max}", groups = {OnCreate.class, OnUpdate.class})
 	@NotBlank(message="{messages.name.required}", groups = {OnCreate.class, OnUpdate.class})
 	@Column(name="firstname")
 	private String firstName;
 	
-	@NotNull
 	@Size(max=255, message="{messages.lastname.max}", groups = {OnCreate.class, OnUpdate.class})
 	@NotBlank(message="{messages.lastname.required}", groups = {OnCreate.class, OnUpdate.class})
 	@Column(name="lastname")
@@ -102,13 +97,14 @@ public class User implements UserDetails {
           name = "user_id", referencedColumnName = "id"), 
         inverseJoinColumns = @JoinColumn(
           name = "role_id", referencedColumnName = "id"))
-	@NotEmpty(message="{messages.at.least.one.role}", groups = {OnCreate.class, OnUpdate.class})
+	// @NotEmpty(message="{messages.at.least.one.role}", groups = {OnCreate.class, OnUpdate.class})
     private Collection<Role> roles;
 	
 	@OneToMany(mappedBy="user")
 	private Collection<Process> processes;
 	
 	@Transient
+	@NotNull(message="{messages.role.required}", groups = {OnCreate.class, OnUpdate.class})
 	private Role role;
 	
 	public User(@Size(max = 255) String username, @Size(max = 255) String password, String firstName, String lastName, String phoneNumber, 

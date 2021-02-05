@@ -9,7 +9,8 @@ import com.scalea.entities.User;
 
 public interface UserRepository extends CrudRepository<User, Long> {
 	User findByUsername(String username);
+	boolean existsByUsername(String username);
 	boolean existsByUsernameAndIdNot(String username, Long id);
-	Page<User> findByIdNot(Long id, Pageable pageable);
-	Page<User> findByIdNotAndRolesNot(Long id, Role role, Pageable pageable);
+	Page<User> findByIdNotOrderByUsername(Long id, Pageable pageable);
+	Page<User> findByIdNotAndRolesNotOrderByUsername(Long id, Role role, Pageable pageable);
 }

@@ -12,5 +12,6 @@ public interface RoleRepository extends CrudRepository<Role, Long> {
 	Role findByName(String name);
 	List<Role> findByUsersIn(Collection<User> users);
 	boolean existsByName(String name);
-	Iterable<Role> findByNameNotIn(Collection<String> roleNames);
+	Iterable<Role> findByNameNotInOrderByName(Collection<String> roleNames);
+	Iterable<Role> findAllByOrderByName();
 }

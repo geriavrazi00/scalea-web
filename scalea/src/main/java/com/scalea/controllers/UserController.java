@@ -76,74 +76,67 @@ public class UserController {
 		
 		if (request.isUserInRole(Constants.ROLE_ADMIN)) {
 			users = userService.findAllExceptMe(user.getId(), PageRequest.of(currentPage - 1, DEFAULT_SIZE));
-			roles = roleRepo.findAll();
+			roles = roleRepo.findAllByOrderByName();
 	    } else {
 	    	users = userService.findAllExceptMeAndNotAdmin(user.getId(), PageRequest.of(currentPage - 1, DEFAULT_SIZE));
-	    	roles = roleRepo.findByNameNotIn(new ArrayList<>(Arrays.asList(new String[] {Constants.ROLE_ADMIN, Constants.ROLE_USER})));
+	    	roles = roleRepo.findByNameNotInOrderByName(new ArrayList<>(Arrays.asList(new String[] {Constants.ROLE_ADMIN, Constants.ROLE_USER})));
 	    }
 		
 		model.addAttribute("users", users);
 		model.addAttribute("roles", roles);
-		model.addAttribute("user", new User());
+		if (!model.containsAttribute("user")) model.addAttribute("user", new User());
 		model.addAttribute("pageNumbers", Utils.getPageNumbersList(users.getTotalPages()));
 		return "private/administration/users/userlist";
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_USERS_PRIVILEGE + "'")
-	@GetMapping("/create")
-	public String newUser(Model model) {
-		log.info("Method newUser()");
-		
-		Iterable<Role> roles = roleRepo.findAll();
-		
-		model.addAttribute("user", new User());
-		model.addAttribute("roles", roles);
-		return "private/administration/users/createuser";
-	}
-	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_USERS_PRIVILEGE + "'")
 	@PostMapping("/create")
-	public String createUser(@Validated(OnCreate.class) User user, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueUserUsernameViolationException {
+	public String createUser(@Validated(OnCreate.class) User user, Errors errors, Model model, Principal principal, RedirectAttributes redirectAttributes,
+			HttpServletRequest request, @RequestParam("page") Optional<Integer> page) throws GenericException {
 		log.info("Method createUser()");
 		
 		if (errors.hasErrors()) {
-			Iterable<Role> roles = roleRepo.findAll();
-			model.addAttribute("roles", roles);
-			
-			return "private/administration/users/createuser";
+			return this.allUsers(request, model, principal, page);
 		}
 		
-		try {
-			String rawPassword = user.getPassword();
-			user.setPassword(passwordEncoder.encode(rawPassword));
-			user.setConfirmPassword(user.getPassword());
-			this.userService.save(user);
-			
-			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.created"));
-		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-		    
-			return "redirect:/users";
-		} catch (DataIntegrityViolationException e) {
-		    if (e.getMostSpecificCause().getClass().getName().equals("org.postgresql.util.PSQLException") && ((SQLException) e.getMostSpecificCause()).getSQLState().equals("23505"))
-		        throw new UniqueUserUsernameViolationException(messages.get("messages.user.unique.username", user.getUsername()));
-		    throw e;
+		if (!request.isUserInRole(Constants.ROLE_ADMIN) && user.getRole().getName().equals(Constants.ROLE_ADMIN)) {
+			throw new GenericException(this.messages.get("messages.unauthorized.access"));
 		}
+		
+		if (userService.existsByUsername(user.getUsername())) {
+			model.addAttribute("message", this.messages.get("messages.user.unique.username", user.getUsername()));
+			model.addAttribute("alertClass", "alert-danger");
+		    return this.allUsers(request, model, principal, page);
+		}
+		
+		String rawPassword = user.getPassword();
+		user.setPassword(passwordEncoder.encode(rawPassword));
+		user.setConfirmPassword(user.getPassword());
+		
+		user.setRoles(new ArrayList<>());
+		user.getRoles().add(user.getRole());
+		this.userService.save(user);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.created"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+	    
+		return "redirect:/users" + paginationParameters(page);
 	}
 	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_USERS_PRIVILEGE + "'")
-	@GetMapping("edit/{id}")
-	public String editUser(@PathVariable("id") Long id, Model model) throws Exception {
-		log.info("Method editUser()");
-		
-		Optional<User> user = userService.findById(id);
-		if (!user.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
-		
-		Iterable<Role> roles = roleRepo.findAll();
-		
-		model.addAttribute("user", user.get());
-		model.addAttribute("roles", roles);
-		return "private/administration/users/edituser";
-	}
+//	@PreAuthorize("hasAuthority('" + Constants.UPSERT_USERS_PRIVILEGE + "'")
+//	@GetMapping("edit/{id}")
+//	public String editUser(@PathVariable("id") Long id, Model model) throws Exception {
+//		log.info("Method editUser()");
+//		
+//		Optional<User> user = userService.findById(id);
+//		if (!user.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
+//		
+//		Iterable<Role> roles = roleRepo.findAll();
+//		
+//		model.addAttribute("user", user.get());
+//		model.addAttribute("roles", roles);
+//		return "private/administration/users/edituser";
+//	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_USERS_PRIVILEGE + "'")
 	@PostMapping("/edit/{id}")
@@ -234,5 +227,9 @@ public class UserController {
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
 		return "redirect:/users";
+	}
+	
+	private String paginationParameters(Optional<Integer> page) {
+		return "?page=" + page.orElse(DEFAULT_PAGE);
 	}
 }

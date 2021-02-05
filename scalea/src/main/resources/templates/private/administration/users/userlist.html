@@ -11,13 +11,15 @@
 		
 		<br/>
 		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
 		<section class="setting_body" style="margin: 0px;">
 			<div th:replace="/commons/settingsmenu.html :: settingsmenu"></div>
 
 			<div class="sb_table col-lg-8">
 				<div class="sb_table_heading">
 					<h2 th:text="#{messages.users}"></h2>
-					<a href="/users/create" th:text="#{messages.user.create}" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')" data-toggle="modal" data-target="#createUserModal"></a>
+					<a class="btn btn-primary" href="/users/create" th:text="#{messages.user.create}" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')" data-toggle="modal" data-target="#createUserModal"></a>
 				</div>
 				<div class="set_table_body">
 					<div class="table-responsive">

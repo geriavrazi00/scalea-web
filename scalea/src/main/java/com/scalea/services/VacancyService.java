@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.scalea.entities.Area;
 import com.scalea.entities.Vacancy;
 import com.scalea.repositories.VacancyRepository;
 
 @Service
+@Transactional
 public class VacancyService {
 	private VacancyRepository vacancyRepo;
 

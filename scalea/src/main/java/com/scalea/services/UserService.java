@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.scalea.entities.Role;
 import com.scalea.entities.User;
@@ -18,6 +19,7 @@ import com.scalea.repositories.UserRepository;
 import com.scalea.utils.Constants;
 
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
 	
 	private UserRepository userRepo;
@@ -44,6 +46,10 @@ public class UserService implements UserDetailsService {
 		return userRepo.findByUsername(username);
 	}
 	
+	public boolean existsByUsername(String username) {
+		return userRepo.existsByUsername(username);
+	}
+	
 	public boolean existsByUsernameAndNotById(String username, Long id) {
 		return userRepo.existsByUsernameAndIdNot(username, id);
 	}
@@ -53,13 +59,13 @@ public class UserService implements UserDetailsService {
 	}
 	
 	public Page<User> findAllExceptMe(Long id, Pageable pageable) {
-		return userRepo.findByIdNot(id, pageable);
+		return userRepo.findByIdNotOrderByUsername(id, pageable);
 	}
 	
 	public Page<User> findAllExceptMeAndNotAdmin(Long id, Pageable pageable) throws GenericException {
 		Role admin = roleRepo.findByName(Constants.ROLE_ADMIN);
 		if (admin == null) throw new GenericException("Role Admin does not exist");
-		return userRepo.findByIdNotAndRolesNot(id, admin, pageable);
+		return userRepo.findByIdNotAndRolesNotOrderByUsername(id, admin, pageable);
 	}
 	
 	public Optional<User> findById(Long id) {

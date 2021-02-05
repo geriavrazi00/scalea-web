@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.scalea.entities.Area;
 import com.scalea.exceptions.GenericException;
 import com.scalea.repositories.AreaRepository;
 
 @Service
+@Transactional
 public class AreaService {
 	
 	private AreaRepository areaRepo;

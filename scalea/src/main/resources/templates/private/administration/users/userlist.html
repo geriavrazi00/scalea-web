@@ -1,207 +1,87 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
+<html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org">
-	<head th:replace="/commons/template.html :: headerfiles"></head>
-	<body>
-		<div th:replace="/commons/template.html :: menu"></div>
+<head th:replace="/commons/template.html :: headerfiles"></head>
+
+<body>
+	<div th:replace="/commons/template.html :: menu"></div>
+
+	<div class="main-container">
+		<h1 th:text="#{messages.settings}" class="page-title"></h1>
 		
-		<div class="main-container">
-				
- <section class="top_section">
-      <div class="tsec_div1">
-			<h1 th:text="#{messages.settings}" class="page-title"></h1>
-      </div>
-      <div class="tsec_div2">
-        <span>
-          <form class="navbar-form" role="search">
-            <div class="input-group add-on">
-              <input
-                class="form-control"
-                placeholder=""
-                name="srch-term"
-                id="srch-term"
-                type="text"
-              />
-              <div class="input-group-btn">
-                <button class="btn btn-default" type="submit">
-                  <img src="img/magnifying-glass.svg" />
-                </button>
-              </div>
-            </div>
-          </form>
-        </span>
-        <span><img src="img/statisp1.png" /></span>
-      </div>
-    </section>
+		<br/>
+		
+		<section class="setting_body" style="margin: 0px;">
+			<div th:replace="/commons/settingsmenu.html :: settingsmenu"></div>
 
-    <section class="setting_body">
-    <div th:replace="/commons/settingsmenu.html :: settingsmenu"></div>
-      
-      <div class="sb_table col-lg-8">
-        <div class="sb_table_heading">
-          <h2>Perdoruesit</h2>
-          <a>Shto nje perdorues +</a>
-        </div>
-        <div class="set_table_body">
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col" style="width: 200px">Emri i perdoruesit</th>
-                  <th scope="col" style="width: 100px">Te drejtat</th>
-                  <th scope="col" style="width: 100px">Statusi</th>
-                  <th scope="col" style="width: 150px">Aktiviteti</th>
-                  <th scope="col" style="width: 100px">Salla</th>
-                  <th scope="col" style="width: 100px"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="st_td_flex">
-                    <img src="img/statisp1.png" />
-                    <span>
-                      <h2>Administratori 1</h2>
-                      <p>administrate@fenix.com</p>
-                    </span>
-                  </td>
-                  <td>Administrator</td>
-                  <td class="color_pri">Aktiv</td>
-                  <td>2min. me pare</td>
-                  <td>------------</td>
-                  <td>
-                    <div class="st_actions">
-                      <img src="img/pencil.svg" />
-                      <img src="img/close.svg" />
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="st_td_flex">
-                    <img src="img/statisp1.png" />
-                    <span>
-                      <h2>Administratori 1</h2>
-                      <p>administrate@fenix.com</p>
-                    </span>
-                  </td>
-                  <td>Administrator</td>
-                  <td class="color_pri">Aktiv</td>
-                  <td>2min. me pare</td>
-                  <td>------------</td>
-                  <td>
-                    <div class="st_actions">
-                      <img src="img/pencil.svg" />
-                      <img src="img/close.svg" />
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="st_td_flex">
-                    <img src="img/statisp1.png" />
-                    <span>
-                      <h2>Administratori 1</h2>
-                      <p>administrate@fenix.com</p>
-                    </span>
-                  </td>
-                  <td>Administrator</td>
-                  <td class="color_pri">Aktiv</td>
-                  <td>2min. me pare</td>
-                  <td>------------</td>
-                  <td>
-                    <div class="st_actions">
-                      <img src="img/pencil.svg" />
-                      <img src="img/close.svg" />
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="st_td_flex">
-                    <img src="img/statisp1.png" />
-                    <span>
-                      <h2>Administratori 1</h2>
-                      <p>administrate@fenix.com</p>
-                    </span>
-                  </td>
-                  <td>Administrator</td>
-                  <td class="color_pri">Aktiv</td>
-                  <td>2min. me pare</td>
-                  <td>------------</td>
-                  <td>
-                    <div class="st_actions">
-                      <img src="img/pencil.svg" />
-                      <img src="img/close.svg" />
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="st_td_flex">
-                    <img src="img/statisp1.png" />
-                    <span>
-                      <h2>Administratori 1</h2>
-                      <p>administrate@fenix.com</p>
-                    </span>
-                  </td>
-                  <td>Administrator</td>
-                  <td class="color_pri">Aktiv</td>
-                  <td>2min. me pare</td>
-                  <td>------------</td>
-                  <td>
-                    <div class="st_actions">
-                      <img src="img/pencil.svg" />
-                      <img src="img/close.svg" />
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="st_td_flex">
-                    <img src="img/statisp1.png" />
-                    <span>
-                      <h2>Administratori 1</h2>
-                      <p>administrate@fenix.com</p>
-                    </span>
-                  </td>
-                  <td>Administrator</td>
-                  <td class="color_pri">Aktiv</td>
-                  <td>2min. me pare</td>
-                  <td>------------</td>
-                  <td>
-                    <div class="st_actions">
-                      <img src="img/pencil.svg" />
-                      <img src="img/close.svg" />
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="st_td_flex">
-                    <img src="img/statisp1.png" />
-                    <span>
-                      <h2>Administratori 1</h2>
-                      <p>administrate@fenix.com</p>
-                    </span>
-                  </td>
-                  <td>Administrator</td>
-                  <td class="color_pri">Aktiv</td>
-                  <td>2min. me pare</td>
-                  <td>------------</td>
-                  <td>
-                    <div class="st_actions">
-                      <img src="img/pencil.svg" />
-                      <img src="img/close.svg" />
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
-					<div th:if="${users.size() == 0}">
-						<p th:text="#{messages.no.users}"></p>
+			<div class="sb_table col-lg-8">
+				<div class="sb_table_heading">
+					<h2 th:text="#{messages.users}"></h2>
+					<a href="/users/create" th:text="#{messages.user.create}" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')" data-toggle="modal" data-target="#createUserModal"></a>
+				</div>
+				<div class="set_table_body">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col" style="width: 200px" th:text="#{messages.username}"></th>
+									<th scope="col" style="width: 100px" th:text="#{messages.role}"></th>
+									<th scope="col" style="width: 100px" th:text="#{messages.status}"></th>
+									<th scope="col" style="width: 100px" th:text="#{messages.area}"></th>
+									<th scope="col" style="width: 100px"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="user: ${users.content}">
+									<td class="st_td_flex" style="padding-top: 0px; padding-bottom: 0px;">
+										<span>
+											<h2 th:text="${user.username}"></h2>
+											<p th:text="${user.firstName} + ' ' + ${user.lastName}"></p>
+										</span>
+									</td>
+									<td th:text="${user.roles.get(0).name}"></td>
+									<td class="color_pri">Aktiv</td>
+									<td>-</td>
+									<td>
+										<div class="st_actions">
+											<!-- <img src="img/pencil.svg" /> <img src="img/close.svg" /> -->
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
+					
+					<div th:if="${users.totalPages > 1 && users.content.size() > 0}">
+						<ul class="pagination">
+							<li th:class="${users.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+								<a class="page-link" th:href="@{/users(page=${users.number})}">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+							<li th:if="${users.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+							    <a th:href="@{/users(page=${pageNumber})}" th:text=${pageNumber} 
+							    	th:class="${pageNumber == users.number + 1} ? 'page-link active' : 'page-link'"></a>
+							</li>
+							<li th:class="${(users.number + 1) == users.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+								<a class="page-link" th:href="@{/users(page=${users.number + 2})}">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</section>
 
+		<div th:if="${users.content.size() == 0}">
+			<p th:text="#{messages.no.users}"></p>
 		</div>
-		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
-	</body>
+
+	</div>
+	
+	<div th:replace="/private/administration/users/createusermodal.html :: createuser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
+
+	<div th:replace="/commons/template.html :: js-scripts"></div>
+</body>
 </html>

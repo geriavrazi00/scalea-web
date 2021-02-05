@@ -52,7 +52,7 @@
 			  	
 			  	<hr class="hr-style">
 
-			  	<a href="/profile" sec:authorize="hasAnyAuthority('VIEW_ROLES_PRIVILEGE', 'UPSERT_ROLES_PRIVILEGE', 'DELETE_ROLES_PRIVILEGE', 'VIEW_USERS_PRIVILEGE', 'UPSERT_USERS_PRIVILEGE', 'PASSWORDS_USERS_PRIVILEGE', 'DELETE_USERS_PRIVILEGE', 'VIEW_PROFILE_PRIVILEGE', 'UPDATE_PROFILE_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/profile') || #httpServletRequest.requestURI.contains('/users') || #httpServletRequest.requestURI.contains('/roles') ? 'active' : ''}">
+			  	<a th:href="@{${#authorization.expression('hasAnyAuthority(''VIEW_PROFILE_PRIVILEGE'',''UPDATE_PROFILE_PRIVILEGE'')') ? '/profile' : (#authorization.expression('hasAnyAuthority(''VIEW_USERS_PRIVILEGE'',''UPSERT_USERS_PRIVILEGE'',''PASSWORDS_USERS_PRIVILEGE'',''DELETE_USERS_PRIVILEGE'')') ? '/users' : '/roles')}}" sec:authorize="hasAnyAuthority('VIEW_ROLES_PRIVILEGE', 'UPSERT_ROLES_PRIVILEGE', 'DELETE_ROLES_PRIVILEGE', 'VIEW_USERS_PRIVILEGE', 'UPSERT_USERS_PRIVILEGE', 'PASSWORDS_USERS_PRIVILEGE', 'DELETE_USERS_PRIVILEGE', 'VIEW_PROFILE_PRIVILEGE', 'UPDATE_PROFILE_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/profile') || #httpServletRequest.requestURI.contains('/users') || #httpServletRequest.requestURI.contains('/roles') ? 'active' : ''}">
 			  		<i class="fas fa-cogs sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.settings}"></span>
 			  	</a>
 			  	

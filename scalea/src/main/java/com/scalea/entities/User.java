@@ -108,6 +108,9 @@ public class User implements UserDetails {
 	@OneToMany(mappedBy="user")
 	private Collection<Process> processes;
 	
+	@Transient
+	private Role role;
+	
 	public User(@Size(max = 255) String username, @Size(max = 255) String password, String firstName, String lastName, String phoneNumber, 
 		Collection<Role> roles) {
 		this.username = username;

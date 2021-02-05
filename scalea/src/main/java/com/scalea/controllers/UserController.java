@@ -1,14 +1,20 @@
 package com.scalea.controllers;
 
+import java.security.Principal;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -19,17 +25,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Role;
 import com.scalea.entities.User;
+import com.scalea.exceptions.GenericException;
 import com.scalea.exceptions.UniqueUserUsernameViolationException;
 import com.scalea.exceptions.UserNotFoundException;
 import com.scalea.models.dto.ChangePasswordDTO;
 import com.scalea.repositories.RoleRepository;
-import com.scalea.repositories.UserRepository;
+import com.scalea.services.UserService;
 import com.scalea.utils.Constants;
+import com.scalea.utils.Utils;
 import com.scalea.validators.groups.OnCreate;
 import com.scalea.validators.groups.OnUpdate;
 
@@ -37,15 +46,18 @@ import com.scalea.validators.groups.OnUpdate;
 @RequestMapping("/users")
 public class UserController {
 	
-	private UserRepository userRepo;
+	private UserService userService;
 	private RoleRepository roleRepo;
 	private Logger log;
 	private Messages messages;
 	private PasswordEncoder passwordEncoder;
 	
+	private static final int DEFAULT_PAGE = 1;
+	private static final int DEFAULT_SIZE = 7;
+	
 	@Autowired
-	public UserController(UserRepository userRepo, RoleRepository roleRepo, Messages messages, PasswordEncoder passwordEncoder) {
-		this.userRepo = userRepo;
+	public UserController(UserService userService, RoleRepository roleRepo, Messages messages, PasswordEncoder passwordEncoder) {
+		this.userService = userService;
 		this.roleRepo = roleRepo;
 		this.log = LoggerFactory.getLogger(UserController.class);
 		this.messages = messages;
@@ -54,11 +66,26 @@ public class UserController {
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_USERS_PRIVILEGE + "', '" + Constants.UPSERT_USERS_PRIVILEGE + "', '" + Constants.DELETE_USERS_PRIVILEGE + "')")
 	@GetMapping
-	public String allUsers(Model model) {
+	public String allUsers(HttpServletRequest request, Model model, Principal principal, @RequestParam("page") Optional<Integer> page) throws GenericException {
 		log.info("Method allUsers()");
 		
-		Iterable<User> users = userRepo.findAll();
+		int currentPage = page.orElse(DEFAULT_PAGE);
+		User user = userService.findByUsername(principal.getName());
+		Page<User> users = null;
+		Iterable<Role> roles = null;
+		
+		if (request.isUserInRole(Constants.ROLE_ADMIN)) {
+			users = userService.findAllExceptMe(user.getId(), PageRequest.of(currentPage - 1, DEFAULT_SIZE));
+			roles = roleRepo.findAll();
+	    } else {
+	    	users = userService.findAllExceptMeAndNotAdmin(user.getId(), PageRequest.of(currentPage - 1, DEFAULT_SIZE));
+	    	roles = roleRepo.findByNameNotIn(new ArrayList<>(Arrays.asList(new String[] {Constants.ROLE_ADMIN, Constants.ROLE_USER})));
+	    }
+		
 		model.addAttribute("users", users);
+		model.addAttribute("roles", roles);
+		model.addAttribute("user", new User());
+		model.addAttribute("pageNumbers", Utils.getPageNumbersList(users.getTotalPages()));
 		return "private/administration/users/userlist";
 	}
 	
@@ -90,7 +117,7 @@ public class UserController {
 			String rawPassword = user.getPassword();
 			user.setPassword(passwordEncoder.encode(rawPassword));
 			user.setConfirmPassword(user.getPassword());
-			this.userRepo.save(user);
+			this.userService.save(user);
 			
 			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.created"));
 		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
@@ -108,7 +135,7 @@ public class UserController {
 	public String editUser(@PathVariable("id") Long id, Model model) throws Exception {
 		log.info("Method editUser()");
 		
-		Optional<User> user = userRepo.findById(id);
+		Optional<User> user = userService.findById(id);
 		if (!user.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
 		
 		Iterable<Role> roles = roleRepo.findAll();
@@ -132,7 +159,7 @@ public class UserController {
 			return "private/administration/users/edituser";
 		}
 		
-		Optional<User> userById = userRepo.findById(user.getId());
+		Optional<User> userById = userService.findById(user.getId());
 		if (!userById.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
 		User foundUser = userById.get();
 		
@@ -143,7 +170,7 @@ public class UserController {
 			foundUser.setPhoneNumber(user.getPhoneNumber());
 			foundUser.setRoles(user.getRoles());
 			
-			this.userRepo.save(foundUser);
+			this.userService.save(foundUser);
 			
 			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.updated"));
 		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
@@ -161,7 +188,7 @@ public class UserController {
 	public String changePassword(@PathVariable("id") Long id, Model model) throws Exception {
 		log.info("Method changePassword()");
 		
-		Optional<User> user = userRepo.findById(id);
+		Optional<User> user = userService.findById(id);
 		if (!user.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
 		
 		model.addAttribute("changePasswordDTO", new ChangePasswordDTO(id));
@@ -178,12 +205,12 @@ public class UserController {
 			return "private/administration/users/changepassword";
 		}
 		
-		Optional<User> optionalUser = userRepo.findById(changePasswordDTO.getId());
+		Optional<User> optionalUser = userService.findById(changePasswordDTO.getId());
 		if (!optionalUser.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
 		User user = optionalUser.get();
 		
 		user.setPassword(passwordEncoder.encode(changePasswordDTO.getPassword()));
-		this.userRepo.save(user);
+		this.userService.save(user);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.password.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
@@ -195,13 +222,13 @@ public class UserController {
 	public String deleteUser(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) throws UserNotFoundException {
 		log.info("Method deleteUser()");
 		
-		Optional<User> user = userRepo.findById(id);
+		Optional<User> user = userService.findById(id);
 		
 		if (!user.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
 		User foundUser = user.get();
 		foundUser.setRoles(null);
 		
-		this.userRepo.delete(foundUser);
+		this.userService.delete(foundUser);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.user.deleted"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");

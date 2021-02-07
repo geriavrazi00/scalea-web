@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+	<div th:fragment="financedetails">
+		<div id="financeDetailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="financeDetailsModal" aria-hidden="true">
+			<div class="modal-dialog" role="document" style="max-width: 600px;">
+				<div class="modal-content">
+					<div class="modal-body">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       						<span aria-hidden="true">&times;</span>
+     					</button>
+						
+						<div>
+							<h5 class="modal-title" th:text="#{messages.financial.details}"></h5>
+							
+							<br/>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.employee}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="employee-full-name"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.employee.personal.number}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="employee-personal-number"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.gross.salary}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="gross-salary"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.social.insurance.salary}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="social-insurance-salary"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.health.insurance.salary}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="health-insurance-salary"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.employer.social.insurance}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="employer-social-insurance"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.employer.health.insurance}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="employer-health-insurance"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.employee.social.insurance}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="employee-social-insurance"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.employee.health.insurance}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="employee-health-insurance"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.progressive.tax}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="progressive-tax"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.employer.total.cost}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="employer-total-cost"></p>
+								</div>
+							</div>
+							
+							<div class="row" style="padding-top: 0; padding-bottom: 0; margin-bottom: 0;">
+								<div class="col-7">
+									<p th:text="#{messages.net.salary}"></p>
+								</div>
+								
+								<div class="col-5 bold">
+									<p id="net-salary"></p>
+								</div>
+							</div>
+							
+							<br/>
+							
+							<div id="below-minimal-wage-message">
+								<p th:text="#{messages.below.minimal.wage}" class="bold" style="font-size: 16px; font-family: ttcommons-extra-bold; color: red;"></p>
+							</div>
+							
+							<div class="clearfix" style="float: right;">
+								<button type="button" data-dismiss="modal" class="btn btn-light" th:text="#{messages.close}"></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</html>

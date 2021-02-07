@@ -1,0 +1,13 @@
+package com.scalea.models.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class MonthDTO {
+	private int number;
+	private String name;
+}

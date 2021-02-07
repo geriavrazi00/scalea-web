@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+	<div th:fragment="deletesubproduct">
+		<div id="deleteSubProductModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deleteSubProductModal" aria-hidden="true">
+			<div class="modal-dialog" role="document" style="margin-top: 200px;">
+				<div class="modal-content">
+					<div class="modal-body">
+						<input type="hidden" id="delete-subproduct-id" />
+						
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       						<span aria-hidden="true">&times;</span>
+     					</button>
+						
+						<div class="container">
+							<h1 th:text="#{messages.subproduct.delete}"></h1>
+							<p th:text="#{messages.subproduct.delete.confirmation}"></p>
+			
+							<div class="clearfix">
+								<button type="button" data-dismiss="modal" class="btn btn-light" th:text="#{messages.cancel}"></button>
+								<button type="button" onclick="submitSubProductDeleteForm();" class="btn btn-cancel" th:text="#{messages.delete}"></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</html>

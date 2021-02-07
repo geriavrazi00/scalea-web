@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -90,41 +87,31 @@ public class User implements UserDetails {
 	@NotBlank(message="{messages.phonenumber.required}", groups = {OnCreate.class, OnUpdate.class})
 	private String phoneNumber;
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable( 
-        name = "users_roles", 
-        joinColumns = @JoinColumn(
-          name = "user_id", referencedColumnName = "id"), 
-        inverseJoinColumns = @JoinColumn(
-          name = "role_id", referencedColumnName = "id"))
-	// @NotEmpty(message="{messages.at.least.one.role}", groups = {OnCreate.class, OnUpdate.class})
-    private Collection<Role> roles;
-	
 	@OneToMany(mappedBy="user")
 	private Collection<Process> processes;
 	
-	@Transient
+	@ManyToOne
+	@JoinColumn(name="role_id")
 	@NotNull(message="{messages.role.required}", groups = {OnCreate.class, OnUpdate.class})
 	private Role role;
 	
 	public User(@Size(max = 255) String username, @Size(max = 255) String password, String firstName, String lastName, String phoneNumber, 
-		Collection<Role> roles) {
+		Role role) {
 		this.username = username;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
-		this.roles = roles;
+		this.role = role;
 	}
 	
 	@Override
 	@Transactional
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> authorities = new ArrayList<>();
-		for (Role role : roles) {
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
-			role.getPrivileges().stream().map(p -> new SimpleGrantedAuthority(p.getName())).forEach(authorities::add);
-		}
+		authorities.add(new SimpleGrantedAuthority(role.getName()));
+		role.getPrivileges().stream().map(p -> new SimpleGrantedAuthority(p.getName())).forEach(authorities::add);
+		
 		return authorities;
 	}
 
@@ -151,7 +138,7 @@ public class User implements UserDetails {
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", phoneNumber=" + phoneNumber 
-				+ "]";
+			+ ", lastName=" + lastName + ", phoneNumber=" + phoneNumber 
+			+ "]";
 	}
 }

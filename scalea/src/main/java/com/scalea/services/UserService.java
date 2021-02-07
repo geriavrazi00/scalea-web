@@ -65,7 +65,7 @@ public class UserService implements UserDetailsService {
 	public Page<User> findAllExceptMeAndNotAdmin(Long id, Pageable pageable) throws GenericException {
 		Role admin = roleRepo.findByName(Constants.ROLE_ADMIN);
 		if (admin == null) throw new GenericException("Role Admin does not exist");
-		return userRepo.findByIdNotAndRolesNotOrderByUsername(id, admin, pageable);
+		return userRepo.findByIdNotAndRoleNotOrderByUsername(id, admin, pageable);
 	}
 	
 	public Optional<User> findById(Long id) {

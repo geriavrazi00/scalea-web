@@ -36,22 +36,38 @@
 							<tbody>
 								<tr th:each="user: ${users.content}">
 									<td class="st_td_flex" style="padding-top: 0px; padding-bottom: 0px;">
-										<span>
+										<span style="padding-left: 0px;">
 											<h2 th:text="${user.username}"></h2>
 											<p th:text="${user.firstName} + ' ' + ${user.lastName}"></p>
 										</span>
 									</td>
-									<td th:text="${user.roles.get(0).name}"></td>
+									<td th:text="${user.role.name}"></td>
 									<td class="color_pri">Aktiv</td>
 									<td>-</td>
 									<td>
 										<div class="st_actions">
-											<!-- <img src="img/pencil.svg" /> <img src="img/close.svg" /> -->
+											<a th:id="'editUserHref' + ${user.id}" th:href="@{'/users/{id}'(id=${user.id})}" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadUser(event, ' + ${user.id} + ')'">
+												<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
+											</a>
+											
+											<a href="#" style="padding-right: 20px;" data-toggle="modal" data-target="#changePasswordModal" th:onclick="'setChangePasswordUserId(' + ${user.id} + ')'" sec:authorize="hasAuthority('PASSWORDS_USERS_PRIVILEGE')">
+												<i class="fas fa-lock row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.change.password}"></i>
+											</a>
+												
+											<form th:id="'deleteUserForm' + ${user.id}" method="POST" th:action="@{'/users/delete/{id}'(id=${user.id}, page=${users.number + 1})}" sec:authorize="hasAuthority('DELETE_USERS_PRIVILEGE')" style="display: initial;">
+												<a href="#" data-toggle="modal" data-target="#deleteUserModal" th:onclick="'setDeleteUserId(' + ${user.id} + ')'">
+													<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i>
+												</a>
+											</form>
 										</div>
 									</td>
 								</tr>
 							</tbody>
 						</table>
+						
+						<div th:if="${users.content.size() == 0}">
+							<p th:text="#{messages.no.users}"></p>
+						</div>
 					</div>
 					
 					<div th:if="${users.totalPages > 1 && users.content.size() > 0}">
@@ -75,14 +91,12 @@
 				</div>
 			</div>
 		</section>
-
-		<div th:if="${users.content.size() == 0}">
-			<p th:text="#{messages.no.users}"></p>
-		</div>
-
 	</div>
 	
 	<div th:replace="/private/administration/users/createusermodal.html :: createuser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
+	<div th:replace="/private/administration/users/editusermodal.html :: edituser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
+	<div th:replace="/private/administration/users/changepasswordmodal.html :: changepassword" sec:authorize="hasAuthority('PASSWORDS_USERS_PRIVILEGE')"></div>
+	<div th:replace="/private/administration/users/deleteuser.html :: deleteuser" sec:authorize="hasAuthority('DELETE_USERS_PRIVILEGE')"></div>
 
 	<div th:replace="/commons/template.html :: js-scripts"></div>
 </body>

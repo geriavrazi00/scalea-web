@@ -351,6 +351,36 @@ function submitEmployeeDetachForm() {
 	$("#detachEmployeeForm" + id).submit(); // Submit the form
 }
 
+// USERS 
+function loadUser(e, id) {
+	e.preventDefault();
+	
+	var href = $("#editUserHref" + id).attr('href');
+	$.get(href, function(user) {
+		$("#edit-user-id").val(user.id);
+		$("#edit-user-firstname").val(user.firstName);
+		$("#edit-user-lastname").val(user.lastName);
+		$("#edit-user-username").val(user.username);
+		$("#edit-user-phonenumber").val(user.phoneNumber);
+		$("#edit-user-role").val(user.roleId);
+	});
+	
+	$('#editUserModal').modal('show');
+}
+
+function setChangePasswordUserId(id) {
+	$("#password-user-id").val(id);
+}
+
+function setDeleteUserId(id) {
+	$("#delete-user-id").val(id);
+}
+
+function submitUserDeleteForm() {
+	id = $("#delete-user-id").val();
+	$("#deleteUserForm" + id).submit(); // Submit the form
+}
+
 /********************************************** WIZARD *******************************************************/
 
 /*$(document).ready(function() {

@@ -1,7 +1,6 @@
 package com.scalea.startup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -79,7 +78,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 		User admin = userRepository.findByUsername(Constants.DEFAULT_ADMIN_USERNAME);
 		if (admin == null) {
 			admin = new User(Constants.DEFAULT_ADMIN_USERNAME, passwordEncoder.encode(Constants.DEFAULT_ADMIN_PASSWORD), Constants.DEFAULT_ADMIN_FIRSTNAME, 
-				Constants.DEFAULT_ADMIN_LASTNAME, Constants.DEFAULT_ADMIN_PHONE, Arrays.asList(adminRole));
+				Constants.DEFAULT_ADMIN_LASTNAME, Constants.DEFAULT_ADMIN_PHONE, adminRole);
 			
 			admin.setConfirmPassword(admin.getPassword()); // To bypass the validation of the password confirmation
 	        userRepository.save(admin);

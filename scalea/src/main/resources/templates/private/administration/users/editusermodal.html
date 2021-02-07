@@ -2,9 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org">
 
-	<div th:fragment="createuser">
-		<form method="POST" th:action="@{'/users/create'(page=${users.number + 1})}" th:object="${user}">
-			<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModal" aria-hidden="true">
+	<div th:fragment="edituser">
+		<form method="POST" th:action="@{'/users/update'(page=${users.number + 1})}" th:object="${userDTO}">
+			<input type="hidden" id="edit-user-id" name="id" th:field="*{id}"/>
+			
+			<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModal" aria-hidden="true">
 				<div class="modal-dialog" role="document" style="max-width: 600px;">
 					<div class="modal-content" style="border-radius: 8px;">
 						<div class="custom-modal-header" style="display: unset;">
@@ -14,7 +16,7 @@
       						
       						<br/>
       						
-							<h5 class="modal-title" th:text="#{messages.user.create}" style="width: 100%; font-size: 28px; text-align: left; padding-left: 20px;"></h5>
+							<h5 class="modal-title" th:text="#{messages.user.edit}" style="width: 100%; font-size: 28px; text-align: left; padding-left: 20px;"></h5>
     					</div>
     					
 						<div class="modal-body" style="padding-top: 0;">
@@ -27,7 +29,7 @@
 									<div>
 										<label class="modal-text-labels" for="firstName" th:text="#{messages.name} + ' *'"></label>
 									</div>
-									<input class="text-input" type="text" name="firstName" th:field="*{firstName}" required/>
+									<input class="text-input" type="text" name="firstName" id="edit-user-firstname" th:field="*{firstName}" required/>
 									<br/>
 									<span class="validationError" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
 								</div>
@@ -36,7 +38,7 @@
 									<div>
 										<label class="modal-text-labels" for="lastName" th:text="#{messages.lastname} + ' *'"></label>
 									</div>
-									<input class="text-input" type="text" name="lastName" th:field="*{lastName}" required/>
+									<input class="text-input" type="text" name="lastName" id="edit-user-lastname" th:field="*{lastName}" required/>
 									<br/>
 									<span class="validationError" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
 								</div>
@@ -47,7 +49,7 @@
 									<div>
 										<label class="modal-text-labels" for="username" th:text="#{messages.username} + ' *'"></label>
 									</div>
-									<input class="text-input" type="text" name="username" th:field="*{username}" required/>
+									<input class="text-input" type="text" name="username" id="edit-user-username" th:field="*{username}" required/>
 									<br/>
 									<span class="validationError" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
 								</div>
@@ -56,28 +58,9 @@
 									<div>
 										<label class="modal-text-labels" for="phoneNumber" th:text="#{messages.phonenumber} + ' *'"></label>
 									</div>
-									<input class="text-input" type="text" name="phoneNumber" th:field="*{phoneNumber}" required/>
+									<input class="text-input" type="text" name="phoneNumber" id="edit-user-phonenumber" th:field="*{phoneNumber}" required/>
 									<br/>
 									<span class="validationError" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
-								</div>
-							</div>
-							
-							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px;">
-								<div class="col">
-									<div>
-										<label class="modal-text-labels" for="password" th:text="#{messages.password} + ' *'"></label>
-									</div>
-									<input class="text-input" type="password" name="password" th:field="*{password}" required/>
-									<br/>
-									<span class="validationError" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
-								</div>
-								<div class="col">
-									<div>
-										<label class="modal-text-labels" for="confirmPassword" th:text="#{messages.password.confirm} + ' *'"></label>
-									</div>
-									<input class="text-input" type="password" name="confirmPassword" th:field="*{confirmPassword}" required/>
-									<br/>
-									<span class="validationError" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></span>
 								</div>
 							</div>
 							
@@ -86,7 +69,7 @@
 								<div>
 									<label class="modal-text-labels" for="role" th:text="#{messages.role}" th:if="${roles.size() > 0}"></label>
 								</div>
-									<select class="text-input" name="vacancy" th:field="*{role}" th:if="${roles.size() > 0}">
+									<select id="edit-user-role" class="text-input" name="vacancy" th:field="*{roleId}" th:if="${roles.size() > 0}">
 										<option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"/>
 									</select>
 									
@@ -108,7 +91,7 @@
 			
 			<div th:if="${#fields.hasErrors()}">
 				<script type="text/javascript">
-					$('#createUserModal').modal('show');
+					$('#editUserModal').modal('show');
 				</script>
 			</div>
 		</form>

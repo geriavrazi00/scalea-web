@@ -12,5 +12,5 @@ public interface UserRepository extends CrudRepository<User, Long> {
 	boolean existsByUsername(String username);
 	boolean existsByUsernameAndIdNot(String username, Long id);
 	Page<User> findByIdNotOrderByUsername(Long id, Pageable pageable);
-	Page<User> findByIdNotAndRolesNotOrderByUsername(Long id, Role role, Pageable pageable);
+	Page<User> findByIdNotAndRoleNotOrderByUsername(Long id, Role role, Pageable pageable);
 }

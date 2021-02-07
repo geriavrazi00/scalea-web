@@ -1,1 +1,0 @@
-ALTER TABLE users ALTER column role_id SET NOT NULL;

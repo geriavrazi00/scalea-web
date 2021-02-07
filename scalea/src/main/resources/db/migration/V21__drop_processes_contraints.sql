@@ -1,2 +1,0 @@
-ALTER TABLE processes DROP CONSTRAINT fk_user;
-ALTER TABLE processes DROP CONSTRAINT fk_area;

@@ -93,9 +93,9 @@
 		</section>
 	</div>
 	
-	<div th:replace="/private/administration/users/createusermodal.html :: createuser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
-	<div th:replace="/private/administration/users/editusermodal.html :: edituser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
-	<div th:replace="/private/administration/users/changepasswordmodal.html :: changepassword" sec:authorize="hasAuthority('PASSWORDS_USERS_PRIVILEGE')"></div>
+	<div th:replace="/private/administration/users/createuser.html :: createuser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
+	<div th:replace="/private/administration/users/edituser.html :: edituser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
+	<div th:replace="/private/administration/users/changepassword.html :: changepassword" sec:authorize="hasAuthority('PASSWORDS_USERS_PRIVILEGE')"></div>
 	<div th:replace="/private/administration/users/deleteuser.html :: deleteuser" sec:authorize="hasAuthority('DELETE_USERS_PRIVILEGE')"></div>
 
 	<div th:replace="/commons/template.html :: js-scripts"></div>

@@ -28,6 +28,12 @@
 					</div>
 					
 					<div class="col">
+						<span class="row-table-text" th:text="#{messages.user.controller}"></span>
+						<span class="row-table-value" th:if="${area.user != null}" th:text="${area.user.firstName + ' ' + area.user.lastName}"></span>
+						<span class="row-table-value" th:if="${area.user == null}">-</span>
+					</div>
+					
+					<div class="col">
 						<span class="row-table-text" th:text="#{messages.status}"></span>
 						<span class="row-table-value" th:text="${area.enabled} ? #{messages.active} : #{messages.not.active}" th:style="${area.enabled} ? 'color: #1f9583;' : 'color: #f1818c;'"></span>
 					</div>

@@ -25,10 +25,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Area;
+import com.scalea.entities.User;
 import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.AreaDTO;
 import com.scalea.services.AreaService;
+import com.scalea.services.UserService;
 import com.scalea.services.VacancyService;
 import com.scalea.utils.Constants;
 import com.scalea.utils.Utils;
@@ -39,6 +41,7 @@ public class AreaController {
 
 	private AreaService areaService;
 	private VacancyService vacancyService;
+	private UserService userService;
 	private Logger log;
 	private Messages messages;
 	
@@ -46,9 +49,10 @@ public class AreaController {
 	private static final int DEFAULT_SIZE = 7;
 	
 	@Autowired
-	public AreaController(AreaService areaService, VacancyService vacancyService, Messages messages) {
+	public AreaController(AreaService areaService, VacancyService vacancyService, UserService userService, Messages messages) {
 		this.areaService = areaService;
 		this.vacancyService = vacancyService;
+		this.userService = userService;
 		this.log = LoggerFactory.getLogger(AreaController.class);
 		this.messages = messages;
 	}
@@ -67,7 +71,10 @@ public class AreaController {
 			area.calculateEmployeeNumber();
 		}
 		
+		Iterable<User> users = userService.findUserWithPrivilege(Constants.MANAGE_CONTROL_PRIVILEGE);
+		
 		model.addAttribute("areas", areas);
+		model.addAttribute("users", users);
 		if (model.getAttribute("area") == null) model.addAttribute("area", new Area());
 		if (model.getAttribute("areaDTO") == null) model.addAttribute("areaDTO", new AreaDTO());
 		model.addAttribute("pageNumbers", Utils.getPageNumbersList(areas.getTotalPages()));
@@ -141,6 +148,12 @@ public class AreaController {
 				model.addAttribute("alertClass", "alert-danger");
 				return this.allAreas(model, page, size);
 			}
+		}
+		
+		// We check if a user is selected. If so and if the user actually exists in the system, we associate it to the area
+		if (selectedArea.getUserId() != null) {
+			Optional<User> optionalUser = userService.findById(selectedArea.getUserId());
+			if (optionalUser.isPresent()) existingArea.setUser(optionalUser.get()); 
 		}
 		
 		/*

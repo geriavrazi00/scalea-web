@@ -27,10 +27,13 @@ public class AreaDTO {
 	@NotNull(message="{messages.capacity.required}")
 	private Integer capacity;
 	
+	private Long userId;
+	
 	public void toDTO(Area area) {
 		this.id = area.getId();
 		this.name = area.getName();
 		this.capacity = area.getCapacity();
+		this.userId = area.getUser() != null ? area.getUser().getId(): null;
 	}
 	
 	public void mergeWithExistingArea(Area area) {

@@ -79,4 +79,8 @@ public class UserService implements UserDetailsService {
 	public void delete(User user) {
 		userRepo.delete(user);
 	}
+	
+	public Iterable<User> findUserWithPrivilege(String privilegeName) {
+		return userRepo.findNotAdminUsersByPrivilege(Constants.ROLE_ADMIN, privilegeName);
+	}
 }

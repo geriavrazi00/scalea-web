@@ -24,6 +24,14 @@
 								</div>
 								
 								<div class="col">
+									<span class="row-table-text" th:text="#{messages.user}"></span>
+									<select class="text-input" name="user" th:field="*{user}" th:if="${users.size() > 0}">
+										<option th:text="#{messages.none}" value=""></option>
+										<option th:each="user : ${users}" th:value="${user.id}" th:text="${user.firstName + ' ' + user.lastName}"/>
+									</select>
+								</div>
+								
+								<div class="col">
 									<input class="btn btn-primary" type="submit" th:value="#{messages.create}" sec:authorize="hasAuthority('UPSERT_AREAS_PRIVILEGE')"/>
 								</div>
 								

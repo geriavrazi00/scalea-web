@@ -121,6 +121,7 @@ function loadArea(e, id) {
 		$("#edit-area-id").val(area.id);
 		$("#edit-area-name").val(area.name);
 		$("#edit-area-capacity").val(area.capacity);
+		$("#edit-area-user").val(area.userId);
 	});
 	
 	$('#editAreaModal').modal('show');

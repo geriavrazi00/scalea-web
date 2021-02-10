@@ -3,12 +3,15 @@ package com.scalea.controllers;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
@@ -38,6 +42,9 @@ public class RoleController {
 	private PrivilegeRepository privilegeRepo;
 	private Logger log;
 	private Messages messages;
+	
+	private static final int DEFAULT_PAGE = 1;
+	private static final int DEFAULT_SIZE = 7;
 
 	@Autowired
 	public RoleController(RoleRepository roleRepo, PrivilegeRepository privilegeRepo, Messages messages) {
@@ -49,10 +56,18 @@ public class RoleController {
 
 	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_ROLES_PRIVILEGE + "', '" + Constants.UPSERT_ROLES_PRIVILEGE + "', '" + Constants.DELETE_ROLES_PRIVILEGE + "')")
 	@GetMapping
-	public String allRoles(Model model) {
+	public String allRoles(HttpServletRequest request, Model model, @RequestParam("page") Optional<Integer> page) {
 		log.info("Method allRoles()");
 		
-		Iterable<Role> roles = roleRepo.findAll();
+		int currentPage = page.orElse(DEFAULT_PAGE);
+		Page<Role> roles = null;
+		
+		if (request.isUserInRole(Constants.ROLE_ADMIN)) {
+			roles = roleRepo.findAll(PageRequest.of(currentPage - 1, DEFAULT_SIZE));
+		} else {
+			roles = roleRepo.findByNameNotIn(new String[] {Constants.ROLE_ADMIN, Constants.ROLE_USER}, PageRequest.of(currentPage - 1, DEFAULT_SIZE));
+		}
+		
 		model.addAttribute("roles", roles);
 		return "private/administration/roles/rolelist";
 	}

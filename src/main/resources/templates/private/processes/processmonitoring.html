@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
 	xmlns:sec="http://www.thymeleaf.org">
-	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<head th:replace="commons/template.html :: headerfiles"></head>
 	
 	<body onload="loadProcessTimers()">
-		<div th:replace="/commons/template.html :: menu"></div>
+		<div th:replace="commons/template.html :: menu"></div>
 		
 		<div class="main-container">
 			<h1 th:text="#{messages.processes}" class="page-title"></h1>
@@ -30,8 +30,8 @@
 							<span class="row-table-value">-</span>
 						</div>
 						
-						<div class="col" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
-							<form th:id="'startProcess' + ${area.id}" method="POST" th:action="@{'/processes/start/{id}'(id=${area.id}, page=${areas.number + 1})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;" th:if="${products != null && products.size() > 0}">
+						<div class="col" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" th:if="${products != null && products.size() > 0}">
+							<form th:id="'startProcess' + ${area.id}" method="POST" th:action="@{'/processes/start/{id}'(id=${area.id}, page=${areas.number + 1})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
 								<span class="row-table-text" th:text="#{messages.products}"></span>
 								<select id="products" name="products" th:if="${products.size() > 0}" class="modal-select ">
 									<option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"/>
@@ -44,18 +44,20 @@
 							<span class="row-table-value">-</span>
 						</div>
 						
+						<div class="col" th:if="${products.size() == 0}">
+							<span th:text="#{messages.no.product}"></span>
+						</div>
+						
 						<div class="col" style="text-align: center;" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
-							<button type="button" th:onclick="'document.getElementById(\'startProcess' + ${area.id} + '\').submit();'" class="delete-button" style="padding-right: 20px; padding-left: 0px;">
+							<button th:if="${products.size() > 0}" type="button" th:onclick="'document.getElementById(\'startProcess' + ${area.id} + '\').submit();'" class="delete-button" style="padding-right: 20px; padding-left: 0px;">
 								<i class="fas fa-play row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.process.start}"></i>
 							</button>
+							
+							<i class="fas fa-play row-table-icons not-allowed-cursor disabled-icon" style="padding-right: 20px;" th:if="${products.size() == 0}"></i>
 							
 							<i class="fas fa-pause row-table-icons not-allowed-cursor disabled-icon" style="padding-right: 20px;"></i>
 							
 							<i class="fas fa-stop row-table-icons not-allowed-cursor disabled-icon"></i>
-						</div>
-						
-						<div class="col" th:if="${products.size() == 0}">
-							<span th:text="#{messages.no.product}"></span>
 						</div>
 					</div>
 					
@@ -139,6 +141,6 @@
 			</div>
 		</div>
 		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
+		<div th:replace="commons/template.html :: js-scripts"></div>
 	</body>
 </html>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
 	xmlns:sec="http://www.thymeleaf.org">
-	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<head th:replace="commons/template.html :: headerfiles"></head>
 	
 	<body>
-		<div th:replace="/commons/template.html :: menu"></div>
+		<div th:replace="commons/template.html :: menu"></div>
 		
 		<div class="main-container">
 			<h1 th:text="#{messages.areas}" class="page-title"></h1>
@@ -76,10 +76,10 @@
 			</div>
 		</div>
 		
-		<div th:replace="/private/areas/createarea.html :: createarea" sec:authorize="hasAuthority('UPSERT_AREAS_PRIVILEGE')"></div>
-		<div th:replace="/private/areas/editarea.html :: editarea" sec:authorize="hasAuthority('UPSERT_AREAS_PRIVILEGE')"></div>
-		<div th:replace="/private/areas/deletearea.html :: deletearea" sec:authorize="hasAuthority('DELETE_AREAS_PRIVILEGE')"></div>
+		<div th:replace="private/areas/createarea.html :: createarea" sec:authorize="hasAuthority('UPSERT_AREAS_PRIVILEGE')"></div>
+		<div th:replace="private/areas/editarea.html :: editarea" sec:authorize="hasAuthority('UPSERT_AREAS_PRIVILEGE')"></div>
+		<div th:replace="private/areas/deletearea.html :: deletearea" sec:authorize="hasAuthority('DELETE_AREAS_PRIVILEGE')"></div>
 		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
+		<div th:replace="commons/template.html :: js-scripts"></div>
 	</body>
 </html>

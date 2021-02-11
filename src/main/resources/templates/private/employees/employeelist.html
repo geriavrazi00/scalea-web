@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
 	xmlns:sec="http://www.thymeleaf.org">
-	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<head th:replace="commons/template.html :: headerfiles"></head>
 	
 	<body>
-	 	<div th:replace="/commons/template.html :: menu"></div>
+	 	<div th:replace="commons/template.html :: menu"></div>
 	 
 	 	<div  class="main-container">
 			<h1 th:text="#{messages.employees}" class="page-title"></h1>
@@ -87,11 +87,11 @@
 			</div>
 		</div>
 		
-		<div th:replace="/private/employees/createemployee.html :: createemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
-		<div th:replace="/private/employees/editemployee.html :: editemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
-		<div th:replace="/private/employees/detachemployee.html :: detachemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
-		<div th:replace="/private/employees/deleteemployee.html :: deleteemployee" sec:authorize="hasAuthority('DELETE_EMPLOYEES_PRIVILEGE')"></div>
+		<div th:replace="private/employees/createemployee.html :: createemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
+		<div th:replace="private/employees/editemployee.html :: editemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
+		<div th:replace="private/employees/detachemployee.html :: detachemployee" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></div>
+		<div th:replace="private/employees/deleteemployee.html :: deleteemployee" sec:authorize="hasAuthority('DELETE_EMPLOYEES_PRIVILEGE')"></div>
 		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
+		<div th:replace="commons/template.html :: js-scripts"></div>
 	</body>
 </html>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
 	xmlns:sec="http://www.thymeleaf.org">
-	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<head th:replace="commons/template.html :: headerfiles"></head>
 	
 	<body>
-		<div th:replace="/commons/template.html :: menu"></div>
+		<div th:replace="commons/template.html :: menu"></div>
 		
 		<div class="main-container">
 			<h1 th:text="#{messages.products}" class="page-title"></h1>
@@ -113,13 +113,13 @@
 			</div>
 		</div>
 		
-		<div th:replace="/private/products/createproduct.html :: createproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
-		<div th:replace="/private/products/editproduct.html :: editproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
-		<div th:replace="/private/products/deleteproduct.html :: deleteproduct" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')"></div>
-		<div th:replace="/private/products/subproducts/createsubproduct.html :: createsubproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
-		<div th:replace="/private/products/subproducts/editsubproduct.html :: editsubproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
-		<div th:replace="/private/products/subproducts/deletesubproduct.html :: deletesubproduct" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')"></div>
+		<div th:replace="private/products/createproduct.html :: createproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
+		<div th:replace="private/products/editproduct.html :: editproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
+		<div th:replace="private/products/deleteproduct.html :: deleteproduct" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')"></div>
+		<div th:replace="private/products/subproducts/createsubproduct.html :: createsubproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
+		<div th:replace="private/products/subproducts/editsubproduct.html :: editsubproduct" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"></div>
+		<div th:replace="private/products/subproducts/deletesubproduct.html :: deletesubproduct" sec:authorize="hasAuthority('DELETE_PRODUCTS_PRIVILEGE')"></div>
 		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
+		<div th:replace="commons/template.html :: js-scripts"></div>
 	</body>
 </html>

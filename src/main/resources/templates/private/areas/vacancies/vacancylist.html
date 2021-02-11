@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
 	xmlns:sec="http://www.thymeleaf.org">
-	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<head th:replace="commons/template.html :: headerfiles"></head>
 	
 	<body>
-		<div th:replace="/commons/template.html :: menu"></div>
+		<div th:replace="commons/template.html :: menu"></div>
 		
 		<div class="main-container">
 			<h1 th:text="${area.name}" class="page-title"></h1>
@@ -118,11 +118,11 @@
 			</div>
 		</div>
 		
-		<div th:replace="/private/areas/vacancies/createvacancy.html :: createvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
-		<div th:replace="/private/areas/vacancies/editvacancy.html :: editvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
-		<div th:replace="/private/areas/vacancies/detachvacancy.html :: detachvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
-		<div th:replace="/private/areas/vacancies/deletevacancy.html :: deletevacancy" sec:authorize="hasAuthority('DELETE_VACANCIES_PRIVILEGE')"></div>
+		<div th:replace="private/areas/vacancies/createvacancy.html :: createvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
+		<div th:replace="private/areas/vacancies/editvacancy.html :: editvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
+		<div th:replace="private/areas/vacancies/detachvacancy.html :: detachvacancy" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')"></div>
+		<div th:replace="private/areas/vacancies/deletevacancy.html :: deletevacancy" sec:authorize="hasAuthority('DELETE_VACANCIES_PRIVILEGE')"></div>
 		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
+		<div th:replace="commons/template.html :: js-scripts"></div>
 	</body>
 </html>

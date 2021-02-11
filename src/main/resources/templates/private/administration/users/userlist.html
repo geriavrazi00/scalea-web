@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org">
-<head th:replace="/commons/template.html :: headerfiles"></head>
+<head th:replace="commons/template.html :: headerfiles"></head>
 
 <body>
-	<div th:replace="/commons/template.html :: menu"></div>
+	<div th:replace="commons/template.html :: menu"></div>
 
 	<div class="main-container">
 		<h1 th:text="#{messages.settings}" class="page-title"></h1>
@@ -91,11 +91,11 @@
 		</section>
 	</div>
 	
-	<div th:replace="/private/administration/users/createuser.html :: createuser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
-	<div th:replace="/private/administration/users/edituser.html :: edituser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
-	<div th:replace="/private/administration/users/changepassword.html :: changepassword" sec:authorize="hasAuthority('PASSWORDS_USERS_PRIVILEGE')"></div>
-	<div th:replace="/private/administration/users/deleteuser.html :: deleteuser" sec:authorize="hasAuthority('DELETE_USERS_PRIVILEGE')"></div>
+	<div th:replace="private/administration/users/createuser.html :: createuser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
+	<div th:replace="private/administration/users/edituser.html :: edituser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
+	<div th:replace="private/administration/users/changepassword.html :: changepassword" sec:authorize="hasAuthority('PASSWORDS_USERS_PRIVILEGE')"></div>
+	<div th:replace="private/administration/users/deleteuser.html :: deleteuser" sec:authorize="hasAuthority('DELETE_USERS_PRIVILEGE')"></div>
 
-	<div th:replace="/commons/template.html :: js-scripts"></div>
+	<div th:replace="commons/template.html :: js-scripts"></div>
 </body>
 </html>

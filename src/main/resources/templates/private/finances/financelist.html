@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="commons/template.html :: headerfiles"></head>
+	
+	<body>
+		<div th:replace="commons/template.html :: menu"></div>
+		
+		<div class="main-container">
+			<h1 th:text="#{messages.finance}" class="page-title"></h1>
+			
+			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			
+			<div class="filter-row">				
+				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
+					<form id="financeFilterForm" method="GET" th:action="@{'/finances'(page=${activities.number + 1})}" style="display: initial;">
+						<select id="month" name="month" th:if="${months.size() > 0}" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.month}" onchange="document.getElementById('financeFilterForm').submit();">
+							<option th:each="m : ${months}" th:value="${m.number}" th:text="${m.name}" th:selected="${selectedMonth != null && selectedMonth.equals(m.number) ? 'true' : 'false'}"/>
+						</select>
+						
+						<select id="year" name="year" th:if="${years.size() > 0}" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.year}" onchange="document.getElementById('financeFilterForm').submit();">
+							<option th:each="y : ${years}" th:value="${y}" th:text="${y}" th:selected="${selectedYear != null && selectedYear.equals(y) ? 'true' : 'false'}"/>
+						</select>
+					</form>
+				</div>
+			</div>
+			
+			<!-- <section class="table_sta">
+				<div class="mytable">
+        			<div class="table_sub" th:if="${activities.content.size() > 0}" th:each="financeDto, iter : ${finances}">
+        				<p>[[#{messages.name}]] <span th:text="${financeDto.activity.employee.firstName + ' ' + financeDto.activity.employee.lastName}"></span></p>
+				        <p>[[#{messages.gross.salary}]] <span th:text="${financeDto.formattedGrossSalary}"></span></p>
+				        <p>[[#{messages.insurance}]] <span th:text="${financeDto.formattedInsuranceTotal}"></span></p>
+				        <p>[[#{messages.progressive.tax}]] <span th:text="${financeDto.formattedProgressiveTax}"></span></p>
+				        <p>[[#{messages.net.salary}]] <span th:text="${financeDto.formattedNetSalary}"></span></p>
+        			</div>
+        		</div>
+			</section> -->
+			
+			<div class="col-lg-12 table-container">
+				<div th:if="${activities.content.size() > 0}" th:each="financeDto, iter : ${finances}" th:class="${iter.index == iter.size - 1 ? 'table-container-rows margin-bottom-zero' : 'table-container-rows bottom-border'}" style="padding-left: 0px;">
+					<div class="col" style="padding-left: 0px;">
+						<span class="row-table-text" th:text="#{messages.name}"></span>
+						&nbsp;
+						<span class="row-table-value" th:text="${financeDto.employee.firstName + ' ' + financeDto.employee.lastName}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.gross.salary}"></span>
+						&nbsp;
+						<span class="row-table-value" th:text="${financeDto.formattedGrossSalary}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.insurance}"></span>
+						&nbsp;
+						<span class="row-table-value" th:text="${financeDto.formattedInsuranceTotal}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.progressive.tax}"></span>
+						&nbsp;
+						<span class="row-table-value" th:text="${financeDto.formattedProgressiveTax}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.net.salary}"></span>
+						&nbsp;
+						<span class="row-table-value" th:text="${financeDto.formattedNetSalary}"></span>
+					</div>
+					
+					<div class="col-1">
+						<a th:id="'financialDetailsHref' + ${financeDto.employee.id}" th:href="@{'/finances/{id}'(id=${financeDto.employee.id},month=${selectedMonth},year=${selectedYear})}" sec:authorize="hasAuthority('VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadFinancialActivity(event, ' + ${financeDto.employee.id} + ')'">
+							<i class="fas fa-info-circle row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.details}"></i>
+						</a>
+					</div>
+				</div>
+				
+				<div th:if="${activities.content.size() == 0}">
+					<p th:text="#{messages.no.results.found}"></p>
+				</div>
+			</div>
+			
+			<div th:if="${activities.totalPages > 1 && activities.content.size() > 0}">
+				<ul class="pagination">
+					<li th:class="${activities.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/finances(page=${activities.number})}">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+					<li th:if="${activities.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+					    <a th:href="@{/finances(page=${pageNumber})}" th:text=${pageNumber} 
+					    	th:class="${pageNumber == activities.number + 1} ? 'page-link active' : 'page-link'"></a>
+					</li>
+					<li th:class="${(activities.number + 1) == activities.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/finances(page=${activities.number + 2})}">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		
+		<div th:replace="private/finances/financedetails.html :: financedetails" sec:authorize="hasAuthority('VIEW_FINANCIAL_ACTIVITIES_PRIVILEGE')"></div>
+		
+		<div th:replace="commons/template.html :: js-scripts"></div>
+	</body>
+</html>

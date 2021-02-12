@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="commons/template.html :: headerfiles"></head>
+	
+	<body onload="loadProcessTimers()">
+		<div th:replace="commons/template.html :: menu"></div>
+		
+		<div class="main-container">
+			<h1 th:text="#{messages.processes}" class="page-title"></h1>
+			
+			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			
+			<div class="table-container">
+			
+				<div th:if="${areas.content.size() > 0}" th:each="area, iter : ${areas.content}" th:class="${iter.index == iter.size - 1 ? 'table-container-rows' : 'table-container-rows bottom-border'}">
+					<div th:if="${area.activeProcess == null}" style="width: 100%; display: inherit;">
+						<div class="col">
+							<span class="row-table-text" th:text="#{messages.area}"></span>
+							<span class="row-table-value" th:text="${area.name} "></span>
+						</div>
+						
+						<div class="col">
+							<span class="row-table-text" th:text="#{messages.status}"></span>
+							<span class="row-table-value" th:text="#{messages.no.active.process}"></span>
+						</div>
+						
+						<div class="col">
+							<span class="row-table-text" th:text="#{messages.process.elapsed}"></span>
+							<span class="row-table-value">-</span>
+						</div>
+						
+						<div class="col" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" th:if="${products != null && products.size() > 0}">
+							<form th:id="'startProcess' + ${area.id}" method="POST" th:action="@{'/processes/start/{id}'(id=${area.id}, page=${areas.number + 1})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
+								<span class="row-table-text" th:text="#{messages.products}"></span>
+								<select id="products" name="products" th:if="${products.size() > 0}" class="modal-select ">
+									<option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"/>
+								</select>
+							</form>
+						</div>
+						
+						<div class="col" sec:authorize="!hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
+							<span class="row-table-text" th:text="#{messages.product}"></span>
+							<span class="row-table-value">-</span>
+						</div>
+						
+						<div class="col" th:if="${products.size() == 0}">
+							<span th:text="#{messages.no.product}"></span>
+						</div>
+						
+						<div class="col" style="text-align: center;" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
+							<button th:if="${products.size() > 0}" type="button" th:onclick="'document.getElementById(\'startProcess' + ${area.id} + '\').submit();'" class="delete-button" style="padding-right: 20px; padding-left: 0px;">
+								<i class="fas fa-play row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.process.start}"></i>
+							</button>
+							
+							<i class="fas fa-play row-table-icons not-allowed-cursor disabled-icon" style="padding-right: 20px;" th:if="${products.size() == 0}"></i>
+							
+							<i class="fas fa-pause row-table-icons not-allowed-cursor disabled-icon" style="padding-right: 20px;"></i>
+							
+							<i class="fas fa-stop row-table-icons not-allowed-cursor disabled-icon"></i>
+						</div>
+					</div>
+					
+					<div th:if="${area.activeProcess != null}" style="width: 100%; display: inherit;">
+						<input th:id="${'area-' + area.id}" class="area" type="hidden" th:value="${area.id}"/>
+						<input th:id="${'started-' + area.id}" class="started" type="hidden" th:value="${area.activeProcess.startedAt.getTime()}"/>
+						<input th:id="${'status-' + area.id}" class="status" type="hidden" th:value="${area.activeProcess.status}"/>
+						<input th:id="${'elapsed-' + area.id}" class="elapsed" type="hidden" th:value="${area.activeProcess.elapsedTime}"/>
+						
+						<div class="col">
+							<span class="row-table-text" th:text="#{messages.area}"></span>
+							<span class="row-table-value" th:text="${area.name} "></span>
+						</div>
+						
+						<div class="col">
+							<span class="row-table-text" th:text="#{messages.status}"></span>
+							<span th:if="${area.activeProcess.status == 0}" class="row-table-value" style="color: #1f9583;" th:text="#{messages.active}"></span>
+							<span th:if="${area.activeProcess.status == 1}" class="row-table-value"  style="color: #f1818c;" th:text="#{messages.paused}"></span>
+						</div>
+						
+						<div class="col">
+							<span class="row-table-text" th:text="#{messages.process.elapsed}"></span>
+							<span th:id="${'timer-' + area.id}" class="timer row-table-value"></span>
+						</div>
+						
+						<div class="col">
+							<span class="row-table-text" th:text="#{messages.product}"></span>
+							<span class="row-table-value" th:text="${area.activeProcess.product.name}"></span>
+						</div>
+						
+						<div class="col" style="text-align: center;" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')">
+							<form method="POST" th:if="${area.activeProcess.status == 0}" th:action="@{'/processes/pause/{id}'(id=${area.activeProcess.id}, page=${areas.number + 1})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
+								<i class="fas fa-play row-table-icons not-allowed-cursor disabled-icon" style="padding-right: 20px;"></i>
+								
+								<button type="submit" class="delete-button" style="padding-right: 20px; padding-left: 0px;">
+									<i class="fas fa-pause row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.process.pause}"></i>
+								</button>
+							</form>
+							
+							<form method="POST" th:if="${area.activeProcess.status == 1}" th:action="@{'/processes/resume/{id}'(id=${area.activeProcess.id}, page=${areas.number + 1})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
+								<button type="submit" class="delete-button" style="padding-right: 20px; padding-left: 0px;">
+									<i class="fas fa-play row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.process.resume}"></i>
+								</button>
+								
+								<i class="fas fa-pause row-table-icons not-allowed-cursor disabled-icon" style="padding-right: 20px;"></i>
+							</form>
+							
+							<form method="POST" th:action="@{'/processes/finish/{id}'(id=${area.activeProcess.id}, page=${areas.number + 1})}" sec:authorize="hasAuthority('MANAGE_PROCESSES_PRIVILEGE')" style="display: initial;">
+								<button type="submit" class="delete-button" style="padding-left: 0px; padding-right: 0;">
+									<i class="fas fa-stop row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.process.finish}"></i>
+								</button>
+							</form>
+						</div>
+						
+						<br/>
+					</div>
+				</div>
+				
+				<div th:if="${areas.content.size() == 0}">
+					<p th:text="#{messages.no.areas}"></p>
+				</div>
+			</div>
+			
+			<div th:if="${areas.totalPages > 1 && areas.content.size() > 0}">
+				<ul class="pagination">
+					<li th:class="${areas.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/processes(page=${areas.number})}">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+					<li th:if="${areas.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+					    <a th:href="@{/processes(page=${pageNumber})}" th:text=${pageNumber} 
+					    	th:class="${pageNumber == areas.number + 1} ? 'page-link active' : 'page-link'"></a>
+					</li>
+					<li th:class="${(areas.number + 1) == areas.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/processes(page=${areas.number + 2})}">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		
+		<div th:replace="commons/template.html :: js-scripts"></div>
+	</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="commons/template.html :: headerfiles"></head>
+	
+	<body>
+		<div th:replace="commons/template.html :: menu"></div>
+		
+		<div class="main-container">
+			<h1 th:text="#{messages.greeting}"></h1>
+			
+			<span th:text="#{messages.lang.change}"></span>:
+			<select id="locales">
+			    <option value=""></option>
+			    <option value="sq" th:text="#{messages.lang.sq}"></option>
+			    <option value="en" th:text="#{messages.lang.en}"></option>
+			</select>
+			
+			<form method="POST" th:action="@{/logout}">
+				<input type="submit" value="Logout"/>
+			</form>
+		</div>
+		
+		<div th:replace="commons/template.html :: js-scripts"></div>
+	</body>
+</html>

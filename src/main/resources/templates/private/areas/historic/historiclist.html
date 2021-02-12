@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="commons/template.html :: headerfiles"></head>
+	
+	<body>
+		<div th:replace="commons/template.html :: menu"></div>
+		
+		<div class="main-container">
+			<h1 th:text="${area.name}" class="page-title"></h1>
+			
+			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			
+			<div class="filter-row">
+				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
+					<a th:href="@{'/areas/{id}/vacancies'(id=${area.id})}" th:text="#{messages.vacancies}" class="inactive-tab"></a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a th:href="@{'/areas/{id}/historic'(id=${area.id})}" th:text="#{messages.history}" class="active-tab"></a>
+				</div>
+				
+				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
+					<form id="processFilterForm" method="GET" th:action="@{'/areas/{id}/historic'(id=${area.id}, size=${processes.size}, page=${processes.number + 1})}" style="display: initial;">
+						<input id="date" name="date" type="date" class="filter-calendar" style="margin-top: 10px; width: 137px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.date}" onchange="document.getElementById('processFilterForm').submit();" th:value="${selectedDate.isPresent() ? selectedDate.get() : null}"/>
+						&nbsp;&nbsp;
+						<select id="product" name="product" th:if="${products.size() > 0}" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.products}" onchange="document.getElementById('processFilterForm').submit();">
+							<option th:text="#{messages.all}" value=""></option>
+							<option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}" th:selected="${selectedProduct.isPresent() && selectedProduct.get() == product.id ? 'true' : 'false'}"/>
+						</select>
+					</form>
+				</div>
+				
+				<div class="col-lg-6" style="padding-right: 0px;">
+					<div class="row info-row">
+						<div class="col-md-3">
+							<span class="row-table-text-2" th:text="#{messages.capacity}"></span>
+							<span class="row-table-value-2" th:text="${area.employeeNumber + '/' + area.capacity}"></span>
+						</div>
+						
+						<div class="col-md-6" th:if="${process.isPresent()}" style="text-align: center;">
+							<span class="row-table-text-2" th:text="#{messages.latest.process}"></span>
+							<span class="row-table-value-2" th:text="${process.get().product.name}"></span>
+						</div>
+						
+						<div class="col-md-3" th:if="${process.isPresent() && process.get().status == 0}">
+							<span class="row-table-text-2" th:text="#{messages.status}"></span>
+							<span class="row-table-value-2" th:text="#{messages.active}" style="color: #1f9583;"></span>
+						</div>
+						
+						<div class="col-md-3" th:if="${process.isPresent() && process.get().status == 1}">
+							<span class="row-table-text-2" th:text="#{messages.status}"></span>
+							<span class="row-table-value-2" th:text="#{messages.paused}" style="color: #f1818c;"></span>
+						</div>
+						
+						<div class="col-md-3" th:if="${process.isPresent() && process.get().status == 2}">
+							<span class="row-table-text-2" th:text="#{messages.elapsed}"></span>
+							<span class="row-table-value-2" th:text="${process.get().elapsedTimeToString}"></span>
+						</div>
+						
+						<div class="col-md-6" th:if="${!process.isPresent()}" style="text-align: center;">
+							<span class="row-table-text-2" th:text="#{messages.no.process.for.area}"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-lg-8 table-container">
+				<i class="far fa-clock history-title"></i>
+				<span class="history-title" th:text="#{messages.history}"></span>
+				
+				<br/><br/>
+				
+				<div th:if="${processes.content.size() > 0}" th:each="pr, iter : ${processes.content}" th:class="${iter.index == iter.size - 1 ? 'table-container-rows' : 'table-container-rows bottom-border'}" style="padding-left: 0px;">
+					<div class="col" style="padding-left: 0px;">
+						<span class="row-table-text-3" th:text="#{messages.product}"></span>
+						&nbsp;
+						<span class="row-table-value-3" th:text="${pr.product.name}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text-3" th:text="#{messages.elapsed}"></span>
+						&nbsp;
+						<span class="row-table-value-3" th:if="${pr.status == 0}">-</span>
+						<span class="row-table-value-3" th:if="${pr.status == 1}" th:text="${pr.elapsedTimeToString}"></span>
+						<span class="row-table-value-3" th:if="${pr.status == 2}" th:text="${pr.elapsedTimeToString}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text-3" th:text="#{messages.status}"></span>
+						&nbsp;
+						<span class="row-table-value-3" th:if="${pr.status == 0}" th:text="#{messages.active}" style="color: #1f9583;"></span>
+						<span class="row-table-value-3" th:if="${pr.status == 1}" th:text="#{messages.paused}" style="color: #f1818c;"></span>
+						<span class="row-table-value-3" th:if="${pr.status == 2}" th:text="#{messages.finished}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text-3" th:text="#{messages.date}"></span>
+						<span class="row-table-value-3" th:text="${pr.formattedCreatedDate}"></span>
+					</div>
+				</div>
+				
+				<div th:if="${processes.content.size() == 0}">
+					<p th:text="#{messages.no.results.found}"></p>
+				</div>
+			</div>
+			
+			<div th:if="${processes.totalPages > 1 && processes.content.size() > 0}">
+				<ul class="pagination">
+					<li th:class="${processes.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${processes.number}, date=${selectedDate.isPresent() ? selectedDate.get() : ''}, product=${selectedProduct.isPresent() ? selectedProduct.isPresent().get() : ''})}">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+					<li th:if="${processes.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+					    <a th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${pageNumber}, date=${selectedDate.isPresent() ? selectedDate.get() : ''}, product=${selectedProduct.isPresent() ? selectedProduct.isPresent().get() : ''})}" th:text=${pageNumber} 
+					    	th:class="${pageNumber == processes.number + 1} ? 'page-link active' : 'page-link'"></a>
+					</li>
+					<li th:class="${(processes.number + 1) == processes.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{/areas/{id}/historic(id=${area.id}, size=${processes.size}, page=${processes.number + 2}, date=${selectedDate.isPresent() ? selectedDate.get() : ''}, product=${selectedProduct.isPresent() ? selectedProduct.isPresent().get() : ''})}">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		
+		<div th:replace="commons/template.html :: js-scripts"></div>
+	</body>
+</html>

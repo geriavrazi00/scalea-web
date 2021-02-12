@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org">
+	<body>
+		<div class="table-container col-lg-3" th:fragment="settingsmenu" style="margin: 0px;">
+			<div sec:authorize="hasAnyAuthority('VIEW_PROFILE_PRIVILEGE','UPDATE_PROFILE_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/profile') ? 'setting-menu-item active' : 'setting-menu-item'}">
+				<a href="/profile" th:text="#{messages.my.data}" class="black-and-bold"></a>
+			</div>
+			<br/>
+			<div sec:authorize="hasAnyAuthority('VIEW_USERS_PRIVILEGE', 'UPSERT_USERS_PRIVILEGE', 'DELETE_USERS_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/users') ? 'setting-menu-item active' : 'setting-menu-item'}">
+				<a href="/users" th:text="#{messages.users}" class="black-and-bold" ></a>
+			</div>
+			<br/>
+			<div class="setting-menu-item" sec:authorize="hasAnyAuthority('VIEW_ROLES_PRIVILEGE', 'UPSERT_ROLES_PRIVILEGE', 'DELETE_ROLES_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/roles') ? 'setting-menu-item active' : 'setting-menu-item'}">
+				<a href="/roles" th:text="#{messages.roles}" class="black-and-bold"></a>
+			</div>
+		</div>
+	</body>
+</html>

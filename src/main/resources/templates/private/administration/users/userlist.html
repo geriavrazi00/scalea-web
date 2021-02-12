@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+<head th:replace="commons/template.html :: headerfiles"></head>
+
+<body>
+	<div th:replace="commons/template.html :: menu"></div>
+
+	<div class="main-container">
+		<h1 th:text="#{messages.settings}" class="page-title"></h1>
+		
+		<br/>
+		
+		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+		
+		<section class="setting_body" style="margin: 0px;">
+			<div th:replace="/commons/settingsmenu.html :: settingsmenu"></div>
+
+			<div class="sb_table col-lg-8">
+				<div class="sb_table_heading">
+					<h2 th:text="#{messages.users}"></h2>
+					<a class="btn btn-primary" href="/users/create" th:text="#{messages.user.create}" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')" data-toggle="modal" data-target="#createUserModal"></a>
+				</div>
+				<div class="set_table_body">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col" style="width: 200px" th:text="#{messages.username}"></th>
+									<th scope="col" style="width: 100px" th:text="#{messages.role}"></th>
+									<th scope="col" style="width: 100px" th:text="#{messages.status}"></th>
+									<th scope="col" style="width: 100px"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="user: ${users.content}">
+									<td class="st_td_flex" style="padding-top: 0px; padding-bottom: 0px;">
+										<span style="padding-left: 0px;">
+											<h2 th:text="${user.username}"></h2>
+											<p th:text="${user.firstName} + ' ' + ${user.lastName}"></p>
+										</span>
+									</td>
+									<td th:text="${user.role.name}"></td>
+									<td class="color_pri">Aktiv</td>
+									<td>
+										<div class="st_actions">
+											<a th:id="'editUserHref' + ${user.id}" th:href="@{'/users/{id}'(id=${user.id})}" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadUser(event, ' + ${user.id} + ')'">
+												<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
+											</a>
+											
+											<a href="#" style="padding-right: 20px;" data-toggle="modal" data-target="#changePasswordModal" th:onclick="'setChangePasswordUserId(' + ${user.id} + ')'" sec:authorize="hasAuthority('PASSWORDS_USERS_PRIVILEGE')">
+												<i class="fas fa-lock row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.change.password}"></i>
+											</a>
+												
+											<form th:id="'deleteUserForm' + ${user.id}" method="POST" th:action="@{'/users/delete/{id}'(id=${user.id}, page=${users.number + 1})}" sec:authorize="hasAuthority('DELETE_USERS_PRIVILEGE')" style="display: initial;">
+												<a href="#" data-toggle="modal" data-target="#deleteUserModal" th:onclick="'setDeleteUserId(' + ${user.id} + ')'">
+													<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i>
+												</a>
+											</form>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<div th:if="${users.content.size() == 0}">
+							<p th:text="#{messages.no.users}"></p>
+						</div>
+					</div>
+					
+					<div th:if="${users.totalPages > 1 && users.content.size() > 0}">
+						<ul class="pagination">
+							<li th:class="${users.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+								<a class="page-link" th:href="@{/users(page=${users.number})}">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
+							<li th:if="${users.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+							    <a th:href="@{/users(page=${pageNumber})}" th:text=${pageNumber} 
+							    	th:class="${pageNumber == users.number + 1} ? 'page-link active' : 'page-link'"></a>
+							</li>
+							<li th:class="${(users.number + 1) == users.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+								<a class="page-link" th:href="@{/users(page=${users.number + 2})}">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+	
+	<div th:replace="private/administration/users/createuser.html :: createuser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
+	<div th:replace="private/administration/users/edituser.html :: edituser" sec:authorize="hasAuthority('UPSERT_USERS_PRIVILEGE')"></div>
+	<div th:replace="private/administration/users/changepassword.html :: changepassword" sec:authorize="hasAuthority('PASSWORDS_USERS_PRIVILEGE')"></div>
+	<div th:replace="private/administration/users/deleteuser.html :: deleteuser" sec:authorize="hasAuthority('DELETE_USERS_PRIVILEGE')"></div>
+
+	<div th:replace="commons/template.html :: js-scripts"></div>
+</body>
+</html>

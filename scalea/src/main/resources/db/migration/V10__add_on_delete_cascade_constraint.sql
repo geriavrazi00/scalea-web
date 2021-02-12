@@ -1,0 +1,5 @@
+ALTER TABLE vacancies DROP CONSTRAINT fk_area,
+ADD CONSTRAINT fk_area FOREIGN KEY (area_id) REFERENCES areas(id) ON DELETE CASCADE;
+
+ALTER TABLE vacancies DROP CONSTRAINT fk_employee,
+ADD CONSTRAINT fk_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE SET NULL;

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<body>
+		<div th:replace="/commons/template.html :: menu"></div>
+		
+		<div class="main-container">
+				
+ <section class="top_section">
+      <div class="tsec_div1">
+			<h1 th:text="#{messages.settings}" class="page-title"></h1>
+      </div>
+      <div class="tsec_div2">
+        <span>
+          <form class="navbar-form" role="search">
+            <div class="input-group add-on">
+              <input
+                class="form-control"
+                placeholder=""
+                name="srch-term"
+                id="srch-term"
+                type="text"
+              />
+              <div class="input-group-btn">
+                <button class="btn btn-default" type="submit">
+                  <img src="img/magnifying-glass.svg" />
+                </button>
+              </div>
+            </div>
+          </form>
+        </span>
+        <span><img src="img/statisp1.png" /></span>
+      </div>
+    </section>
+
+    <section class="setting_body">
+    <div th:replace="/commons/settingsmenu.html :: settingsmenu"></div>
+      
+      <div class="sb_table col-lg-8">
+        <div class="sb_table_heading">
+          <h2>Perdoruesit</h2>
+          <a>Shto nje perdorues +</a>
+        </div>
+        <div class="set_table_body">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" style="width: 200px">Emri i perdoruesit</th>
+                  <th scope="col" style="width: 100px">Te drejtat</th>
+                  <th scope="col" style="width: 100px">Statusi</th>
+                  <th scope="col" style="width: 150px">Aktiviteti</th>
+                  <th scope="col" style="width: 100px">Salla</th>
+                  <th scope="col" style="width: 100px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="st_td_flex">
+                    <img src="img/statisp1.png" />
+                    <span>
+                      <h2>Administratori 1</h2>
+                      <p>administrate@fenix.com</p>
+                    </span>
+                  </td>
+                  <td>Administrator</td>
+                  <td class="color_pri">Aktiv</td>
+                  <td>2min. me pare</td>
+                  <td>------------</td>
+                  <td>
+                    <div class="st_actions">
+                      <img src="img/pencil.svg" />
+                      <img src="img/close.svg" />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="st_td_flex">
+                    <img src="img/statisp1.png" />
+                    <span>
+                      <h2>Administratori 1</h2>
+                      <p>administrate@fenix.com</p>
+                    </span>
+                  </td>
+                  <td>Administrator</td>
+                  <td class="color_pri">Aktiv</td>
+                  <td>2min. me pare</td>
+                  <td>------------</td>
+                  <td>
+                    <div class="st_actions">
+                      <img src="img/pencil.svg" />
+                      <img src="img/close.svg" />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="st_td_flex">
+                    <img src="img/statisp1.png" />
+                    <span>
+                      <h2>Administratori 1</h2>
+                      <p>administrate@fenix.com</p>
+                    </span>
+                  </td>
+                  <td>Administrator</td>
+                  <td class="color_pri">Aktiv</td>
+                  <td>2min. me pare</td>
+                  <td>------------</td>
+                  <td>
+                    <div class="st_actions">
+                      <img src="img/pencil.svg" />
+                      <img src="img/close.svg" />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="st_td_flex">
+                    <img src="img/statisp1.png" />
+                    <span>
+                      <h2>Administratori 1</h2>
+                      <p>administrate@fenix.com</p>
+                    </span>
+                  </td>
+                  <td>Administrator</td>
+                  <td class="color_pri">Aktiv</td>
+                  <td>2min. me pare</td>
+                  <td>------------</td>
+                  <td>
+                    <div class="st_actions">
+                      <img src="img/pencil.svg" />
+                      <img src="img/close.svg" />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="st_td_flex">
+                    <img src="img/statisp1.png" />
+                    <span>
+                      <h2>Administratori 1</h2>
+                      <p>administrate@fenix.com</p>
+                    </span>
+                  </td>
+                  <td>Administrator</td>
+                  <td class="color_pri">Aktiv</td>
+                  <td>2min. me pare</td>
+                  <td>------------</td>
+                  <td>
+                    <div class="st_actions">
+                      <img src="img/pencil.svg" />
+                      <img src="img/close.svg" />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="st_td_flex">
+                    <img src="img/statisp1.png" />
+                    <span>
+                      <h2>Administratori 1</h2>
+                      <p>administrate@fenix.com</p>
+                    </span>
+                  </td>
+                  <td>Administrator</td>
+                  <td class="color_pri">Aktiv</td>
+                  <td>2min. me pare</td>
+                  <td>------------</td>
+                  <td>
+                    <div class="st_actions">
+                      <img src="img/pencil.svg" />
+                      <img src="img/close.svg" />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="st_td_flex">
+                    <img src="img/statisp1.png" />
+                    <span>
+                      <h2>Administratori 1</h2>
+                      <p>administrate@fenix.com</p>
+                    </span>
+                  </td>
+                  <td>Administrator</td>
+                  <td class="color_pri">Aktiv</td>
+                  <td>2min. me pare</td>
+                  <td>------------</td>
+                  <td>
+                    <div class="st_actions">
+                      <img src="img/pencil.svg" />
+                      <img src="img/close.svg" />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+					<div th:if="${users.size() == 0}">
+						<p th:text="#{messages.no.users}"></p>
+					</div>
+
+		</div>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

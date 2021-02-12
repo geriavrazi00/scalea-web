@@ -2,24 +2,64 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org">
 	
-	<head th:replace="/commons/template.html :: headerfiles"></head>
-	
-	<body>
-		<h1 th:text="#{messages.login}"></h1>
-		<div th:if="${error}">Unable to login. Check your username and password.</div>
-		
-		<p>New here? Click <a th:href="@{/register}">here</a> to register.</p>
-		<!-- tag::thAction[] -->
-		<form method="POST" th:action="@{/login}" id="loginForm">
-			<label for="username">Username: </label>
-			<input type="text" name="username" id="username" />
-			<br/>
-			<label for="password">Password: </label>
-			<input type="password" name="password" id="password" />
-			<br/>
-			<input type="submit" value="Login" />
-		</form>
-		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
-	</body>
+	<head th:replace="/commons/template.html :: headerfiles">
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    	<title>Login</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/newstyle.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/fa-all.css" />
+ 	</head>
+	<body style="background-color: #1f9584">
+    <section class="login-form-new" style="width: 1038px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 3rem 0px;">
+      <div class="row" style="padding: 0px; width: 100%">
+        <div class="col-md-6 logind1 dnon" style="padding: 0px">
+          <img src="/images/sideform.PNG" style="width: 100%; height: 100%" />
+        </div>
+        <div class="col-md-6 logind2">
+          <div>
+            <h2>Pershendetje!</h2>
+            <p>Ju lutem plotësoni e-mail-in tuaj dhe fjalëkalimin</p>
+            <div class="loginformd">
+              <form>
+                <div class="form-input mb-40">
+                  <div class="form-input-box">
+                    <input
+                      type="text"
+                      name="username"
+                      autocomplete="off"
+                      id="username"
+                      value="administratorfenix@gmail.com"
+                      required
+                    />
+                    <label class="label-name" for="username">
+                      <span class="content-name">Adresa e-mail </span>
+                    </label>
+                  </div>
+                </div>
+                <div class="form-input mb-40">
+                  <div class="form-input-box">
+                    <input
+                      type="password"
+                      name="name"
+                      autocomplete="off"
+                      value="********"
+                      required
+                    />
+                    <label class="label-name" for="password">
+                      <span class="content-name"> Fjalëkalimi </span>
+                    </label>
+                  </div>
+                </div>
+                <input type="submit" value="Kycu" class="btn-sub" />
+                <a href="">keni harruar fjalëkalimin?</a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </body>
+
 </html>

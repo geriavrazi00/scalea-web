@@ -659,6 +659,8 @@ body {
   font-size: 28px;
   line-height: 38px;
   font-weight: bold;
+  text-align: left;
+  padding-left: 30px;
 }
 .Shto_content {
   padding: 40px 10px 20px;
@@ -903,7 +905,7 @@ input[type="number"] {
       #22635468 53%,
       #17826987 100%
     ),
-    url(../images/olive2.jpg);
+    url("../images/olive2.jpg");
 
   background-size: cover;
   border-radius: 10px;
@@ -924,6 +926,8 @@ input[type="number"] {
   margin: auto;
   left: 50%;
   transform: translateX(-50%);
+  background:
+  url("../images/artboard2.png");
 }
 .logind1sb span {
   text-align: center;
@@ -983,5 +987,33 @@ input[type="number"] {
   .loginbg .row {
     width: 80%;
   }
+
+#canv1
+{
+        height: 50px;
+        width: 50px;
+        border-radius: 25px;
+        border-style: solid;
+        border-width: 1px;
+        border-color: rgb(122, 113, 113);
+        position: relative;
+        top: -14px;
 }
+
+.Shto_overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.2);
+    transition: opacity 1ms;
+    visibility: hidden;
+    opacity: 0;
+}
+.Shto_overlay:target {
+    visibility: visible;
+    opacity: 1;
+}
+
 }

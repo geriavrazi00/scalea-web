@@ -5,26 +5,31 @@
 	<div th:fragment="deleteproduct">
 		<div id="deleteProductModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deleteProductModal" aria-hidden="true">
 			<div class="modal-dialog" role="document" style="margin-top: 200px;">
+
+			<div class="Shto_content">
 				<div class="modal-content">
 					<div class="modal-body">
 						<input type="hidden" id="delete-product-id" />
 						
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-       						<span aria-hidden="true">&times;</span>
-     					</button>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       							<span aria-hidden="true">&times;</span>
+     						</button>
 						
 						<div class="container">
-							<h1 th:text="#{messages.product.delete}"></h1>
-							<p th:text="#{messages.product.delete.confirmation}"></p>
-			
+							<h2 style="padding-left:0px !important; padding-bottom:20px;" th:text="#{messages.product.delete}"></h2>
+							<div class="upload_img">
+							<h1 style="color:#272D3B; padding-bottom:20px;" th:text="#{messages.product.delete.confirmation}"></h1>
+							</div>
+							
 							<div class="clearfix">
-								<button type="button" data-dismiss="modal" class="btn btn-light" th:text="#{messages.cancel}"></button>
-								<button type="button" onclick="submitProductDeleteForm();" class="btn btn-cancel" th:text="#{messages.delete}"></button>
+								<button style="width:100px;" type="button" data-dismiss="modal"  class="btn-sub" th:text="#{messages.cancel}"></button>
+								<button style="width:100px; background-color: #f1818a;border-color: #f1818a;" type="button" onclick="submitProductDeleteForm();" class="btn-sub" th:text="#{messages.delete}"></button>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+		</div>
 		</div>
 	</div>
 </html>

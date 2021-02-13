@@ -672,11 +672,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .product-img {
 	height: 145px;
-	width: 100%;
 	border-radius: 8px;
 	border: 1px solid #dcdcdc;
 }
-
+.product-img-container{
+		text-align:center;
+}
 .sub-product-label {
 	color: #1F9584;
 	font-size: 20px;

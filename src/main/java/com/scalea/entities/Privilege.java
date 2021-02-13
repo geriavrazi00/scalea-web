@@ -1,13 +1,10 @@
 package com.scalea.entities;
 
-import java.util.Collection;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -30,9 +27,6 @@ public class Privilege {
 	@Column(unique=true)
 	@Unique(message="{messages.privilege.exists}")
     private String name;
- 
-    @ManyToMany(mappedBy = "privileges")
-    private Collection<Role> roles;
     
     public Privilege(String name) {
     	this.name = name;

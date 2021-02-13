@@ -1,40 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head th:replace="commons/template.html :: headerfiles"></head>
-	
-	<body>
-		<div th:replace="commons/template.html :: menu"></div>
-		
-		<div class="main-container">
-			<h1 th:text="#{messages.role.create}"></h1>
-	
-			<form method="POST" th:action="@{/roles/create}" th:object="${role}">
-						
-				<div th:if="${#fields.hasErrors()}">
-					<span class="validationError" th:text="#{messages.correct.problems}"></span>
-				</div>
-			
-				<label th:text="#{messages.name}" for="name"></label>
-				<input type="text" th:field="*{name}" />
-				<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}" th:text="#{messages.name.error}"></span>
-				<br />
-	
-				<div class="grid">
-					<div id="privileges">
-						<h3 th:text="#{messages.privileges}">: </h3>
-						<div th:each="privilege : ${privileges}">
-							<input name="privilege" type="checkbox" th:value="${privilege.id}" th:field="*{privileges}"/>
-							<span th:text="${privilege.name}"></span>
-							<br />
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+	<div th:fragment="createrole">
+		<form method="POST" th:action="@{'/roles/create'(page=${roles.number + 1})}" th:object="${role}">
+			<div class="modal fade" id="createRoleModal" tabindex="-1" role="dialog" aria-labelledby="createRoleModal" aria-hidden="true">
+				<div class="modal-dialog" role="document" style="max-width: 600px;">
+					<div class="modal-content" style="border-radius: 8px;">
+						<div class="custom-modal-header" style="display: unset;">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        						<span aria-hidden="true">&times;</span>
+      						</button>
+      						
+      						<br/>
+      						
+							<h5 class="modal-title" th:text="#{messages.role.create}" style="width: 100%; font-size: 28px; text-align: left; padding-left: 20px;"></h5>
+    					</div>
+    					
+						<div class="modal-body" style="padding-top: 0;">
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px;">
+								<div class="col" style="padding-left: 0px;">
+									<div>
+										<label class="modal-text-labels" for="name" th:text="#{messages.name} + ' *'"></label>
+									</div>
+									<input class="text-input" type="text" name="name" th:field="*{name}" required/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+								</div>
+							</div>
+							
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px;" th:if="${privileges != null && privileges.size() > 0}">	
+								<h3 th:text="#{messages.privileges}">: </h3>
+								<div class="grid" style="overflow: auto;" th:class="${privileges != null && privileges.size() > 0 ? 'product-container-height' : ''}">
+									<div id="privileges">
+										<div th:each="privilege : ${privileges}">
+											<input name="privilege" type="checkbox" th:value="${privilege.id}" th:field="*{privileges}"/>
+											<span th:text="${privilege.name}"></span>
+											<br />
+										</div>
+									</div>
+								</div>
+								<span class="validationError" th:if="${#fields.hasErrors('privileges')}" th:errors="*{privileges}" th:text="#{privilege}"></span>
+							</div>
+							
+							<div class="row" th:if="${privileges != null && privileges.size() > 0}">
+								<button type="submit" th:text="#{messages.save}" class="btn btn-primary"></button>				
+							</div>
+							
+							<div class="row" th:if="${privileges == null || privileges.size() == 0}">
+								<span th:text="#{messages.no.privileges}"></span>
+							</div>
 						</div>
-						<span class="validationError" th:if="${#fields.hasErrors('privileges')}" th:errors="*{privileges}" th:text="#{privilege}"></span>
 					</div>
 				</div>
-	
-				<input type="submit" th:value="#{messages.save}" />
-			</form>
-		</div>
-
-		<div th:replace="commons/template.html :: js-scripts"></div>
-	</body>
+			</div>
+			
+			<div th:if="${#fields.hasErrors()}">
+				<script type="text/javascript">
+					$('#createRoleModal').modal('show');
+				</script>
+			</div>
+		</form>
+	</div>
 </html>

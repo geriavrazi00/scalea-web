@@ -382,6 +382,35 @@ function submitUserDeleteForm() {
 	$("#deleteUserForm" + id).submit(); // Submit the form
 }
 
+// ROLES
+function loadRole(e, id) {
+	e.preventDefault();
+	
+	var href = $("#editRoleHref" + id).attr('href');
+	$.get(href, function(role) {
+		$("#edit-role-id").val(role.id);
+		$("#edit-role-name").val(role.name);
+		
+		// Uncheck all options first so different users don't overlap their privileges
+		$('.chk').prop("checked", false);
+		
+		for (var i = 0; i < role.privileges.length; i++) {
+			$("#edit-role-privilege-" + role.privileges[i].id).prop('checked', true);
+		}
+	});
+	
+	$('#editRoleModal').modal('show');
+}
+
+function setDeleteRoleId(id) {
+	$("#delete-role-id").val(id);
+}
+
+function submitRoleDeleteForm() {
+	id = $("#delete-role-id").val();
+	$("#deleteRoleForm" + id).submit(); // Submit the form
+}
+
 /********************************************** WIZARD *******************************************************/
 
 /*$(document).ready(function() {

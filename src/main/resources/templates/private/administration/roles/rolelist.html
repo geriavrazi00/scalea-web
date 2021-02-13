@@ -18,7 +18,7 @@
 				<div class="sb_table col-lg-8">
 					<div class="sb_table_heading">
 						<h2 th:text="#{messages.roles}"></h2>
-						<a class="btn btn-primary" href="/roles/create" th:text="#{messages.role.create}" sec:authorize="hasAuthority('UPSERT_ROLES_PRIVILEGE')" data-toggle="modal" data-target="#createUserModal"></a>
+						<a class="btn btn-primary" href="#" th:text="#{messages.role.create}" sec:authorize="hasAuthority('UPSERT_ROLES_PRIVILEGE')" data-toggle="modal" data-target="#createRoleModal"></a>
 					</div>
 					
 					<div class="set_table_body">
@@ -39,17 +39,17 @@
 										</td>
 										<td>
 											<div class="st_actions">
-												<a th:id="'editUserHref' + ${role.id}" th:href="@{'/roles/{id}'(id=${role.id})}" sec:authorize="hasAuthority('UPSERT_ROLES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadUser(event, ' + ${role.id} + ')'">
+												<a th:id="'editRoleHref' + ${role.id}" th:href="@{'/roles/{id}'(id=${role.id})}" sec:authorize="hasAuthority('UPSERT_ROLES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadRole(event, ' + ${role.id} + ')'">
 													<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
 												</a>
 													
-												<form th:id="'deleteUserForm' + ${role.id}" method="POST" th:action="@{'/roles/delete/{id}'(id=${role.id}, page=${roles.number + 1})}" sec:authorize="hasAuthority('DELETE_ROLES_PRIVILEGE')" style="display: initial;" th:if="${role.users == null || role.users.size() == 0}">
-													<a href="#" data-toggle="modal" data-target="#deleteUserModal" th:onclick="'setDeleteUserId(' + ${role.id} + ')'">
+												<form th:id="'deleteRoleForm' + ${role.id}" method="POST" th:action="@{'/roles/delete/{id}'(id=${role.id}, page=${roles.number + 1})}" sec:authorize="hasAuthority('DELETE_ROLES_PRIVILEGE')" style="display: initial;" th:if="${role.users == null || role.users.size() == 0}">
+													<a href="#" data-toggle="modal" data-target="#deleteRoleModal" th:onclick="'setDeleteRoleId(' + ${role.id} + ')'">
 														<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i>
 													</a>
 												</form>
 												
-												<i th:if="${role.users != null && role.users.size() > 0}" class="fas fa-times row-table-icons disabled-icon not-allowed-cursor"></i>
+												<i th:if="${role.users != null && role.users.size() > 0}" class="fas fa-times row-table-icons disabled-icon not-allowed-cursor"  data-toggle="tooltip" data-placement="top" th:title="#{messages.role.associated}"></i>
 											</div>
 										</td>
 									</tr>
@@ -83,6 +83,10 @@
 				</div>
 			</section>
 		</div>
+		
+		<div th:replace="private/administration/roles/createrole.html :: createrole" sec:authorize="hasAuthority('UPSERT_ROLES_PRIVILEGE')"></div>
+		<div th:replace="private/administration/roles/editrole.html :: editrole" sec:authorize="hasAuthority('UPSERT_ROLES_PRIVILEGE')"></div>
+		<div th:replace="private/administration/roles/deleterole.html :: deleterole" sec:authorize="hasAuthority('DELETE_ROLES_PRIVILEGE')"></div>
 		
 		<div th:replace="commons/template.html :: js-scripts"></div>
 	</body>

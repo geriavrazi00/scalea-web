@@ -1,6 +1,5 @@
 package com.scalea.controllers;
 
-import java.sql.SQLException;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +8,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,18 +19,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Privilege;
 import com.scalea.entities.Role;
 import com.scalea.enums.ApplicationRoles;
+import com.scalea.exceptions.GenericException;
 import com.scalea.exceptions.RoleCannotBeDeletedException;
 import com.scalea.exceptions.RoleNotFoundException;
 import com.scalea.exceptions.UniqueRoleNameViolationException;
+import com.scalea.models.dto.RoleDTO;
 import com.scalea.repositories.PrivilegeRepository;
 import com.scalea.repositories.RoleRepository;
 import com.scalea.utils.Constants;
+import com.scalea.utils.Utils;
 
 @Controller
 @RequestMapping("/roles")
@@ -61,99 +63,81 @@ public class RoleController {
 		
 		int currentPage = page.orElse(DEFAULT_PAGE);
 		Page<Role> roles = null;
+		Iterable<Privilege> privileges = privilegeRepo.findAll();
 		
 		if (request.isUserInRole(Constants.ROLE_ADMIN)) {
-			roles = roleRepo.findAll(PageRequest.of(currentPage - 1, DEFAULT_SIZE));
+			roles = roleRepo.findAllByOrderByName(PageRequest.of(currentPage - 1, DEFAULT_SIZE));
 		} else {
-			roles = roleRepo.findByNameNotIn(new String[] {Constants.ROLE_ADMIN, Constants.ROLE_USER}, PageRequest.of(currentPage - 1, DEFAULT_SIZE));
+			roles = roleRepo.findByNameNotInOrderByName(new String[] {Constants.ROLE_ADMIN, Constants.ROLE_USER}, 
+				PageRequest.of(currentPage - 1, DEFAULT_SIZE));
 		}
 		
 		model.addAttribute("roles", roles);
-		return "private/administration/roles/rolelist";
-	}
-	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_ROLES_PRIVILEGE + "'")
-	@GetMapping("/create")
-	public String newRole(Model model) {
-		log.info("Method newRole()");
-		
-		Iterable<Privilege> privileges = privilegeRepo.findAll();
-		
-		model.addAttribute("role", new Role());
 		model.addAttribute("privileges", privileges);
-		return "private/administration/roles/createrole";
+		if (!model.containsAttribute("role")) model.addAttribute("role", new Role());
+		if (!model.containsAttribute("roleDTO")) model.addAttribute("roleDTO", new RoleDTO());
+		model.addAttribute("pageNumbers", Utils.getPageNumbersList(roles.getTotalPages()));
+		return "private/administration/roles/rolelist";
 	}
 
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_ROLES_PRIVILEGE + "'")
 	@PostMapping("/create")
-	public String createRole(@Valid Role role, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueRoleNameViolationException {
+	public String createRole(@Valid Role role, Errors errors, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, 
+			@RequestParam("page") Optional<Integer> page) throws UniqueRoleNameViolationException {
 		log.info("Method createRole()");
 		
-		if (errors.hasErrors()) {
-			Iterable<Privilege> privileges = privilegeRepo.findAll();
-			model.addAttribute("privileges", privileges);
-			
-			return "private/administration/roles/createrole";
+		if (errors.hasErrors()) return this.allRoles(request, model, page);
+		
+		if (roleRepo.existsByName(role.getName())) {
+			model.addAttribute("message", messages.get("messages.role.unique.name", role.getName()));
+			model.addAttribute("alertClass", "alert-danger");
+		    return this.allRoles(request, model, page);
 		}
 		
-		try {
-			this.roleRepo.save(role);
-			
-			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.role.created"));
-		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-		    
-			return "redirect:/roles";
-		} catch (DataIntegrityViolationException e) {
-		    if (e.getMostSpecificCause().getClass().getName().equals("org.postgresql.util.PSQLException") && ((SQLException) e.getMostSpecificCause()).getSQLState().equals("23505"))
-		        throw new UniqueRoleNameViolationException(messages.get("messages.role.unique.name", role.getName()));
-		    throw e;
-		}
+		this.roleRepo.save(role);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.role.created"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+		return "redirect:/roles" + paginationParameters(page);
 	}
 	
-	@PreAuthorize("hasAuthority('" + Constants.UPSERT_ROLES_PRIVILEGE + "'")
-	@GetMapping("edit/{id}")
-	public String editRole(@PathVariable("id") Long id, Model model) throws Exception {
-		log.info("Method editRole()");
+	@PreAuthorize("hasAnyAuthority('" + Constants.UPSERT_ROLES_PRIVILEGE + "')")
+	@GetMapping("/{id}")
+	public @ResponseBody RoleDTO getRole(@PathVariable("id") Long id) throws Exception {
+		log.info("Method getRole()");
 		
 		Optional<Role> role = roleRepo.findById(id);
-		if (role.isPresent()) {
-			Iterable<Privilege> privileges = privilegeRepo.findAll();
-			
-			model.addAttribute("role", role.get());
-			model.addAttribute("privileges", privileges);
-			return "private/administration/roles/editrole";
-		} else {
-			throw new RoleNotFoundException(messages.get("messages.role.not.found"));
-		}
+		if (!role.isPresent()) throw new GenericException(messages.get("messages.role.not.found"));
+		
+		RoleDTO newRole = new RoleDTO();
+		newRole.toDTO(role.get());
+		return newRole;
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_ROLES_PRIVILEGE + "'")
-	@PostMapping("/edit/{id}")
-	public String updateRole(@Valid Role role, Errors errors, Model model, RedirectAttributes redirectAttributes) throws UniqueRoleNameViolationException {
+	@PostMapping("/update")
+	public String updateRole(@Valid RoleDTO roleDTO, Errors errors, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, 
+			@RequestParam("page") Optional<Integer> page) throws RoleNotFoundException {
 		log.info("Method updateRole()");
 		
-		if (errors.hasErrors()) {
-			Iterable<Privilege> privileges = privilegeRepo.findAll();
-			
-			model.addAttribute("role", role);
-			model.addAttribute("privileges", privileges);
-			
-			return "private/administration/roles/editrole";
+		if (errors.hasErrors()) return this.allRoles(request, model, page);
+		Optional<Role> optionalRole = roleRepo.findById(roleDTO.getId());
+		if (!optionalRole.isPresent()) throw new RoleNotFoundException(messages.get("messages.role.not.found"));
+		Role existingRole = optionalRole.get();
+		
+		if (roleRepo.existsByNameAndIdNot(roleDTO.getName(), existingRole.getId())) {
+			model.addAttribute("message", messages.get("messages.role.unique.name", roleDTO.getName()));
+			model.addAttribute("alertClass", "alert-danger");
+		    return this.allRoles(request, model, page);
 		}
 		
-		try {
-			redirectAttributes.addFlashAttribute("message", this.messages.get("messages.role.updated"));
-		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-			if (ApplicationRoles.getRoleByName(role.getName()) != null) role.setDeletable(false);
-		    
-			this.roleRepo.save(role);
-			return "redirect:/roles";
-			
-		} catch (DataIntegrityViolationException e) {
-		    if (e.getMostSpecificCause().getClass().getName().equals("org.postgresql.util.PSQLException") && ((SQLException) e.getMostSpecificCause()).getSQLState().equals("23505"))
-		        throw new UniqueRoleNameViolationException(messages.get("messages.role.unique.name", role.getName()));
-		    throw e;
-		}
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.role.updated"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+		if (ApplicationRoles.getRoleByName(roleDTO.getName()) != null) roleDTO.setDeletable(false);
+		roleDTO.toRole(existingRole);
+	    
+		this.roleRepo.save(existingRole);
+		return "redirect:/roles" + paginationParameters(page);
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_ROLES_PRIVILEGE + "'")
@@ -166,14 +150,18 @@ public class RoleController {
 		if (!role.isPresent()) throw new RoleNotFoundException(messages.get("messages.role.not.found"));
 		Role foundRole = role.get();
 		if (!foundRole.isDeletable()) throw new RoleCannotBeDeletedException(messages.get("messages.role.not.deletable"));
+		if (foundRole.getUsers() != null && foundRole.getUsers().size() > 0) throw new RoleCannotBeDeletedException(messages.get("messages.role.not.deletable"));
 			
 		foundRole.setPrivileges(null);
-		foundRole.setUsers(null);
 		this.roleRepo.delete(foundRole);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.role.deleted"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
 		return "redirect:/roles";
+	}
+	
+	private String paginationParameters(Optional<Integer> page) {
+		return "?page=" + page.orElse(DEFAULT_PAGE);
 	}
 }

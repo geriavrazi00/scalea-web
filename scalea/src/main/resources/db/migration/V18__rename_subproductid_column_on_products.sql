@@ -1,0 +1,1 @@
+ALTER TABLE products RENAME COLUMN sub_product_id TO father_product_id;

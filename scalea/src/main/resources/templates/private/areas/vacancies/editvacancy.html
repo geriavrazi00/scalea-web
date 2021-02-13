@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+	<div th:fragment="editvacancy">
+		<form method="POST" th:action="@{/areas/{id}/vacancies/update(id=${area.id}, size=${vacancies.size}, page=${vacancies.number + 1})}">	
+			<input type="hidden" id="edit-vacancy-id" name="edit-vacancy-id"/>
+			
+			<div class="modal fade" id="editVacancyModal" tabindex="-1" role="dialog" aria-labelledby="editVacancyModal" aria-hidden="true">
+				<div class="modal-dialog" role="document" style="width: max-content; margin-top: 200px;">
+					<div class="modal-content">
+						<div class="custom-modal-header" style="display: unset;">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        						<span aria-hidden="true">&times;</span>
+      						</button>
+      						
+      						<br/>
+      						
+							<h5 class="modal-title" th:text="#{messages.vacancy.edit}" style="width: 100%;"></h5>
+							<h6 id="modalSubTitle" class="modal-sub-title" th:text="#{messages.free.employees}" style="width: 100%;" th:if="${employees.size() > 0}"></h6>
+    					</div>
+    					
+						<div class="modal-body" style="padding-top: 0;">
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px; text-align: center; display: block; padding-top: 0;">
+								<select id="employee" name="employee" th:if="${employees.size() > 0}" class="modal-select">
+									<option th:each="employee : ${employees}" th:value="${employee.id}" th:text="${employee.firstName + ' ' + employee.lastName}"/>
+								</select>
+								
+								<div th:if="${employees.size() == 0}">
+									<b><span th:text="#{messages.no.free.employee}"></span></b>
+								</div>
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<div class="col">
+								<input id="updateVacancy" type="submit" class="btn btn-primary" th:value="#{messages.update}"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</html>

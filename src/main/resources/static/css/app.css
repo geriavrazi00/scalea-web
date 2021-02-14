@@ -1,7 +1,7 @@
 @charset "ISO-8859-1";
 
 .validationError {
-	color: red;
+	color: red!important;
 }
 
 /* Font */
@@ -716,6 +716,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .disabled-icon {
 	opacity: 0.5;
+}
+
+.sidebar-logo {
+	width: 58px;
+    height: 51px;
+    position: absolute;
+    top: 10%;
+    text-align: center;
+    margin: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    background: url(../images/artboard2.png);
 }
 
 /* Ellipsis text overflow */

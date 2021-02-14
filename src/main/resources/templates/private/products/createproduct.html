@@ -5,46 +5,69 @@
 	<div th:fragment="createproduct">
 		<form method="POST" th:action="@{/products/create(size=${products.size}, page=${products.number + 1})}" th:object="${product}" enctype="multipart/form-data">
 			<div class="modal fade" id="createProductModal" tabindex="-1" role="dialog" aria-labelledby="createProductModal" aria-hidden="true">
-				<div class="modal-dialog" role="document">
+				<div class="modal-dialog" role="document" style="max-width:380px;">
 					<div class="modal-content">
-						<div class="custom-modal-header" style="display: unset;">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<div class="Shto_content">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="padding-right: 30px;">
         						<span aria-hidden="true">&times;</span>
       						</button>
       						
       						<br/>
       						
-							<h5 class="modal-title" th:text="#{messages.product.create}" style="width: 100%;"></h5>
-    					</div>
-						<div class="modal-body" style="padding-top: 0;">
+							<h2 th:text="#{messages.product.create}"></h2>
+    						
 							<div class="row">
 								<div class="col-lg-12">
-									<span class="row-table-text" th:text="#{messages.name} + ' *'"></span>
-									<input class="text-input" type="text" name="name" th:field="*{name}" required/>
-									<br/>
+									<div class="form-input">
+										<div class="form-input-box">
+		              						<input type="text" name="name" autocomplete="off" th:field="*{name}" required />
+		               					 	<label class="label-name" for="name">
+		                  						<span class="content-name" th:text="#{messages.name} + ' *'" ></span>
+		               						</label>
+		             					</div>
+									</div>
+									<br>
 									<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
 								</div>
 								
-								<div class="col-lg-12" style="margin-top: 10px;">
-									<label for="img" th:text="#{messages.image}"></label>
-									<input type="file" name="img" accept="image/png, image/jpeg, image/jpg" />
+								<div class="col-lg-12">
+									<div class="upload_img">
+										<h1><label for="img" th:text="#{messages.image}"></label></h1>
+										<div class="flex_up_img">
+	                						<input name="img" type="file" multiple="false" accept="image/png, image/jpeg, image/jpg" id="finput" onchange="upload()"/>
+	               					 		<canvas id="canv1" style=" height:50px; width:50px; border-radius:25px; border-style: solid; border-width: 1px; border-color: rgb(122, 113, 113); position: relative; top: -14px;"></canvas>
+	             					 	</div>
+									</div>
 								</div>
 								
-								<div class="col-lg-12" style="margin-top: 10px;">
-									<span class="row-table-text" th:text="#{messages.has.subproducts}"></span>
-									<input type="checkbox" id="subproduct" name="subproduct" th:field="*{withSubProducts}" onchange="changeProductPrice()"/>
+								<div class="col-lg-12" >
+									<div class="ka_check">
+										<div class="flex_up_img">
+											<h1><span th:text="#{messages.has.subproducts}"></span></h1>
+											
+											<div style="width: 30%;">
+				                  				<label class="checkbox-button">
+				                    				<input type="checkbox" id="subproduct" name="subproduct" th:field="*{withSubProducts}" onchange="changeProductPrice()" />
+				                  				</label>
+				                			</div>
+										</div>
+									</div>
 								</div>
 								
-								<div class="col-lg-12" style="margin-top: 10px;">
-									<span class="row-table-text" th:text="#{messages.price.per.kg}"></span>
-									<input type="number" id="price" class="text-input" name="price" th:field="*{price}" step=".0001" th:disabled="*{withSubProducts}" required/>
-									<br />
-									<span class="validationError" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
-								</div>
+								<div class="col-lg-12">
+									<div class="cimi">
+              							<h1 th:text="#{messages.price.per.kg}"></h1>
+             							<div class="flex_up_img">
+             								<div>
+                  								<input type="number" id="price" class="text-input" name="price" th:field="*{price}" step=".0001" th:disabled="*{withSubProducts}" required style="opacity: 0.5;"/>
+                 					 			<span>/kg</span>
+                							</div>
+               					 		</div>
+               					 		<span class="validationError" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+               					 	</div>
+               					 </div>
 							</div>
-						</div>
-						
-						<div class="modal-footer">
+							
 							<div class="col">
 								<input class="btn btn-primary" type="submit" th:value="#{messages.save}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"/>
 							</div>

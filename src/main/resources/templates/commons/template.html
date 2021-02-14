@@ -18,10 +18,13 @@
 		<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
 		<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
 		<script type="text/javascript" th:src="@{/js/chart.js}"></script>
+		<script src="https://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js"></script>
 	</head>
 	<body>
 		<div th:fragment="menu" sec:authorize="isAuthenticated()">
 		    <div class="sidenav">
+		    	<!-- <img src="images/artboard2.png" class="sidebar-logo"/><br/> -->
+				
 				<a href="/areas" sec:authorize="hasAnyAuthority('VIEW_AREAS_PRIVILEGE', 'UPSERT_AREAS_PRIVILEGE', 'DELETE_AREAS_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/areas') ? 'active' : ''}">
 					<i class="fas fa-door-open sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.areas}"></span>
 				</a>

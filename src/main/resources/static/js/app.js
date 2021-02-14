@@ -41,8 +41,10 @@ function changeProductPrice() {
 	if (document.getElementById("price") != null) {
 		if (document.getElementById("price").disabled == true) {
 			document.getElementById("price").disabled = false;
+			document.getElementById("price").style.opacity = "1";
 		} else {
 			document.getElementById("price").disabled = true;
+			document.getElementById("price").style.opacity = "0.5";
 		}
 	}
 }
@@ -226,9 +228,11 @@ function loadProduct(e, id) {
 		
 		if (withSubProducts) {
 			document.getElementById("edit-product-price").disabled = true;
+			document.getElementById("edit-product-price").style.opacity = "0.5";
 			$("#edit-product-price").val(0.0);
 		} else {
 			document.getElementById("edit-product-price").disabled = false;
+			document.getElementById("edit-product-price").style.opacity = "1";
 			$("#edit-product-price").val(product.price);
 		}
 	});
@@ -262,8 +266,10 @@ function changeEditProductPrice() {
 	if (document.getElementById("edit-product-price") != null) {
 		if (document.getElementById("edit-product-price").disabled == true) {
 			document.getElementById("edit-product-price").disabled = false;
+			document.getElementById("edit-product-price").style.opacity = "1";
 		} else {
 			document.getElementById("edit-product-price").disabled = true;
+			document.getElementById("edit-product-price").style.opacity = "0.5";
 		}
 	}
 }
@@ -409,6 +415,20 @@ function setDeleteRoleId(id) {
 function submitRoleDeleteForm() {
 	id = $("#delete-role-id").val();
 	$("#deleteRoleForm" + id).submit(); // Submit the form
+}
+
+function upload() {
+    var imgcanvas = document.getElementById("canv1");
+    var fileinput = document.getElementById("finput");
+    var image = new SimpleImage(fileinput);
+    image.drawTo(imgcanvas);
+}
+
+function uploadSubProductImage() {
+	var imgcanvas = document.getElementById("canv2");
+    var fileinput = document.getElementById("finput2");
+    var image = new SimpleImage(fileinput);
+    image.drawTo(imgcanvas);
 }
 
 /********************************************** WIZARD *******************************************************/

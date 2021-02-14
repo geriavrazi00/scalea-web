@@ -8,54 +8,72 @@
 			<input type="hidden" id="edit-product-image" th:field="*{image}" name="image"/>
 			
 			<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModal" aria-hidden="true">
-				<div class="modal-dialog" role="document">
+				<div class="modal-dialog" role="document" style="max-width:380px;">
 					<div class="modal-content">
-						<div class="custom-modal-header" style="display: unset;">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<div class="Shto_content">
+						
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="padding-right: 30px;">
         						<span aria-hidden="true">&times;</span>
       						</button>
       						
       						<br/>
       						
-							<h5 class="modal-title" th:text="#{messages.product.edit}" style="width: 100%;"></h5>
-    					</div>
-						<div class="modal-body" style="padding-top: 0;">
+							<h2 th:text="#{messages.product.edit}" style="width: 100%;"></h2>
+    					
 							<div class="row">
 								<div class="col-lg-12">
-									<span class="row-table-text" th:text="#{messages.name} + ' *'"></span>
-									<input id="edit-product-name"  class="text-input" type="text" name="name" th:field="*{name}" required/>
-									<br/>
+									<div class="form-input">
+             							<div class="form-input-box">
+              					  			<input id="edit-product-name" type="text" name="name" autocomplete="off" th:field="*{name}" required />
+               					 			<label class="label-name" for="name">
+                  								<span class="content-name" th:text="#{messages.name} + ' *'" ></span>
+               								</label>
+             							</div>
+           							</div>
 									<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
 								</div>
 								
-								<div class="col-lg-12" style="margin-top: 10px;">
+								<div class="col-lg-12">
 									<img id="edit-product-current-image" class="img-fluid product-img" th:src="*{base64Image}"/>
 								</div>
 								
 								<div class="col-lg-12" style="margin-top: 10px;">
-									<label for="img" th:text="#{messages.image}"></label>
-									<input id="edit-product-img" type="file" name="img" accept="image/png, image/jpeg, image/jpg" />
+									<div class="upload_img">
+             							<h1> <label for="img" th:text="#{messages.image}"></label></h1>
+             					 		<div class="flex_up_img" style="padding-bottom: 10px;">
+                							<input name="img" type="file" multiple="false" accept="image/png, image/jpeg, image/jpg" id="finput" onchange="upload()" />
+             					 		</div>
+           					 		</div>
 								</div>
 								
-								<div class="col-lg-12" style="margin-top: 10px;">
-									<span class="row-table-text" th:text="#{messages.has.subproducts}"></span>
-									<input type="checkbox" id="edit-product-subproducts" name="edit-product-subproducts" th:field="*{withSubProducts}" onchange="changeEditProductPrice()"/>
+								<div class="col-lg-12" >
+									<div class="ka_check">
+              							<div class="flex_up_img">
+                							<h1><span th:text="#{messages.has.subproducts}"></span></h1>
+                							<div style="width: 30%;">
+                  								<label class="checkbox-button">
+                    								<input type="checkbox" id="edit-product-subproducts" name="edit-product-subproducts" th:field="*{withSubProducts}" onchange="changeEditProductPrice()"/>
+                  								</label>
+                							</div>
+              							</div>
+         							</div>
 								</div>
-								
-								<div class="col-lg-12" style="margin-top: 10px;">
-									<span class="row-table-text" th:text="#{messages.price.per.kg}"></span>
-									<input type="number" id="edit-product-price" class="text-input" name="edit-product-price" th:field="*{price}" step=".0001" required/>
-									<br />
-									<span class="validationError" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+
+								<div class="col-lg-12">
+									<div class="cimi">
+              							<h1 th:text="#{messages.price.per.kg}"> </h1>
+             							<div class="flex_up_img">
+                							<div>
+                  								<input type="number" id="edit-product-price" class="text-input" name="edit-product-price" th:field="*{price}" step=".0001" required />
+                 					 			<span>/kg</span>
+                							</div>
+              							</div>
+           				 				<span class="validationError" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+           				 			</div>			
 								</div>
-							</div>
-						</div>
-						
-						<div class="modal-footer">
-							<div class="col">
 								<input class="btn btn-primary" type="submit" th:value="#{messages.save}" sec:authorize="hasAuthority('UPSERT_PRODUCTS_PRIVILEGE')"/>
 							</div>
-						</div>
+						</div>		
 					</div>
 				</div>
 			</div>

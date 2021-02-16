@@ -25,7 +25,7 @@ public class SubProductDTO {
 	@Positive(message="{messages.price.positive}")
 	private Double price;
 	
-	private String image;
+	private byte[] image;
 	
 	@NotNull(message="{messages.no.product.for.subproduct}")
     private Product fatherProduct;

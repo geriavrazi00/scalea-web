@@ -1,5 +1,7 @@
 package com.scalea.controllers;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -95,13 +98,16 @@ public class ProductController {
 		
 		// While creating the image, we check if one was selected to upload. If so, we save it in the storage of the system. If not, we simply set the default image value and not write anything in the storage
 		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-		String storedFileName = Constants.PRODUCTS_DEFAULT_IMAGE;
+		byte[] byteObjects = null;
 		
 		if (fileName != null && !fileName.isEmpty()) {
-			storedFileName = productService.savePhotoToDisk(multipartFile, fileName, product.getName());
+			byteObjects = multipartFile.getBytes();
+		} else {
+			File defaultImageFile = ResourceUtils.getFile("classpath:static/images/" + Constants.PRODUCTS_DEFAULT_IMAGE);
+			byteObjects = Files.readAllBytes(defaultImageFile.toPath());
 		}
 		
-		product.setImage(storedFileName);
+		product.setImage(byteObjects);
 		this.productService.save(product);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.product.created"));
@@ -116,14 +122,14 @@ public class ProductController {
 			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws Exception {
 		log.info("Method updateProduct()");
 		
-		if (errors.hasErrors()) {
-			product.setBase64Image(productService.getBase64ImageString(product.getImage()));
-			return this.allProducts(model, page, size);
-		}
-		
 		Optional<Product> existingOptionalProduct = productService.findById(product.getId());
 		if (!existingOptionalProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
 		Product existingProduct = existingOptionalProduct.get();
+		
+		if (errors.hasErrors()) {
+			product.setBase64Image(productService.getBase64ImageString(existingProduct.getImage()));
+			return this.allProducts(model, page, size);
+		}
 		
 		/*
 		 *  While creating the image, we check if one was selected to upload. If so, we save it in the storage of the system. If not, we simply set the 
@@ -134,9 +140,8 @@ public class ProductController {
 		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 		
 		if (fileName != null && !fileName.isEmpty()) {
-			if (existingProduct.getImage() != null && !existingProduct.getImage().equals(Constants.PRODUCTS_DEFAULT_IMAGE)) productService.deletePhotoFromDisk(existingProduct.getImage());
-			String storedFileName = productService.savePhotoToDisk(multipartFile, fileName, product.getName());
-			product.setImage(storedFileName);
+			byte[] byteObjects = multipartFile.getBytes();
+			product.setImage(byteObjects);
 		} else {
 			product.setImage(existingProduct.getImage());
 		}
@@ -199,13 +204,16 @@ public class ProductController {
 		
 		// While creating the image, we check if one was selected to upload. If so, we save it in the storage of the system. If not, we simply set the default image value and not write anything in the storage
 		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-		String storedFileName = Constants.PRODUCTS_DEFAULT_IMAGE;
+		byte[] byteObjects = null;
 		
 		if (fileName != null && !fileName.isEmpty()) {
-			storedFileName = productService.savePhotoToDisk(multipartFile, fileName, subProduct.getName());
+			byteObjects = multipartFile.getBytes();
+		} else {
+			File defaultImageFile = ResourceUtils.getFile("classpath:static/images/" + Constants.PRODUCTS_DEFAULT_IMAGE);
+			byteObjects = Files.readAllBytes(defaultImageFile.toPath());
 		}
 		
-		subProduct.setImage(storedFileName);
+		subProduct.setImage(byteObjects);
 		this.productService.save(subProduct.toNewProduct());
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.subproduct.created"));
@@ -220,15 +228,16 @@ public class ProductController {
 			@RequestParam("img") MultipartFile multipartFile, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws Exception {
 		log.info("Method updateSubProduct()");
 		
-		if (errors.hasErrors()) {
-			subProduct.setBase64Image(productService.getBase64ImageString(subProduct.getImage()));
-			return this.allProducts(model, page, size);
-		}
-		
+
 		Optional<Product> existingOptionalProduct = productService.findById(subProduct.getId());
 		if (!existingOptionalProduct.isPresent()) throw new GenericException(messages.get("messages.product.not.found"));
 		if (existingOptionalProduct.get().getFatherProduct() == null) throw new GenericException(messages.get("messages.product.not.found"));
 		Product existingProduct = existingOptionalProduct.get();
+		
+		if (errors.hasErrors()) {
+			subProduct.setBase64Image(productService.getBase64ImageString(existingProduct.getImage()));
+			return this.allProducts(model, page, size);
+		}
 		
 		/*
 		 *  While creating the image, we check if one was selected to upload. If so, we save it in the storage of the system. If not, we simply set the 
@@ -239,9 +248,8 @@ public class ProductController {
 		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 		
 		if (fileName != null && !fileName.isEmpty()) {
-			if (existingProduct.getImage() != null && !existingProduct.getImage().equals(Constants.PRODUCTS_DEFAULT_IMAGE)) productService.deletePhotoFromDisk(existingProduct.getImage());
-			String storedFileName = productService.savePhotoToDisk(multipartFile, fileName, subProduct.getName());
-			subProduct.setImage(storedFileName);
+			byte[] byteObjects = multipartFile.getBytes();
+			subProduct.setImage(byteObjects);
 		} else {
 			subProduct.setImage(existingProduct.getImage());
 		}

@@ -220,7 +220,7 @@ function loadProduct(e, id) {
 		$("#edit-product-id").val(product.id);
 		$("#edit-product-name").val(product.name);
 		$("#edit-product-current-image").attr("src", product.base64Image);
-		$("#edit-product-image").val(product.image);
+		// $("#edit-product-image").val(product.image);
 		// $("#edit-product-img").val(product.image);
 		
 		var withSubProducts = product.withSubProducts;
@@ -249,7 +249,7 @@ function loadSubProduct(e, productId, subProductId) {
 		console.log(product);
 		$("#edit-subproduct-id").val(product.id);
 		$("#edit-subproduct-name").val(product.name);
-		$("#edit-subproduct-image").val(product.image);
+		// $("#edit-subproduct-image").val(product.image);
 		$("#edit-subproduct-current-image").attr("src", product.base64Image);
 		$("#edit-subproduct-price").val(product.price);
 		$("#edit-subproduct-father").val(productId);

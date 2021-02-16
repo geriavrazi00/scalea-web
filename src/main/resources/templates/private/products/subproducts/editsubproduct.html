@@ -6,7 +6,6 @@
 		<form method="POST" th:action="@{/products/subproduct/update(size=${products.size}, page=${products.number + 1})}" th:object="${subProductDTO}" enctype="multipart/form-data">
 			<input type="hidden" id="edit-subproduct-id" name="edit-subproduct-id" th:field="*{id}"/>
 			<input type="hidden" id="edit-subproduct-father" th:field="*{fatherProduct}"/>
-			<input type="hidden" id="edit-subproduct-image" th:field="*{image}" name="image"/>
 			
 			<div class="modal fade" id="editSubProductModal" tabindex="-1" role="dialog" aria-labelledby="editSubProductModal" aria-hidden="true">
 				<div class="modal-dialog" role="document" style="max-width:380px;">

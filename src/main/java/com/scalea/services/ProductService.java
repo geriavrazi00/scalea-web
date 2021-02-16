@@ -1,8 +1,6 @@
 package com.scalea.services;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -37,9 +35,9 @@ public class ProductService {
 	public Page<Product> findByFatherProductIsNullAndEnabledIsTrue(Pageable pageable) throws Exception {
 		Page<Product> products = productRepo.findByFatherProductIsNullAndEnabledIsTrueOrderByName(pageable);
 		
-		for (Product product: products) {
-			product.setBase64Image(this.getBase64ImageString(product.getImage()));
-		}
+//		for (Product product: products) {
+//			product.setBase64Image(this.getBase64ImageString(product.getImage()));
+//		}
 		
 		return products;
 	}
@@ -83,19 +81,16 @@ public class ProductService {
 	    }
 	}
 	
-	public String getBase64ImageString(String imageName) throws Exception {
-		String pathName = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + imageName;
-		try {
-			File file = new File(pathName);
-			byte[] fileContent = Files.readAllBytes(file.toPath());
-	        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(fileContent);
-		} catch (IOException e) {
-			System.err.println("File " + pathName + " not found!");
-			
-			pathName = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + Constants.PRODUCTS_DEFAULT_IMAGE;
-			File file = new File(pathName);
-			byte[] fileContent = Files.readAllBytes(file.toPath());
-	        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(fileContent);
-		}
+	public String getBase64ImageString(byte[] imageData) throws Exception {
+//		String pathName = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + imageName;
+//		try {
+	        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(imageData);
+//		} catch (IOException e) {
+//			System.err.println("File not found!");
+//			
+//			File defaultImageFile = ResourceUtils.getFile("classpath:static/images/" + Constants.PRODUCTS_DEFAULT_IMAGE);
+//			byte[] byteObjects = Files.readAllBytes(defaultImageFile.toPath());
+//	        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(byteObjects);
+//		}
 	}
 }

@@ -30,7 +30,7 @@ public class ProductDTO {
 	
 	private double price;
 	
-	private String image;
+	private byte[] image;
 	
 	private boolean enabled = true;
 	

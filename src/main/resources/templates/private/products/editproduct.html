@@ -5,7 +5,6 @@
 	<div th:fragment="editproduct">
 		<form method="POST" th:action="@{/products/update(size=${products.size}, page=${products.number + 1})}" th:object="${productDTO}" enctype="multipart/form-data">
 			<input type="hidden" id="edit-product-id" name="edit-product-id" th:field="*{id}"/>
-			<input type="hidden" id="edit-product-image" th:field="*{image}" name="image"/>
 			
 			<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModal" aria-hidden="true">
 				<div class="modal-dialog" role="document" style="max-width:380px;">
@@ -41,7 +40,7 @@
 									<div class="upload_img">
              							<h1> <label for="img" th:text="#{messages.image}"></label></h1>
              					 		<div class="flex_up_img" style="padding-bottom: 10px;">
-                							<input name="img" type="file" multiple="false" accept="image/png, image/jpeg, image/jpg" id="finput" onchange="upload()" />
+                							<input name="img" type="file" multiple="false" accept="image/png, image/jpeg, image/jpg" id="finput"/>
              					 		</div>
            					 		</div>
 								</div>

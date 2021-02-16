@@ -1,5 +1,6 @@
 package com.scalea.entities;
 
+import java.util.Base64;
 import java.util.Collection;
 
 import javax.persistence.Column;
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 
 import com.scalea.annotations.NumbersWhenEnabled;
@@ -48,7 +50,8 @@ public class Product {
 	@Column(name="price_per_kg")
 	private double price;
 	
-	private String image;
+	@Type(type="org.hibernate.type.BinaryType")
+	private byte[] image;
 	
 	private boolean enabled = true;
 	
@@ -66,6 +69,10 @@ public class Product {
 	
 	@Transient
 	private String base64Image;
+	
+	public String getBase64Image() {
+		return "data:image/png;base64, " + Base64.getEncoder().encodeToString(this.image);
+	}
 
 	@Override
 	public String toString() {

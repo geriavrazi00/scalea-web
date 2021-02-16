@@ -1,0 +1,1 @@
+ALTER TABLE products ALTER COLUMN image TYPE bytea USING image::bytea;

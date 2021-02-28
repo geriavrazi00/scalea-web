@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import com.scalea.utils.Constants;
 
@@ -23,6 +24,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
+	}
+	
+	@Bean
+	public AuthenticationSuccessHandler myAuthenticationSuccessHandler(){
+	    return new MyAuthenticationSuccessHandler();
 	}
 	
 	@Override
@@ -52,6 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/", "/home").authenticated()
 			.antMatchers("/**").access("permitAll")
 			.and().formLogin().loginPage("/login")
-			.and().logout().logoutSuccessUrl("/");
+			.successHandler(myAuthenticationSuccessHandler())
+			.and().logout().logoutSuccessUrl("/")
+			.and().csrf().ignoringAntMatchers("/device");
 	}
 }

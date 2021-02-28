@@ -1,5 +1,6 @@
 package com.scalea.api.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -7,10 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.scalea.controllers.ProcessController;
@@ -18,9 +20,12 @@ import com.scalea.entities.Activity;
 import com.scalea.entities.Process;
 import com.scalea.entities.Vacancy;
 import com.scalea.enums.ProcessStatus;
+import com.scalea.models.dto.ActivityDTO;
 import com.scalea.repositories.ActivityRepository;
 import com.scalea.repositories.ProcessRepository;
 import com.scalea.repositories.VacancyRepository;
+
+import javassist.NotFoundException;
 
 /* The @RestController annotation serves two purposes. First, it’s a stereotype annotation like @Controller and @Service that marks a class for 
  * discovery by component scanning. But most relevant to the discussion of REST, the @RestController annotation tells Spring that all handler 
@@ -59,30 +64,38 @@ public class DeviceCommunicationController {
 		this.log = LoggerFactory.getLogger(ProcessController.class);
 	}
 	
-	@GetMapping
-	public ResponseEntity<Object> receiveData(@RequestParam("code") String code, @RequestParam("weight") Double weight) {
-		if (code == null || code.isBlank()) return new ResponseEntity<>("The code is wrong.", HttpStatus.BAD_REQUEST);
-		if (weight == null || weight == 0) return new ResponseEntity<>("Wrong format of the weight.", HttpStatus.BAD_REQUEST);
+	@PostMapping
+	@Transactional(rollbackFor = Exception.class)
+	public ResponseEntity<Object> receiveData(@RequestBody List<ActivityDTO> activities) throws Exception {		
+		if (activities != null && activities.size() > 0) {
+			for (ActivityDTO activityDto: activities) {
+				try {
+					Optional<Vacancy> optionalVacancy = vacancyRepo.findByUuid(activityDto.getBarcode());
+					if (!optionalVacancy.isPresent()) throw new NotFoundException("Vendi i punës nuk ekziston!");
+					Vacancy vacancy = optionalVacancy.get();
+					
+					if (vacancy.getEmployee() == null) throw new NotFoundException("Vendi i punës me id " + vacancy.getId() + " nuk është shoqëruar me asnjë punonjës!");
+					
+					Optional<Process> optionalProcess = processRepo.findByStatusAndArea(ProcessStatus.STARTED.getStatus(), vacancy.getArea());
+					if (!optionalProcess.isPresent()) throw new NotFoundException("Asnjë proces aktiv për vendin e punës me id " + vacancy.getId() + "!");
+					Process activeProcess = optionalProcess.get();
+					
+					Activity activity = new Activity();
+					activity.setVacancy(vacancy);
+					activity.setWeight(Double.valueOf(activityDto.getWeight()));
+					activity.setProduct(activeProcess.getProduct());
+					activity.setEmployee(vacancy.getEmployee());
+					
+					activityRepo.save(activity);
+				} catch(NotFoundException e) {
+					log.error(e.getMessage());
+				} catch(Exception e) {
+					throw new Exception("Invalid input!");
+				}
+			}
+		}
 		
-		Optional<Vacancy> optionalVacancy = vacancyRepo.findByUuid(code);
-		if (!optionalVacancy.isPresent()) return new ResponseEntity<>("Vacancy not found.", HttpStatus.NOT_FOUND);
-		Vacancy vacancy = optionalVacancy.get();
-		
-		if (vacancy.getEmployee() == null) return new ResponseEntity<>("No employee attached to the vacancy.", HttpStatus.NOT_FOUND);
-		
-		Optional<Process> optionalProcess = processRepo.findByStatusAndArea(ProcessStatus.STARTED.getStatus(), vacancy.getArea());
-		if (!optionalProcess.isPresent()) return new ResponseEntity<>("Not active process for the vacancy.", HttpStatus.INTERNAL_SERVER_ERROR);
-		Process activeProcess = optionalProcess.get();
-		
-		Activity activity = new Activity();
-		activity.setVacancy(vacancy);
-		activity.setWeight(weight);
-		activity.setProduct(activeProcess.getProduct());
-		activity.setEmployee(vacancy.getEmployee());
-		
-		activityRepo.save(activity);
-		
-		String confirmationMessage = "The data was saved successfully!";
+		String confirmationMessage = "Të dhënat u ruajtën me sukses!";
 		log.info(confirmationMessage);
 		return new ResponseEntity<>(confirmationMessage, HttpStatus.OK);	
 	}

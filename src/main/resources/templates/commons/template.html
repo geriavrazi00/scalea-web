@@ -11,14 +11,14 @@
 		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 		<link th:href="@{/css/fa-all.css}" rel="stylesheet">
 		<link th:href="@{/css/app.css}" rel="stylesheet">
-		<link th:href="@{/css/app.css}" rel="stylesheet">
 		<link th:href="@{/css/app-2.css}" rel="stylesheet">
+		<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 		
 		<script type="text/javascript" th:src="@{/js/jquery-3.5.1.js}"></script>
 		<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
 		<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
 		<script type="text/javascript" th:src="@{/js/chart.js}"></script>
-		<script src="https://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js"></script>
+		<script type="text/javascript" th:src="@{/js/simple-image.js}"></script>
 	</head>
 	<body>
 		<div th:fragment="menu" sec:authorize="isAuthenticated()">

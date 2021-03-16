@@ -14,4 +14,5 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
 	Iterable<Product> findByEnabledIsTrueAndWithSubProductsIsFalseOrderByName();
 	Iterable<Product> findByFatherProductIsNullAndEnabledIsTrueOrderByName();
 	Optional<Product> findByIdAndFatherProductIsNullAndEnabledIsTrue(Long id);
+	Optional<Product> findByIdAndFatherProductAndEnabledIsTrue(Long id, Product fatherProduct);
 }

@@ -154,6 +154,8 @@ public class AreaController {
 		if (selectedArea.getUserId() != null) {
 			Optional<User> optionalUser = userService.findById(selectedArea.getUserId());
 			if (optionalUser.isPresent()) existingArea.setUser(optionalUser.get()); 
+		} else {
+			existingArea.setUser(null); 
 		}
 		
 		/*

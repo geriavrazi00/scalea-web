@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.scalea.entities.Area;
+import com.scalea.entities.User;
 import com.scalea.exceptions.GenericException;
 import com.scalea.repositories.AreaRepository;
 
@@ -66,5 +67,17 @@ public class AreaService {
 	
 	public Optional<Area> findByIdAndEnabledIsTrue(Long id) {
 		return areaRepo.findByIdAndEnabledIsTrue(id);
+	}
+	
+	public Iterable<Area> findByUserId(User user) {
+		return areaRepo.findByEnabledIsTrueAndUserOrderByName(user);
+	}
+	
+	public boolean existsByUser(User user) {
+		return areaRepo.existsByEnabledIsTrueAndUser(user);
+	}
+	
+	public Optional<Area> findByEnabledIsTrueAndUser(User user) {
+		return areaRepo.findByEnabledIsTrueAndUser(user);
 	}
 }

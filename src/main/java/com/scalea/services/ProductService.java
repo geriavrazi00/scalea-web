@@ -62,6 +62,10 @@ public class ProductService {
 		return productRepo.findByIdAndFatherProductIsNullAndEnabledIsTrue(id);
 	}
 	
+	public Optional<Product> findByIdAndFatherProductAndEnabledIsTrue(Long id, Product fatherProduct) {
+		return productRepo.findByIdAndFatherProductAndEnabledIsTrue(id, fatherProduct);
+	}
+	
 	public String savePhotoToDisk(MultipartFile multipartFile, String fileName, String desiredName) throws Exception {
 		String fileExtension = fileName.substring(fileName.lastIndexOf('.'));
 		String storedFileName = desiredName.toLowerCase() + "_" + System.currentTimeMillis() + fileExtension;
@@ -82,15 +86,6 @@ public class ProductService {
 	}
 	
 	public String getBase64ImageString(byte[] imageData) throws Exception {
-//		String pathName = configService.findValueByName(Constants.IMAGE_PATH) + Constants.PRODUCTS_IMAGE_SYSTEM_PATH + imageName;
-//		try {
-	        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(imageData);
-//		} catch (IOException e) {
-//			System.err.println("File not found!");
-//			
-//			File defaultImageFile = ResourceUtils.getFile("classpath:static/images/" + Constants.PRODUCTS_DEFAULT_IMAGE);
-//			byte[] byteObjects = Files.readAllBytes(defaultImageFile.toPath());
-//	        return "data:image/png;base64, " + Base64.getEncoder().encodeToString(byteObjects);
-//		}
+		return "data:image/png;base64, " + Base64.getEncoder().encodeToString(imageData);
 	}
 }

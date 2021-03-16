@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/commons/template.html :: headerfiles"></head>
+
+	<body onload="loadSingleProcessTimer()">
+		<div th:replace="/commons/template.html :: menu"></div>
+		
+		<div class="main-container">
+			<h1 th:text="#{messages.manage.process}" class="page-title"></h1>
+			
+			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			
+			<section class="carosel_sec">
+				<div class="filter-row">
+					<div class="col-lg-4" style="padding-left: 0px; text-align: center;">
+						<span class="row-table-text-2" th:text="#{messages.area} + ': '" style="font-size: 22px;"></span>
+						<span class="row-table-value-2" th:text="${controlSubProductDTO.areaName}" style="font-size: 22px;"></span>
+					</div>
+					
+					<div class="col-lg-4" style="padding-left: 0px; text-align: center;">
+						<span class="row-table-text-2" th:text="#{messages.product} + ': '" style="font-size: 22px;"></span>
+						<span class="row-table-value-2" th:text="${controlSubProductDTO.productName}" style="font-size: 22px;"></span>
+					</div>
+					
+					<div class="col-lg-4" style="padding-left: 0px; text-align: center;">
+						<span class="row-table-text-2" th:text="#{messages.subproduct} + ': '" style="font-size: 22px;"></span>
+						<span class="row-table-value-2" th:text="${controlSubProductDTO.subProductName}" style="font-size: 22px;" th:if="${controlSubProductDTO.subProductId != null}"></span>
+						<span class="row-table-value-2" style="font-size: 22px;" th:if="${controlSubProductDTO.subProductId == null}">-</span>
+					</div>
+				</div>
+				
+				<br/><br/>
+		
+				<div>
+					<div class="timerdiv">
+						<p id="timer">00:00:00</p>
+					</div>
+					<div class="play_pause">
+						<div class="play_div" th:if="${controlSubProductDTO.activeProcess == null}">
+							<button type="button" onclick="document.getElementById('startProcess').submit();" style="background-color: transparent; border: none;">
+								<img src="/images/play-button.svg" />
+							</button>
+							
+							<p th:text="#{messages.start}"></p>
+						</div>
+						
+						<div class="pause_div" th:if="${controlSubProductDTO.activeProcess != null && controlSubProductDTO.activeProcess.status == 0}">
+							<button type="button" onclick="document.getElementById('pauseProcess').submit();" style="background-color: transparent; border: none;">
+								<img src="/images/pause.svg" />
+							</button>
+							
+							<p th:text="#{messages.pause}"></p>
+						</div>
+						
+						<div class="play_div" th:if="${controlSubProductDTO.activeProcess != null && controlSubProductDTO.activeProcess.status == 1}">
+							<button type="button" onclick="document.getElementById('resumeProcess').submit();" style="background-color: transparent; border: none;">
+								<img src="/images/play-button.svg" />
+							</button>
+							
+							<p th:text="#{messages.resume}"></p>
+						</div>
+						
+						<div class="stop_div" th:if="${controlSubProductDTO.activeProcess != null && (controlSubProductDTO.activeProcess.status == 0 || controlSubProductDTO.activeProcess.status == 1)}">
+							<button type="button" onclick="document.getElementById('stopProcess').submit();" style="background-color: transparent; border: none;">
+								<img src="/images/stop.svg" />
+							</button>
+							
+							<p th:text="#{messages.stop}"></p>
+						</div>
+					</div>
+				</div>
+		
+				<hr class="hr_caro" />
+		
+				<div class="container">
+					<div class="counting_div">
+						<div>
+							<span class="text_gray_countnum">1</span>
+							<span class="text_gray_count" th:text="#{messages.choose.product}"></span>
+						</div>
+						<div>
+							<span class="text_gray_countnum">2</span>
+							<span class="text_gray_count" th:text="#{messages.choose.subproduct}"></span>
+						</div>
+						<div>
+							<span class="text_blue_countnum">3</span>
+							<span class="text_blue_count" th:text="#{messages.manage.process}"></span>
+						</div>
+					</div>
+				</div>
+			</section>
+			
+			<form id="startProcess" method="POST" th:action="@{/control/process/start}" th:object="${controlSubProductDTO}">
+				<input type="hidden" id="product-id" name="productId" th:field="*{productId}"/>
+				<input type="hidden" id="subproduct-id" name="subProductId" th:field="*{subProductId}"/>
+				<input type="hidden" id="area" name="areaId" th:field="*{areaId}"/>
+				
+				<div th:if="${controlSubProductDTO.activeProcess != null}">
+					<input type="hidden" id="started" th:value="${controlSubProductDTO.activeProcess.startedAt.getTime()}"/>
+					<input type="hidden" id="status" th:value="${controlSubProductDTO.activeProcess.status}"/>
+					<input type="hidden" id="elapsed" th:value="${controlSubProductDTO.activeProcess.elapsedTime}"/>
+				</div>
+			</form>
+			
+			<form id="pauseProcess" method="POST" th:action="@{/control/process/pause}" th:object="${controlSubProductDTO}">
+				<input type="hidden" id="product-id" name="productId" th:field="*{productId}"/>
+				<input type="hidden" id="subproduct-id" name="subProductId" th:field="*{subProductId}"/>
+				<input type="hidden" id="area" name="areaId" th:field="*{areaId}"/>
+				
+				<div th:if="${controlSubProductDTO.activeProcess != null}">
+					<input type="hidden" id="started" th:value="${controlSubProductDTO.activeProcess.startedAt.getTime()}"/>
+					<input type="hidden" id="status" th:value="${controlSubProductDTO.activeProcess.status}"/>
+					<input type="hidden" id="elapsed" th:value="${controlSubProductDTO.activeProcess.elapsedTime}"/>
+					<input type="hidden" th:field="*{activeProcess}"/>
+				</div>
+			</form>
+			
+			<form id="resumeProcess" method="POST" th:action="@{/control/process/resume}" th:object="${controlSubProductDTO}">
+				<input type="hidden" id="product-id" name="productId" th:field="*{productId}"/>
+				<input type="hidden" id="subproduct-id" name="subProductId" th:field="*{subProductId}"/>
+				<input type="hidden" id="area" name="areaId" th:field="*{areaId}"/>
+				
+				<div th:if="${controlSubProductDTO.activeProcess != null}">
+					<input type="hidden" id="started" th:value="${controlSubProductDTO.activeProcess.startedAt.getTime()}"/>
+					<input type="hidden" id="status" th:value="${controlSubProductDTO.activeProcess.status}"/>
+					<input type="hidden" id="elapsed" th:value="${controlSubProductDTO.activeProcess.elapsedTime}"/>
+					<input type="hidden" th:field="*{activeProcess}"/>
+				</div>
+			</form>
+			
+			<form id="stopProcess" method="POST" th:action="@{/control/process/stop}" th:object="${controlSubProductDTO}">
+				<input type="hidden" id="product-id" name="productId" th:field="*{productId}"/>
+				<input type="hidden" id="subproduct-id" name="subProductId" th:field="*{subProductId}"/>
+				<input type="hidden" id="area" name="areaId" th:field="*{areaId}"/>
+				
+				<div th:if="${controlSubProductDTO.activeProcess != null}">
+					<input type="hidden" id="started" th:value="${controlSubProductDTO.activeProcess.startedAt.getTime()}"/>
+					<input type="hidden" id="status" th:value="${controlSubProductDTO.activeProcess.status}"/>
+					<input type="hidden" id="elapsed" th:value="${controlSubProductDTO.activeProcess.elapsedTime}"/>
+					<input type="hidden" th:field="*{activeProcess}"/>
+				</div>
+			</form>
+		</div>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

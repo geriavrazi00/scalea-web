@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles">
+		<style>
+			.swiper-container {
+				width: 70%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div th:replace="/commons/template.html :: menu"></div>
+		
+		<div class="main-container">
+			<h1 th:text="#{messages.choose.subproduct}" class="page-title"></h1>
+			
+			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			
+			<form method="GET" th:action="@{/control/process}" th:object="${controlSubProductDTO}">
+				<input type="hidden" id="product-id" name="productId" th:field="*{productId}"/>
+				<input type="hidden" id="area-id" name="areaId" th:field="*{areaId}"/>
+				<input type="hidden" id="subproduct-id" name="subProductId" th:field="*{subProductId}"/>
+				
+				<section class="carosel_sec">
+					<div class="container-fluid">
+						<!-- Swiper -->
+						<div class="swiper-container">
+							<div class="swiper-wrapper">
+								<div th:each="product : ${products}" class="swiper-slide">
+									<img th:src="${product.base64Image}"/>
+									<br/><br/>
+									<a href="#" th:text="${product.name}" style="font-size: 18px; margin-top: 5px;" th:onclick="'goToStep3(event, this, ' + ${product.id} + ')'"></a>
+								</div>
+							</div>
+			
+							<!-- Add Arrows -->
+							<div class="swiper-button-next"></div>
+							<div class="swiper-button-prev"></div>
+						</div>
+					</div>
+			
+					<hr class="hr_caro" />
+			
+					<div class="container">
+						<div class="counting_div">
+							<div>
+								<span class="text_gray_countnum">1</span>
+								<span class="text_gray_count" th:text="#{messages.choose.product}"></span>
+							</div>
+							<div>
+								<span class="text_blue_countnum">2</span>
+								<span class="text_blue_count" th:text="#{messages.choose.subproduct}"></span>
+							</div>
+							<div>
+								<span class="text_gray_countnum">3</span>
+								<span class="text_gray_count" th:text="#{messages.manage.process}"></span>
+							</div>
+						</div>
+					</div>
+				</section>
+			</form>
+		</div>
+	
+		<!-- Swiper JS -->
+		<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+	
+		<!-- Initialize Swiper -->
+		<script>
+	      var swiper = new Swiper(".swiper-container", {
+	        slidesPerView: 1,
+	        spaceBetween: 10,
+	        // init: false,
+	        navigation: {
+	          nextEl: ".swiper-button-next",
+	          prevEl: ".swiper-button-prev",
+	        },
+	        breakpoints: {
+	            400: {
+	              slidesPerView: 1,
+	              spaceBetween: 10,
+	            },
+	            640: {
+	              slidesPerView: 2,
+	              spaceBetween: 20,
+	            },
+	            985: {
+	          	  slidesPerView: 3,
+	                spaceBetween: 20,
+	            },
+	            1200: {
+	              slidesPerView: 4,
+	              spaceBetween: 20,
+	        	},
+	        },
+	      });
+	    </script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+	
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

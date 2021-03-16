@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
+import com.scalea.entities.Area;
 import com.scalea.entities.Role;
 import com.scalea.entities.User;
 import com.scalea.exceptions.GenericException;
@@ -35,6 +36,7 @@ import com.scalea.exceptions.UserNotFoundException;
 import com.scalea.models.dto.ChangePasswordDTO;
 import com.scalea.models.dto.UserDTO;
 import com.scalea.repositories.RoleRepository;
+import com.scalea.services.AreaService;
 import com.scalea.services.UserService;
 import com.scalea.utils.Constants;
 import com.scalea.utils.Utils;
@@ -46,6 +48,7 @@ public class UserController {
 	
 	private UserService userService;
 	private RoleRepository roleRepo;
+	private AreaService areaService;
 	private Logger log;
 	private Messages messages;
 	private PasswordEncoder passwordEncoder;
@@ -54,9 +57,10 @@ public class UserController {
 	private static final int DEFAULT_SIZE = 7;
 	
 	@Autowired
-	public UserController(UserService userService, RoleRepository roleRepo, Messages messages, PasswordEncoder passwordEncoder) {
+	public UserController(UserService userService, RoleRepository roleRepo, AreaService areaService, Messages messages, PasswordEncoder passwordEncoder) {
 		this.userService = userService;
 		this.roleRepo = roleRepo;
+		this.areaService = areaService;
 		this.log = LoggerFactory.getLogger(UserController.class);
 		this.messages = messages;
 		this.passwordEncoder = passwordEncoder;
@@ -160,6 +164,14 @@ public class UserController {
 		Optional<User> userById = userService.findById(user.getId());
 		if (!userById.isPresent()) throw new UserNotFoundException(messages.get("messages.user.not.found"));
 		User foundUser = userById.get();
+		Optional<Area> optionalArea = areaService.findByEnabledIsTrueAndUser(foundUser);
+		
+		if (optionalArea.isPresent() && !foundUser.getRole().getId().equals(user.getRoleId())) {
+			model.addAttribute("message", this.messages.get("messages.user.has.area", optionalArea.get().getName()));
+			model.addAttribute("alertClass", "alert-danger");
+		    return this.allUsers(request, model, principal, page);
+		}
+		
 		user.toUser(foundUser);
 		foundUser.setRole(role);
 		this.userService.save(foundUser);

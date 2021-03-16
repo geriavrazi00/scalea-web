@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head th:replace="commons/template.html :: headerfiles"></head>
+<head th:replace="/commons/template.html :: headerfiles"></head>
 	<body>
-		<div th:replace="commons/template.html :: menu"></div>
+		<div th:replace="/commons/template.html :: menu"></div>
 		
-		<div class="main-container">
-			<h2 th:text="#{messages.error.not.found}"></h2>
-			
-			<a href="/" th:text="#{messages.home}"></a>
-		</div>
+		<section>
+			<div class="container error_page_main">
+				<div class="error_page">
+					<img src="/images/notfound.PNG" />
+					<p th:text="#{messages.error.not.found}"></p>
+					<a href="/" th:text="#{messages.home}"></a>
+				</div>
+			</div>
+		</section>
 		
-		<div th:replace="commons/template.html :: js-scripts"></div>
+		<div th:replace="/commons/template.html :: js-scripts"></div>
 	</body>
 </html>

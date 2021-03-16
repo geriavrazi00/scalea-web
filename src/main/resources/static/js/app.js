@@ -70,6 +70,41 @@ function loadProcessTimers() {
   }
 }
 
+function loadProcessTimer() {
+  var areas = document.getElementsByClassName("area");
+  var started = document.getElementsByClassName("started");
+  var status = document.getElementsByClassName("status");
+  var timer = document.getElementsByClassName("timer");
+  var elapsed = document.getElementsByClassName("elapsed");
+
+  if (areas != null) {
+	for (var i = 0; i < areas.length; i++) {
+	  var areaId = document.getElementById("area-" + areas[i].value).value;
+	  var startTime = document.getElementById("started-" + areas[i].value).value;
+	  var status = document.getElementById("status-" + areas[i].value).value;
+	  var timer = document.getElementById("timer-" + areas[i].value);
+	  var elapsed = document.getElementById("elapsed-" + areas[i].value).value;
+	    
+	  startTimer(areaId, startTime, status, timer, elapsed);
+	}
+  }
+}
+
+function loadSingleProcessTimer() {
+	var areaId = document.getElementById("area").value;
+	
+	if (document.getElementById("started") != null && document.getElementById("status") != null && document.getElementById("timer") != null 
+		&& document.getElementById("elapsed") != null) {
+		
+		var started = document.getElementById("started").value;
+		var status = document.getElementById("status").value;
+	 	var timer = document.getElementById("timer");
+		var elapsed = document.getElementById("elapsed").value;
+		
+		startTimer(areaId, started, status, timer, elapsed);
+	}
+}
+
 // Convert time to a format of hours, minutes, seconds, and milliseconds
 function timeToString(time) {
   let diffInHrs = time / 3600000;
@@ -99,9 +134,6 @@ function print(txt, id, elem) {
 
 // Create "start" function
 function startTimer(id, startTime, status, elem, elapsed) {
-
-  // startTime = (Number(startTime) + Number(elapsed)).toString();
-  // maybe elapsed should be added to elapsedTime
   if (status == 0) {    
 	timerInterval = setInterval(function printTime() {
 	  var elapsedTime = (Date.now() - startTime) + Number(elapsed);
@@ -246,7 +278,6 @@ function loadSubProduct(e, productId, subProductId) {
 	var href = $("#editSubProductHref" + subProductId).attr('href');
 	
 	$.get(href, function(product) {
-		console.log(product);
 		$("#edit-subproduct-id").val(product.id);
 		$("#edit-subproduct-name").val(product.name);
 		// $("#edit-subproduct-image").val(product.image);
@@ -432,6 +463,18 @@ function uploadSubProductImage() {
 }
 
 /********************************************** WIZARD *******************************************************/
+
+function goToStep2(e, elem, productId) {
+	e.preventDefault();
+	$("#product-id").val(productId);
+	$(elem).closest('form').submit();
+}
+
+function goToStep3(e, elem, productId) {
+	e.preventDefault();
+	$("#subproduct-id").val(productId);
+	$(elem).closest('form').submit();
+}
 
 /*$(document).ready(function() {
     

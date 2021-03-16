@@ -62,4 +62,12 @@ public class ProcessService {
 	public Process save(Process process) {
 		return processRepo.save(process);
 	}
+	
+	public boolean existsByStatusAndArea(int[] statuses, Area area) {
+		return processRepo.existsByStatusInAndArea(statuses, area);
+	}
+	
+	public Optional<Process> findByStatusesAndArea(int[] statuses, Area area) {
+		return processRepo.findByStatusInAndArea(statuses, area);
+	}
 }

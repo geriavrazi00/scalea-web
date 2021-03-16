@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 import com.scalea.entities.Area;
+import com.scalea.entities.User;
 
 public interface AreaRepository extends CrudRepository<Area, Long> {
 	boolean existsByName(String name);
@@ -14,4 +15,7 @@ public interface AreaRepository extends CrudRepository<Area, Long> {
 	Iterable<Area> findByEnabledOrderByName(boolean enabled);
 	Page<Area> findByEnabledOrderByName(boolean enabled, Pageable pageable);
 	Optional<Area> findByIdAndEnabledIsTrue(Long id);
+	Iterable<Area> findByEnabledIsTrueAndUserOrderByName(User user);
+	boolean existsByEnabledIsTrueAndUser(User user);
+	Optional<Area> findByEnabledIsTrueAndUser(User user);
 }

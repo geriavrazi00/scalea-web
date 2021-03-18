@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="/commons/template.html :: headerfiles"></head>
+<head th:replace="commons/template.html :: headerfiles"></head>
 <body>
-	<div th:replace="/commons/template.html :: menu"></div>
+	<div th:replace="commons/template.html :: menu"></div>
 
 	<div class="main-container">
 		<h1 th:text="#{messages.choose.product}" class="page-title"></h1>
@@ -104,6 +104,6 @@
     </script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
 
-	<div th:replace="/commons/template.html :: js-scripts"></div>
+	<div th:replace="commons/template.html :: js-scripts"></div>
 </body>
 </html>

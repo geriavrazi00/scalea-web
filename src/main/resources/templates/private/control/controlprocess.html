@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="/commons/template.html :: headerfiles"></head>
+<head th:replace="commons/template.html :: headerfiles"></head>
 
 	<body onload="loadSingleProcessTimer()">
-		<div th:replace="/commons/template.html :: menu"></div>
+		<div th:replace="commons/template.html :: menu"></div>
 		
 		<div class="main-container">
 			<h1 th:text="#{messages.manage.process}" class="page-title"></h1>
@@ -142,6 +142,6 @@
 			</form>
 		</div>
 		
-		<div th:replace="/commons/template.html :: js-scripts"></div>
+		<div th:replace="commons/template.html :: js-scripts"></div>
 	</body>
 </html>

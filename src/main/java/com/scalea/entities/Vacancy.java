@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import com.scalea.utils.Utils;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -40,6 +42,13 @@ public class Vacancy {
 	
 	@Transient
 	private boolean detach = false;
+	
+	@Transient
+	private String base64Image;
+	
+	public String getBase64Image() {
+		return Utils.getBarCodeImage(this.uuid, 450, 80, this.getUuid());
+	}
 
 	@Override
 	public String toString() {

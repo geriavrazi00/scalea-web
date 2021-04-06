@@ -57,6 +57,14 @@
 			</div>
 			
 			<div class="table-container">
+				<div class="col-lg-2 offset-lg-10">
+					<form th:id="'downloadAllVacancyBarcodes' + ${area.id}" method="GET" th:action="@{'/areas/{id}/vacancies/download'(id=${area.id}, size=${vacancies.size}, page=${vacancies.number + 1})}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="display: initial;">
+						<a class="btn btn-primary" th:text="#{messages.download.all.barcodes}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="margin-top: 10px;" onclick="$(this).closest('form').submit();"></a>
+					</form>
+				</div>
+				
+				<br/>
+				
 				<div th:if="${vacancies.content.size() > 0}" th:each="vacancy, iter : ${vacancies.content}" th:class="${iter.index == iter.size - 1 ? 'table-container-rows' : 'table-container-rows bottom-border'}">
 					<div class="col">
 						<span class="row-table-text" th:text="#{messages.vacancy}"></span>
@@ -75,6 +83,12 @@
 					</div>
 					
 					<div class="col">
+						<form th:id="'downloadVacancyBarcode' + ${vacancy.id}" method="GET" th:action="@{'/areas/{id}/vacancies/download/{vId}'(id=${area.id}, vId=${vacancy.id}, size=${vacancies.size}, page=${vacancies.number + 1})}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="display: initial;">
+							<a th:id="'downloadVacancyBarcodeHref' + ${vacancy.id}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="padding-right: 20px; font-size: 18px;" onclick="$(this).closest('form').submit();">
+								<i class="fas fa-file-download row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.download.barcode}"></i>
+							</a>
+						</form>
+						
 						<a th:id="'editVacancyHref' + ${vacancy.id}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadVacancy(event, ' + ${vacancy.id} + ', ' + ${employees.size()} + ')'" th:if="${vacancy.employee == null}">
 							<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
 						</a>

@@ -23,6 +23,7 @@ import com.google.zxing.oned.Code128Writer;
 import com.google.zxing.oned.EAN13Writer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.scalea.utils.Constants;
+import com.scalea.utils.Utils;
 
 @Controller
 @RequestMapping("/barcode")
@@ -32,10 +33,10 @@ public class BarCodeController {
 	@GetMapping
 	public String barCodeIndex(Model model) throws Exception {
 		UUID uuid = UUID.randomUUID();
-		String imageAsBase64 = this.getBarCodeImage(uuid.getMostSignificantBits() + "", 450, 80);
+		String imageAsBase64 = Utils.getBarCodeImage(uuid.getMostSignificantBits() + "", 450, 80, "Test 1");
 		
 		UUID uuid2 = UUID.randomUUID();
-		String imageAsBase64_2 = this.getBarCodeImage(uuid2.getMostSignificantBits() + "", 450, 80);
+		String imageAsBase64_2 = Utils.getBarCodeImage(uuid2.getMostSignificantBits() + "", 450, 80, "Test 2");
 		
 		model.addAttribute("code1", uuid.getMostSignificantBits());
 		model.addAttribute("image1", imageAsBase64);

@@ -1,6 +1,14 @@
 package com.scalea.utils;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -17,6 +25,8 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import javax.imageio.ImageIO;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -36,7 +46,7 @@ public class Utils {
 		return UUID.randomUUID().getLeastSignificantBits() + "";
 	}
 	
-	public static String getBarCodeImage(String text, int width, int height) {
+	public static String getBarCodeImage(String text, int width, int height, String label) {
 		try {
 			Hashtable<EncodeHintType, ErrorCorrectionLevel> hintMap = new Hashtable<>();
 			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
@@ -44,11 +54,46 @@ public class Utils {
 			BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.CODE_128, width, height);
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			MatrixToImageWriter.writeToStream(bitMatrix, "png", byteArrayOutputStream);
-			return Base64.getEncoder().encodeToString( byteArrayOutputStream.toByteArray());
-//			return byteArrayOutputStream.toByteArray();
+			byte[] barcodeByteArray = byteArrayOutputStream.toByteArray();
+			
+			if (label != null && label.length() > 0) barcodeByteArray = addLabelToBarcode(byteArrayOutputStream, height, label);
+			
+			return Base64.getEncoder().encodeToString(barcodeByteArray);
 		} catch (Exception e) {
 			return null;
 		}
+	}
+	
+	private static byte[] addLabelToBarcode(ByteArrayOutputStream byteArrayOutputStream, int height, String label) throws IOException { 
+		int totalTextLineToAdd = 1;
+		byte[] data = byteArrayOutputStream.toByteArray();
+		
+        InputStream in = new ByteArrayInputStream(data);
+        BufferedImage image = ImageIO.read(in);
+
+        BufferedImage outputImage = new BufferedImage(image.getWidth(), image.getHeight() + 25 * totalTextLineToAdd, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = outputImage.getGraphics();
+        g.setColor(Color.WHITE);
+        
+        g.fillRect(0, 0, outputImage.getWidth(), outputImage.getHeight());
+        g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+        g.setFont(new Font("Arial Black", Font.PLAIN, 14));
+        Color textColor = Color.BLACK;
+        g.setColor(textColor);
+        FontMetrics fm = g.getFontMetrics();
+        int startingYposition = height + 15;
+        
+        // Drawing the label on the image
+        g.drawString(label, (outputImage.getWidth() / 2)   - (fm.stringWidth(label) / 2), startingYposition);
+        startingYposition += 20;
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(outputImage, "png", baos);
+        baos.flush();
+        data = baos.toByteArray();
+        baos.close();
+        
+        return data;
 	}
 	
 	public static String millisToString(long millis) {

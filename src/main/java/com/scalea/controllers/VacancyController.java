@@ -1,6 +1,11 @@
 package com.scalea.controllers;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.validation.Valid;
 
@@ -9,6 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -87,9 +95,9 @@ public class VacancyController {
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "')")
 	@PostMapping("/create")
-	public String alterVacancies(Model model, @Valid AlterVacancyDTO alterVacancyDTO, Errors errors, @PathVariable("id") Long id, 
+	public String createVacancy(Model model, @Valid AlterVacancyDTO alterVacancyDTO, Errors errors, @PathVariable("id") Long id, 
 			@RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size, RedirectAttributes redirectAttributes) throws GenericException {
-		log.info("Method alterVacancies()");
+		log.info("Method createVacancy()");
 		
 		if (errors.hasErrors()) {
 			return this.allVacancies(model, id, page, size);
@@ -116,6 +124,84 @@ public class VacancyController {
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.vacancies.and.codes.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		return "redirect:/areas/" + id + "/vacancies" + paginationParameters(page, size);
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "'")
+	@GetMapping(value="/download/{vId}")
+	public ResponseEntity<byte[]> downloadVacancyBarcode(@PathVariable("id") Long id, @PathVariable("vId") Long vId, @RequestParam("page") Optional<Integer> page, 
+			@RequestParam("size") Optional<Integer> size, RedirectAttributes redirectAttributes) throws GenericException, IOException {
+		log.info("Method downloadVacancyBarcode()");
+		
+		Optional<Area> optionalArea = areaService.findById(id);
+		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		Area area = optionalArea.get();
+		
+		Optional<Vacancy> optionalVacancy = vacancyService.findById(vId);
+		if (!optionalVacancy.isPresent()) throw new GenericException(messages.get("messages.vacancy.not.found"));
+		Vacancy vacancy = optionalVacancy.get();
+		
+		String areaName = area.getName().trim().replaceAll(this.messages.get("messages.area"), "");
+		String barcodeLabel = this.messages.get("messages.area") + " " + areaName 
+			+ ", " + this.messages.get("messages.singular.vacancy").toLowerCase() + " " + vacancy.getNumber();
+		
+		String encodedBarcode = Utils.getBarCodeImage(vacancy.getUuid(), 450, 80, barcodeLabel);
+		byte[] decodedBarcode = Base64.getDecoder().decode(encodedBarcode);
+		
+		areaName = areaName.replaceAll(" ", "_");
+		if (areaName.startsWith("_")) areaName = areaName.substring(1);
+		String fileName = this.messages.get("messages.area") + "_" + areaName 
+			+ "-" + this.messages.get("messages.singular.vacancy").toLowerCase() + "_" + vacancy.getNumber() 
+			+ "-" + System.currentTimeMillis() + ".png";
+		
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE); // Content-Type: image/jpeg
+        httpHeaders.set("Content-Disposition", "attachment; filename=" + fileName); // Content-Disposition: attachment; filename="demo-file.txt"
+        return ResponseEntity.ok().headers(httpHeaders).body(decodedBarcode); // Return Response
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "'")
+	@GetMapping(value="/download")
+	public ResponseEntity<byte[]> downloadAllVacancyBarcodes(@PathVariable("id") Long id, @RequestParam("page") Optional<Integer> page, 
+			@RequestParam("size") Optional<Integer> size, RedirectAttributes redirectAttributes) throws GenericException, IOException {
+		log.info("Method downloadAllVacancyBarcodes()");
+		
+		Optional<Area> optionalArea = areaService.findById(id);
+		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		Area area = optionalArea.get();
+		
+		Iterable<Vacancy> vacancies = vacancyService.findByAreaAndEnabled(area, true);
+		String zipFileName = this.messages.get("messages.area.barcodes", area.getName().trim()) + ".zip";
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    ZipOutputStream zos = new ZipOutputStream(baos);
+	    
+	    String areaName = area.getName().trim().replaceAll(this.messages.get("messages.area"), "");
+		areaName = areaName.replaceAll(" ", "_");
+		if (areaName.startsWith("_")) areaName = areaName.substring(1);
+        
+        for (Vacancy vacancy : vacancies) {
+        	String barcodeLabel = this.messages.get("messages.area") + " " + areaName 
+        		+ ", " + this.messages.get("messages.singular.vacancy").toLowerCase() + " " + vacancy.getNumber();
+        
+        	String encodedBarcode = Utils.getBarCodeImage(vacancy.getUuid(), 450, 80, barcodeLabel);
+    		byte[] decodedBarcode = Base64.getDecoder().decode(encodedBarcode);
+    		
+    		String fileName = this.messages.get("messages.area") + "_" + areaName 
+    			+ "-" + this.messages.get("messages.singular.vacancy").toLowerCase() + "_" + vacancy.getNumber() 
+    			+ "-" + System.currentTimeMillis() + ".png";
+    		
+    	    ZipEntry entry = new ZipEntry(fileName);
+    	    zos.putNextEntry(entry);
+    	    zos.write(decodedBarcode);
+    	    zos.closeEntry();
+        }
+        
+        zos.close();
+		
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE); // Content-Type: image/jpeg
+        httpHeaders.set("Content-Disposition", "attachment; filename=" + zipFileName); // Content-Disposition: attachment; filename="demo-file.txt"
+        return ResponseEntity.ok().headers(httpHeaders).body(baos.toByteArray()); // Return Response
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "'")

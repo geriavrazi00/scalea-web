@@ -43,6 +43,10 @@ public class VacancyService {
 		return this.vacancyRepo.findByAreaAndEnabledOrderByNumber(area, enabled, pageable);
 	}
 	
+	public Iterable<Vacancy> findByAreaAndEnabled(Area area, boolean enabled) {
+		return this.vacancyRepo.findByAreaAndEnabledOrderByNumber(area, enabled);
+	}
+	
 	public Vacancy save(Vacancy vacancy) {
 		return this.vacancyRepo.save(vacancy);
 	}

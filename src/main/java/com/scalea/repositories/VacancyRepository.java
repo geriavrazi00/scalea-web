@@ -26,4 +26,6 @@ public interface VacancyRepository extends CrudRepository<Vacancy, Long> {
 	Page<Vacancy> findByAreaAndEnabledOrderByNumber(Area area, boolean enabled, Pageable pageable);
 	
 	boolean existsByIdAndArea(Long id, Area area);
+	
+	Iterable<Vacancy> findByAreaAndEnabledOrderByNumber(Area area, boolean enabled);
 }

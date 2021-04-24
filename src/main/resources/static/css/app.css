@@ -291,7 +291,7 @@ input[type=number] {
   top: 0;
   left: 0;
   overflow-x: hidden;
-  padding-top: 150px;
+  padding-top: 120px;
   background-color: #1f9583;
   box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   font-family: ttcommons-demi-bold;
@@ -722,12 +722,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 	width: 58px;
     height: 51px;
     position: absolute;
-    top: 10%;
+    top: 8%;
     text-align: center;
     margin: auto;
     left: 50%;
     transform: translateX(-50%);
-    background: url(../images/artboard2.png);
+    opacity: 0.5;
 }
 
 /* Ellipsis text overflow */
@@ -741,7 +741,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Media queries */
 
 @media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
+  .sidenav {padding-top: 80px;}
   .sidenav a {font-size: 16px;}
 }
 

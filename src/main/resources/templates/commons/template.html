@@ -23,7 +23,7 @@
 	<body>
 		<div th:fragment="menu" sec:authorize="isAuthenticated()">
 		    <div class="sidenav">
-		    	<!-- <img src="images/artboard2.png" class="sidebar-logo"/><br/> -->
+		    	<img src="images/white_artboard.png" class="sidebar-logo"/><br/>
 				
 				<a href="/areas" sec:authorize="hasAnyAuthority('VIEW_AREAS_PRIVILEGE', 'UPSERT_AREAS_PRIVILEGE', 'DELETE_AREAS_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/areas') ? 'active' : ''}">
 					<i class="fas fa-door-open sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.areas}"></span>

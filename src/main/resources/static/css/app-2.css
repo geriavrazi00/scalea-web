@@ -1275,6 +1275,7 @@ input[type="number"] {
 	/* border: 1px solid #DCDCDC; */
 	border-radius: 8px;
 	display: block;
+	object-fit: cover;
 }
 
 .caro1_text1 {

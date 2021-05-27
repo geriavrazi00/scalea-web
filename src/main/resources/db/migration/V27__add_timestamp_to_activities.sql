@@ -1,0 +1,1 @@
+ALTER TABLE activities ADD COLUMN timestamp VARCHAR(255) NOT NULL;

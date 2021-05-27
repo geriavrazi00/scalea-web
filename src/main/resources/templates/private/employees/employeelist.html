@@ -61,6 +61,10 @@
 						
 					</div>
 				</div>
+				
+				<div th:if="${employees.content.size() == 0}">
+					<p th:text="#{messages.no.employees}"></p>
+				</div>
 			</div>
 	
 			<div th:if="${employees.totalPages > 1 && employees.content.size() > 0}">
@@ -80,10 +84,6 @@
 						</a>
 					</li>
 				</ul>
-			</div>
-			
-			<div th:if="${employees.content.size() == 0}">
-				<p th:text="#{messages.no.employees}"></p>
 			</div>
 		</div>
 		

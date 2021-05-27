@@ -47,6 +47,8 @@ public class Activity {
     @JoinColumn(name="employee_id", nullable=false)
     private Employee employee;
 	
+	private String timestamp;
+	
 	@PrePersist
 	void preInsert() {
 	   if (this.createdAt == null) this.createdAt = new Date();

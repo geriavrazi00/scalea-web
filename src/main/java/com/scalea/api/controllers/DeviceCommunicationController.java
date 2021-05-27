@@ -66,7 +66,7 @@ public class DeviceCommunicationController {
 	
 	@PostMapping
 	@Transactional(rollbackFor = Exception.class)
-	public ResponseEntity<Object> receiveData(@RequestBody List<ActivityDTO> activities) throws Exception {		
+	public ResponseEntity<Object> receiveData(@RequestBody List<ActivityDTO> activities) throws Exception {
 		if (activities != null && activities.size() > 0) {
 			for (ActivityDTO activityDto: activities) {
 				try {
@@ -80,15 +80,25 @@ public class DeviceCommunicationController {
 					if (!optionalProcess.isPresent()) throw new NotFoundException("Asnjë proces aktiv për vendin e punës me id " + vacancy.getId() + "!");
 					Process activeProcess = optionalProcess.get();
 					
-					Activity activity = new Activity();
-					activity.setVacancy(vacancy);
-					activity.setWeight(Double.valueOf(activityDto.getWeight()));
-					activity.setProduct(activeProcess.getProduct());
-					activity.setEmployee(vacancy.getEmployee());
+					double weight = Double.valueOf(activityDto.getWeight());
+					String timestamp = activityDto.getTime();
 					
-					activityRepo.save(activity);
+					// Use this control to prevent inserting the same record more than once. It should not be possible to have the same vacancy, weight amount and timestamp twice in the db
+					boolean alreadyInserted = activityRepo.existsByVacancyAndWeightAndTimestamp(vacancy, weight, activityDto.getTime());
+					
+					if (!alreadyInserted) {
+						Activity activity = new Activity();
+						activity.setVacancy(vacancy);
+						activity.setWeight(weight);
+						activity.setProduct(activeProcess.getProduct());
+						activity.setEmployee(vacancy.getEmployee());
+						activity.setTimestamp(timestamp);
+						
+						activityRepo.save(activity);
+					}
 				} catch(NotFoundException e) {
 					log.error(e.getMessage());
+					throw e;
 				} catch(Exception e) {
 					throw new Exception("Invalid input!");
 				}

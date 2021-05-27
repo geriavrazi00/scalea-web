@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.scalea.entities.Activity;
+import com.scalea.entities.Vacancy;
 import com.scalea.models.dto.ActivityAggregatorDTO;
 
 public interface ActivityRepository extends CrudRepository<Activity, Long> {
@@ -29,4 +30,6 @@ public interface ActivityRepository extends CrudRepository<Activity, Long> {
 	
 	@Query("SELECT DISTINCT YEAR(a.createdAt) FROM Activity a")
 	Iterable<Integer> findYearsWithData();
+	
+	boolean existsByVacancyAndWeightAndTimestamp(Vacancy vacancy, double weight, String timestamp);
 }

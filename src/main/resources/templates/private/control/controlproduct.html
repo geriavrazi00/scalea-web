@@ -21,8 +21,8 @@
 				</div>
 			</div>
 			
-			<div class="col-lg-3" style="padding-left: 0px; text-align: left;" th:if="${areas == null || areas.size() == 0}">
-				<h1 th:text="{messages.user.has.no.area}"></h1>
+			<div class="col-lg-12" style="padding-left: 0px; text-align: left;" th:if="${areas == null || areas.size() == 0}">
+				<p th:text="#{messages.user.has.no.area}"></p>
 			</div>
 		
 			<section class="carosel_sec" th:if="${areas != null && areas.size() > 0}">

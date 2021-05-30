@@ -29,7 +29,7 @@
 					<i class="fas fa-door-open sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.areas}"></span>
 				</a>
 				
-			  	<a href="/employees" sec:authorize="hasAnyAuthority('VIEW_EMPLOYEES_PRIVILEGE', 'UPSERT_EMPLOYEES_PRIVILEGE', 'DELETE_EMPLOYEES_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/employees') ? 'active' : ''}">
+			  	<a href="/employees" sec:authorize="hasAnyAuthority('VIEW_EMPLOYEES_PRIVILEGE', 'UPSERT_EMPLOYEES_PRIVILEGE', 'DELETE_EMPLOYEES_PRIVILEGE', 'UPLOAD_EMPLOYEES_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/employees') ? 'active' : ''}">
 			  		<i class="fas fa-suitcase sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.employees}"></span>
 			  	</a>
 			  	

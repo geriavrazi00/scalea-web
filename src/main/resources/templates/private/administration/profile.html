@@ -13,10 +13,10 @@
 
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 	
-			<section class="setting_body-15" style="margin: 0px;">
+			<section class="setting_body" style="margin: 0px;">
 				<div th:replace="commons/settingsmenu.html :: settingsmenu"></div>
 				
-				<div class="st_card" style="padding-top: 2rem;">
+				<div class="sb_table col-lg-7" style="padding-top: 2rem;">
 					<div class="st_card_body">
 						<h2 th:text="#{messages.personal.data}"></h2>
 						

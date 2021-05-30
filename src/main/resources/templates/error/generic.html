@@ -11,14 +11,8 @@
 	
 			<p th:text="#{messages.error.generic.url} + '=' + ${url}"></p><br>
 			
-			<p th:text="#{messages.error.generic.exception} + '=' + ${exception.message}"></p><br>
-			
-			<a href="/" th:text="#{messages.home}"></a>
-			
-			<!-- <strong>Exception Stack Trace</strong><br>
-			<div th:each="ste : ${exception.stackTrace}">
-				<span th:text="${ste}"></span><br/>
-			</div> -->
+			<p th:text="#{messages.error.generic.exception} + '=' + ${exception.message}"></p>
+			<br/>
 		</div>
 		
 		<div th:replace="commons/template.html :: js-scripts"></div>

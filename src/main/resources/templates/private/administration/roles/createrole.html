@@ -33,9 +33,14 @@
 								<h3 th:text="#{messages.privileges}">: </h3>
 								<div class="grid" style="overflow: auto;" th:class="${privileges != null && privileges.size() > 0 ? 'product-container-height' : ''}">
 									<div id="privileges">
-										<div th:each="privilege : ${privileges}">
-											<input name="privilege" type="checkbox" th:value="${privilege.id}" th:field="*{privileges}"/>
-											<span th:text="${privilege.name}"></span>
+										<div th:each="instance : ${privileges}">
+											<p th:text="${instance.key}" style="font-weight: bold; margin-bottom: 0;"></p>
+											
+											<div th:each="privilege : ${instance.value}">
+												&emsp;
+												<input th:id="'add-role-privilege-' + ${privilege.id}" name="privilege" type="checkbox" th:value="${privilege.id}" th:field="*{privileges}"/>
+												<label th:for="'add-role-privilege-' + ${privilege.id}" th:text="${privilege.name}"></label>
+											</div>
 											<br />
 										</div>
 									</div>

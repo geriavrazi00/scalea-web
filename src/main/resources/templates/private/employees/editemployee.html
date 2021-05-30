@@ -111,7 +111,6 @@
 										<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
 									</select>
 								</div>
-								<p th:if="${vacancies.size() == 0}" th:text="#{messages.no.vacancies}"></p>
 							</div>
 									
 							<div class="col" th:if="${vacancies.size() == 0}">

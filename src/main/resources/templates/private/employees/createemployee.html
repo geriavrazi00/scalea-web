@@ -99,17 +99,20 @@
 							</div>
 								
 							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px;">	
-								<div class="col">
-								<div>
-									<label class="modal-text-labels" for="vacancy" th:text="#{messages.vacancy}" th:if="${vacancies.size() > 0}"></label>
-								</div>
-									<select class="text-input" name="vacancy" th:field="*{vacancy}" th:if="${vacancies.size() > 0}">
+								<div class="col" th:if="${vacancies.size() > 0}">
+									<div>
+										<label class="modal-text-labels" for="vacancy" th:text="#{messages.vacancy}" ></label>
+									</div>
+									
+									<select class="text-input" name="vacancy" th:field="*{vacancy}">
 										<option th:text="#{messages.none}" value=""></option>
 										<option th:each="vacancy : ${vacancies}" th:value="${vacancy.id}" th:text="${vacancy.area.name + ' - ' + vacancy.number}"/>
 									</select>
-									
 								</div>
-								<p th:if="${vacancies.size() == 0}" th:text="#{messages.no.vacancies}"></p>
+								
+								<div class="col" th:if="${vacancies.size() == 0}">
+									<p th:text="#{messages.no.vacancies}"></p>
+								</div>
 							</div>
 							
 							<div class="row">

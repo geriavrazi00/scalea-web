@@ -1,9 +1,16 @@
 package com.scalea.controllers;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
@@ -179,6 +187,79 @@ public class EmployeeController {
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 		
 		return "redirect:/employees" + paginationParameters(page);
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.UPLOAD_EMPLOYEES_PRIVILEGE + "'")
+	@PostMapping("/upload")
+	public String uploadFile(Model model, @RequestParam("file") MultipartFile file, @RequestParam("page") Optional<Integer> page, 
+			RedirectAttributes redirectAttributes) throws IOException {
+		Workbook workbook = null;
+		
+		try {
+			if (file == null)
+				throw new Exception(this.messages.get("messages.employee.no.file.provided"));
+			
+			InputStream in = file.getInputStream();
+		    
+		    workbook = new XSSFWorkbook(in);
+		    Sheet sheet = workbook.getSheet("Sheet1");
+		    Iterator<Row> rows = sheet.iterator();
+		    int rowCount = 0;
+
+		    while (rows.hasNext()) {
+		    	Row currentRow = rows.next();
+		    	rowCount++;
+		    	
+		    	if (rowCount > 3) {
+		    		String personalNumber = currentRow.getCell(1).getStringCellValue();
+		    		String fullName = currentRow.getCell(2).getStringCellValue();
+		    		
+		    		if (personalNumber == null || personalNumber.isBlank()) 
+		    			throw new Exception(this.messages.get("messages.employee.file.error.personal.number", rowCount));
+		    		
+		    		if (fullName == null || fullName.isBlank())
+		    			throw new Exception(this.messages.get("messages.employee.file.error.firstname", rowCount));
+		    		
+		    		String[] splitName = fullName.split(" ");
+		    		if (splitName.length != 2) 
+		    			throw new Exception(this.messages.get("messages.employee.file.error.name", rowCount));
+		    		
+		    		String firstName = splitName[0];
+		    		String lastName = splitName[1];
+		    		
+		    		if (firstName == null || firstName.isBlank())
+		    			throw new Exception(this.messages.get("messages.employee.file.error.firstname", rowCount));
+		    		
+		    		if (lastName == null || lastName.isBlank())
+		    			throw new Exception(this.messages.get("messages.employee.file.error.lastname", rowCount));
+		    		
+		    		if (!employeeService.existsByPersonalNumber(personalNumber)) {
+		    			Employee employee = new Employee();
+		    			
+		    			employee.setPersonalNumber(personalNumber);
+		    			employee.setFirstName(firstName);
+		    			employee.setLastName(lastName);
+		    			
+		    			this.employeeService.save(employee);
+		    		}	
+		    	}
+		    }
+		         
+		    workbook.close();
+		    
+		    redirectAttributes.addFlashAttribute("message", this.messages.get("messages.employee.uploaded.successfully"));
+		    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+		    return "redirect:/employees" + paginationParameters(page);
+			
+		} catch (Exception e) {
+			if (workbook != null) {
+				workbook.close();
+			}
+			
+			redirectAttributes.addFlashAttribute("message", e.getMessage());
+			redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+			return "redirect:/employees" + paginationParameters(page);
+		}
 	}
 	
 	@PreAuthorize("hasAuthority('" + Constants.DELETE_EMPLOYEES_PRIVILEGE + "'")

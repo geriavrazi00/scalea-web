@@ -10,9 +10,19 @@
 			<h1 th:text="#{messages.employees}" class="page-title"></h1>
 			
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
-			<div class="filter-row">
+			
+			<div class="filter-row" style="justify-content: space-between;">
 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createEmployeeModal" th:text="#{messages.employee.create}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')"></button>
+				
+				<div sec:authorize="hasAuthority('UPLOAD_EMPLOYEES_PRIVILEGE')">
+					<form method="POST" th:action="@{/employees/upload(page=${employees.number + 1})}" enctype="multipart/form-data">
+						<input name="file" type="file" multiple="false" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" id="finput" required/>
+					
+						<button type="submit" class="btn btn-primary" th:text="#{messages.employee.upload}"></button>
+					</form>
+				</div>
 			</div>
+			
 			<div class="table-container">
 				<div th:if="${employees.content.size() > 0}" th:each="employee, iter : ${employees.content}" th:class="${iter.index == iter.size - 1 ? 'table-container-rows' : 'table-container-rows bottom-border'}">
 					

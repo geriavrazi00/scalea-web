@@ -1,5 +1,7 @@
 package com.scalea.controllers;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +36,7 @@ import com.scalea.models.dto.RoleDTO;
 import com.scalea.repositories.PrivilegeRepository;
 import com.scalea.repositories.RoleRepository;
 import com.scalea.utils.Constants;
+import com.scalea.utils.RoleUtil;
 import com.scalea.utils.Utils;
 
 @Controller
@@ -64,6 +67,7 @@ public class RoleController {
 		int currentPage = page.orElse(DEFAULT_PAGE);
 		Page<Role> roles = null;
 		Iterable<Privilege> privileges = privilegeRepo.findAll();
+		Map<String, List<Privilege>> groupedPrivileges = RoleUtil.groupPrivileges(privileges, this.messages);
 		
 		if (request.isUserInRole(Constants.ROLE_ADMIN)) {
 			roles = roleRepo.findAllByOrderByName(PageRequest.of(currentPage - 1, DEFAULT_SIZE));
@@ -73,7 +77,7 @@ public class RoleController {
 		}
 		
 		model.addAttribute("roles", roles);
-		model.addAttribute("privileges", privileges);
+		model.addAttribute("privileges", groupedPrivileges);
 		if (!model.containsAttribute("role")) model.addAttribute("role", new Role());
 		if (!model.containsAttribute("roleDTO")) model.addAttribute("roleDTO", new RoleDTO());
 		model.addAttribute("pageNumbers", Utils.getPageNumbersList(roles.getTotalPages()));

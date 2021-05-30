@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Bean
 	public AuthenticationSuccessHandler myAuthenticationSuccessHandler(){
-	    return new MyAuthenticationSuccessHandler();
+	    return new AuthenticationRedirectHandler();
 	}
 	
 	@Override

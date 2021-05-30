@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import com.scalea.utils.Constants;
 
-public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class AuthenticationRedirectHandler implements AuthenticationSuccessHandler {
 	
 	private Map<String, String> privilegeTargetUrlMap = new LinkedHashMap<>();
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
@@ -41,6 +41,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
 		privilegeTargetUrlMap.put(Constants.VIEW_EMPLOYEES_PRIVILEGE, "/employees");
 		privilegeTargetUrlMap.put(Constants.UPSERT_EMPLOYEES_PRIVILEGE, "/employees");
 		privilegeTargetUrlMap.put(Constants.DELETE_EMPLOYEES_PRIVILEGE, "/employees");
+		privilegeTargetUrlMap.put(Constants.UPLOAD_EMPLOYEES_PRIVILEGE, "/employees");
 		
 		// Statistics
 		privilegeTargetUrlMap.put(Constants.VIEW_GENERAL_STATISTICS_PRIVILEGE, "/statistics");

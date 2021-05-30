@@ -13,7 +13,6 @@ public class RoleUtil {
 	public static Map<String, List<Privilege>> groupPrivileges(Iterable<Privilege> privileges, Messages messages) {
 		Map<String, List<Privilege>> groupedPrivileges = new TreeMap<>();
 		groupedPrivileges.put(messages.get("messages.role.home.privilege"), new ArrayList<>());
-		groupedPrivileges.put(messages.get("messages.role.barcode.privilege"), new ArrayList<>());
 		groupedPrivileges.put(messages.get("messages.role.role.privilege"), new ArrayList<>());
 		groupedPrivileges.put(messages.get("messages.role.user.privilege"), new ArrayList<>());
 		groupedPrivileges.put(messages.get("messages.role.area.privilege"), new ArrayList<>());
@@ -30,8 +29,6 @@ public class RoleUtil {
 		for (Privilege privilege : privileges) {
 			if (Arrays.asList(Constants.HOME_PRIVILEGES).contains(privilege.getName())) {
 				groupedPrivileges.get(messages.get("messages.role.home.privilege")).add(privilege);
-			} else if (Arrays.asList(Constants.BARCODE_PRIVILEGES).contains(privilege.getName())) {
-				groupedPrivileges.get(messages.get("messages.role.barcode.privilege")).add(privilege);
 			} else if (Arrays.asList(Constants.ROLE_PRIVILEGES).contains(privilege.getName())) {
 				groupedPrivileges.get(messages.get("messages.role.role.privilege")).add(privilege);
 			} else if (Arrays.asList(Constants.USER_PRIVILEGES).contains(privilege.getName())) {

@@ -1,5 +1,7 @@
 package com.scalea.repositories;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +15,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
 	boolean existsByUsername(String username);
 	boolean existsByUsernameAndIdNot(String username, Long id);
 	Page<User> findByIdNotOrderByUsername(Long id, Pageable pageable);
-	Page<User> findByIdNotAndRoleNotOrderByUsername(Long id, Role role, Pageable pageable);
+	Page<User> findByIdNotAndRoleNotInOrderByUsername(Long id, List<Role> roles, Pageable pageable);
 	
 	@Query("SELECT DISTINCT u FROM User u JOIN u.role.privileges AS p WHERE u.role.name != ?1 AND p.name = ?2 ORDER BY u.username")
 	Iterable<User> findNotAdminUsersByPrivilege(String roleName, String privilegeName);

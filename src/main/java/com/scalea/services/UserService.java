@@ -1,5 +1,7 @@
 package com.scalea.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +67,13 @@ public class UserService implements UserDetailsService {
 	public Page<User> findAllExceptMeAndNotAdmin(Long id, Pageable pageable) throws GenericException {
 		Role admin = roleRepo.findByName(Constants.ROLE_ADMIN);
 		if (admin == null) throw new GenericException("Role Admin does not exist");
-		return userRepo.findByIdNotAndRoleNotOrderByUsername(id, admin, pageable);
+		Role user = roleRepo.findByName(Constants.ROLE_USER);
+		List<Role> roles = new ArrayList<>();
+		
+		roles.add(admin);
+		roles.add(user);
+		
+		return userRepo.findByIdNotAndRoleNotInOrderByUsername(id, roles, pageable);
 	}
 	
 	public Optional<User> findById(Long id) {

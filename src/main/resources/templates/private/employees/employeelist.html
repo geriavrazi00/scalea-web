@@ -50,7 +50,7 @@
 						<span class="row-table-value" th:if="${employee.vacancy == null}">-</span>
 					</div>
 					
-					<div class="col" style="display:inline;">
+					<div class="col" style="display:inline;" sec:authorize="hasAnyAuthority('UPSERT_EMPLOYEES_PRIVILEGE', 'DELETE_EMPLOYEES_PRIVILEGE')">
 						<form th:id="'detachEmployeeForm' + ${employee.id}" method="POST" th:action="@{'/employees/detach/{id}'(id=${employee.id}, page=${employees.number + 1})}" sec:authorize="hasAuthority('UPSERT_EMPLOYEES_PRIVILEGE')" style="display: initial;">
 							<a href="#" data-toggle="modal" data-target="#detachEmployeeModal" style="padding-right: 20px;" th:onclick="'setDetachEmployeeId(' + ${employee.id} + ')'" th:if="${employee.vacancy != null}">
 								<i class="fas fa-unlink row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.detach}"></i>

@@ -45,9 +45,6 @@ public class AreaController {
 	private Logger log;
 	private Messages messages;
 	
-	private static final int DEFAULT_PAGE = 1;
-	private static final int DEFAULT_SIZE = 7;
-	
 	@Autowired
 	public AreaController(AreaService areaService, VacancyService vacancyService, UserService userService, Messages messages) {
 		this.areaService = areaService;
@@ -62,8 +59,8 @@ public class AreaController {
 	public String allAreas(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
 		log.info("Method allAreas()");
 		
-		int currentPage = page.orElse(DEFAULT_PAGE);
-        int pageSize = size.orElse(DEFAULT_SIZE);
+		int currentPage = page.orElse(Constants.DEFAULT_PAGE);
+        int pageSize = size.orElse(Constants.DEFAULT_SIZE);
         
 		Page<Area> areas = areaService.findPaginatedByEnabledOrderByName(PageRequest.of(currentPage - 1, pageSize));
 		
@@ -263,6 +260,6 @@ public class AreaController {
 	}
 	
 	private String paginationParameters(Optional<Integer> page, Optional<Integer> size) {
-		return "?page=" + page.orElse(DEFAULT_PAGE) + "&size=" + size.orElse(DEFAULT_SIZE);
+		return "?page=" + page.orElse(Constants.DEFAULT_PAGE) + "&size=" + size.orElse(Constants.DEFAULT_SIZE);
 	}
 }

@@ -95,4 +95,8 @@ public interface Constants {
 	
 	// When a record is disabled, we need to add something to a field of it that must be unique. So this way, a new record with that same field can be created
 	public static final String DISABLED_STRING = "disabled------";
+	
+	// Pagination settings
+	public static final int DEFAULT_PAGE = 1;
+	public static final int DEFAULT_SIZE = 7;
 }

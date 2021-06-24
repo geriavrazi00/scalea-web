@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.scalea.enums.ProcessStatus;
 import com.scalea.utils.Utils;
 
 import lombok.Data;
@@ -77,6 +78,10 @@ public class Process {
 	
 	public String getFormattedCreatedDate() {
 		return Utils.albanianDateFormat(this.createdAt);
+	}
+	
+	public String getStatusAsString() {
+		return ProcessStatus.getStatusTranslationMessage(this.status);
 	}
 	
 	@PrePersist

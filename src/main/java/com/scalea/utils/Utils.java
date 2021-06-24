@@ -103,11 +103,20 @@ public class Utils {
 	
 	public static String albanianDateFormat(Date date) {
 		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		return dateFormat.format(date);  
+		return dateFormat.format(date);
+	}
+	
+	public static String albanianFullDateFormat(Date date) {
+		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+		return dateFormat.format(date);
 	}
 	
 	public static Date inputDateStringToDate(String dateString) throws ParseException {
 		return (dateString != null && !dateString.isBlank()) ? new SimpleDateFormat("yyyy-MM-dd").parse(dateString) : null;  
+	}
+	
+	public static String dateToDateString(Date date) {
+		return date != null ? new SimpleDateFormat("yyyy-MM-dd").format(date) : null;
 	}
 	
 	public static List<Integer> getPageNumbersList(int totalPages) {
@@ -142,7 +151,9 @@ public class Utils {
 		return cal.get(Calendar.YEAR);
 	}
 	
-	public static double twoDecimalPlacesDouble(double number) {
+	public static double twoDecimalPlacesDouble(Double number) {
+		if (number == null) number = 0.0;
+		
 		DecimalFormat df = new DecimalFormat("#.##");
 		String formattedNumber = df.format(number);
 		return Double.valueOf(formattedNumber);
@@ -151,5 +162,10 @@ public class Utils {
 	public static String thousandSeparatorDouble(double number) {
 		NumberFormat formatter = NumberFormat.getInstance(new Locale("en_US"));
 		return formatter.format(number);
+	}
+	
+	public static String getTimeFromDate(Date date) {
+		DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");  
+        return dateFormat.format(date);  
 	}
 }

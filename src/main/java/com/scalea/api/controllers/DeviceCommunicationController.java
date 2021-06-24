@@ -1,5 +1,7 @@
 package com.scalea.api.controllers;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.scalea.controllers.ProcessController;
 import com.scalea.entities.Activity;
+import com.scalea.entities.Area;
 import com.scalea.entities.Process;
 import com.scalea.entities.Vacancy;
 import com.scalea.enums.ProcessStatus;
@@ -79,12 +82,16 @@ public class DeviceCommunicationController {
 					Optional<Process> optionalProcess = processRepo.findByStatusAndArea(ProcessStatus.STARTED.getStatus(), vacancy.getArea());
 					if (!optionalProcess.isPresent()) throw new NotFoundException("Asnjë proces aktiv për vendin e punës me id " + vacancy.getId() + "!");
 					Process activeProcess = optionalProcess.get();
+					Area area = vacancy.getArea();
 					
 					double weight = Double.valueOf(activityDto.getWeight());
-					String timestamp = activityDto.getTime();
+					Long timestamp = Long.valueOf(activityDto.getTime());
+					
+					Instant instant = Instant.ofEpochSecond(timestamp);
+					Date date = Date.from(instant);
 					
 					// Use this control to prevent inserting the same record more than once. It should not be possible to have the same vacancy, weight amount and timestamp twice in the db
-					boolean alreadyInserted = activityRepo.existsByVacancyAndWeightAndTimestamp(vacancy, weight, activityDto.getTime());
+					boolean alreadyInserted = activityRepo.existsByVacancyAndWeightAndDate(vacancy, weight, date);
 					
 					if (!alreadyInserted) {
 						Activity activity = new Activity();
@@ -92,7 +99,9 @@ public class DeviceCommunicationController {
 						activity.setWeight(weight);
 						activity.setProduct(activeProcess.getProduct());
 						activity.setEmployee(vacancy.getEmployee());
-						activity.setTimestamp(timestamp);
+						activity.setDate(date);
+						activity.setArea(area);
+						activity.setUser(area.getUser());
 						
 						activityRepo.save(activity);
 					}

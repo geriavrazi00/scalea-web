@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="/commons/template.html :: headerfiles"></head>
+	<body>
+		<div th:replace="/commons/template.html :: menu"></div>
+		
+		<div class="main-container">
+			<h1 th:text="#{messages.daily.activities}" class="page-title"></h1>
+			
+			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			
+			<div class="filter-row" style="justify-content: space-between;">
+				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
+					<form id="dailyActivitiesFilterForm" method="GET" th:action="@{'/daily-activities'}" style="display: initial;">
+						<input id="date" name="date" type="date" class="filter-calendar" style="margin-top: 10px; width: 137px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.date}" onchange="document.getElementById('dailyActivitiesFilterForm').submit();" th:value="${selectedDate.isPresent() ? selectedDate.get() : null}"/>
+						
+						&nbsp;&nbsp;
+						
+						<select id="area" name="area" th:if="${areas.size() > 0}" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.areas}" onchange="document.getElementById('dailyActivitiesFilterForm').submit();">
+							<option th:each="area : ${areas}" th:value="${area.id}" th:text="${area.name}" th:selected="${selectedArea.isPresent() && selectedArea.get().id == area.id ? 'true' : 'false'}"/>
+						</select>
+					</form>
+				</div>
+				
+				<!-- th:action="@{/employees/upload(page=${employees.number + 1})}" -->
+				
+				<div sec:authorize="hasAuthority('DOWNLOAD_DAILY_ACTIVITIES_PRIVILEGE')" style="justify-content: space-between;">
+					<form method="POST" th:action="@{'/daily-activities/export'(date=${selectedDate.get()},area=${selectedArea.isPresent() ? selectedArea.get().id : activities.get(0)})}">
+						<button type="submit" class="btn btn-primary" th:text="#{messages.download}"></button>
+					</form>
+				</div>
+			</div>
+			
+			<div class="col-lg-12 table-container">
+				<div th:if="${activities != null && activities.size() > 0}" th:each="dailyActivityDto, iter : ${activities}" th:class="${iter.index == iter.size - 1 ? 'table-container-rows margin-bottom-zero' : 'table-container-rows bottom-border'}" style="padding-left: 0px;">
+					<div class="col" style="padding-left: 0px;">
+						<span class="row-table-text" th:text="#{messages.name}"></span>
+						&nbsp;
+						<span class="row-table-value" th:text="${dailyActivityDto.employee.firstName + ' ' + dailyActivityDto.employee.lastName}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.weighings}"></span>
+						&nbsp;
+						<span class="row-table-value" th:text="${dailyActivityDto.weighings}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.total.kg}"></span>
+						&nbsp;
+						<span class="row-table-value" th:text="${dailyActivityDto.totalWeight + ' kg'}"></span>
+					</div>
+
+					<div class="col-1">
+						<a th:id="'dailyActivityDetailsHref' + ${dailyActivityDto.employee.id}" th:href="@{'/daily-activities/{id}'(id=${dailyActivityDto.employee.id},date=${selectedDate.get()},area=${selectedArea.isPresent() ? selectedArea.get().id : activities.get(0)})}" style="padding-right: 20px;" th:onclick="'loadDailyActivity(event, ' + ${dailyActivityDto.employee.id} + ', ' + ${dailyActivityDto.weighings} + ', \'' + #{messages.daily.activity.details} + '\')'">
+							<i class="fas fa-info-circle row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.details}"></i>
+						</a>
+					</div>
+				</div>
+				
+				<div th:if="${activities != null && activities.size() > 0}" class="table-container-rows margin-bottom-zero" style="padding-left: 0px; border-top: 4px solid #e5e5e5;">
+					<div class="col" style="padding-left: 0px; font-weight: bold;">
+						<span class="row-table-text" th:text="#{messages.total.weighings}" style="font-size: 20px;"></span>
+					</div>
+					
+					<div class="col" style="font-weight: bold;">
+						<span class="row-table-text" th:text="#{messages.weighings}"></span>
+						&nbsp;
+						<span class="row-table-value" th:text="${totalWeighings}"></span>
+					</div>
+					
+					<div class="col" style="font-weight: bold;">
+						<span class="row-table-text" th:text="#{messages.total.kg}"></span>
+						&nbsp;
+						<span class="row-table-value" th:text="${totalWeight + ' kg'}"></span>
+					</div>
+					
+					<div class="col-1"></div>
+				</div>
+				
+				<div th:if="${activities.size() == 0}">
+					<p th:text="#{messages.no.results.found}"></p>
+				</div>
+			</div> 
+		</div>
+		
+		<div th:replace="private/daily-activities/dailyactivitiesdetails.html :: dailyactivitiesdetails"></div>
+		
+		<div th:replace="/commons/template.html :: js-scripts"></div>
+	</body>
+</html>

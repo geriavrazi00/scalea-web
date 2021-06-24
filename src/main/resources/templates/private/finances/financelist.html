@@ -11,7 +11,7 @@
 			
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 			
-			<div class="filter-row">				
+			<div class="filter-row">
 				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
 					<form id="financeFilterForm" method="GET" th:action="@{'/finances'(page=${activities.number + 1})}" style="display: initial;">
 						<select id="month" name="month" th:if="${months.size() > 0}" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.month}" onchange="document.getElementById('financeFilterForm').submit();">

@@ -47,7 +47,18 @@ public class Activity {
     @JoinColumn(name="employee_id", nullable=false)
     private Employee employee;
 	
-	private String timestamp;
+	@DateTimeFormat(pattern = "yyyy-MM-dd h:i:s")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="date")
+	private Date date;
+	
+	@ManyToOne
+    @JoinColumn(name="area_id", nullable=false)
+    private Area area;
+	
+	@ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
+    private User user;
 	
 	@PrePersist
 	void preInsert() {

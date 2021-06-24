@@ -33,6 +33,10 @@
 			  		<i class="fas fa-suitcase sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.employees}"></span>
 			  	</a>
 			  	
+			  	<a href="/daily-activities" sec:authorize="hasAnyAuthority('VIEW_DAILY_ACTIVITIES_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/daily-activities') ? 'active' : ''}">
+			  		<i class="fas fa-calendar-day sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.daily.activities}"></span>
+			  	</a>
+			  	
 			  	<a href="/statistics" sec:authorize="hasAnyAuthority('VIEW_GENERAL_STATISTICS_PRIVILEGE')" th:class="${#httpServletRequest.requestURI.contains('/statistics') ? 'active' : ''}">
 			  		<i class="fas fa-chart-line sidenav-icons"></i> <span class="sidenav-text" th:text="#{messages.statistics}"></span>
 			  	</a>

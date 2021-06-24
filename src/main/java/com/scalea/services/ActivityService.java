@@ -1,6 +1,7 @@
 package com.scalea.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,8 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.scalea.entities.Activity;
+import com.scalea.entities.Area;
+import com.scalea.entities.Employee;
 import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.ActivityAggregatorDTO;
+import com.scalea.models.dto.DailyActivityDTO;
+import com.scalea.models.dto.DailyActivityDetailDTO;
 import com.scalea.models.dto.EmployeeFinancialDTO;
 import com.scalea.models.dto.FinanceDTO;
 import com.scalea.repositories.ActivityRepository;
@@ -132,5 +137,17 @@ public class ActivityService {
 	
 	public Iterable<Integer> findYearsWithData() {
 		return activityRepo.findYearsWithData();
+	}
+	
+	public Iterable<DailyActivityDTO> findActivityByAreaAndDate(Area area, Date date) {
+		return activityRepo.findActivityByAreaAndDate(area, date);
+	}
+	
+	public Iterable<DailyActivityDetailDTO> findActivityByAreaAndDateAndEmployee(Area area, Date date, Employee employee) {
+		return activityRepo.findActivityByAreaAndDateAndEmployee(area, date, employee);
+	}
+	
+	public Iterable<Activity> findAllActivityByAreaAndDate(Area area, Date date) {
+		return activityRepo.findAllActivityByAreaAndDate(area, date);
 	}
 }

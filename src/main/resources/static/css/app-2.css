@@ -589,7 +589,7 @@ body {
 .line_graph_head {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 
 .line_graph_head p {
@@ -624,7 +624,7 @@ body {
 .custtable_sdb_row {
 	display: flex;
 	flex-wrap: nowrap;
-	justify-content: space-between;
+	/* justify-content: space-between; */
 	width: 1000px;
 	margin-bottom: 5px;
 }

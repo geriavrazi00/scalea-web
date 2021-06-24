@@ -371,6 +371,66 @@ function loadEmployee(e, id) {
 	$('#editEmployeeModal').modal('show');
 }
 
+// Daily activities
+function loadDailyActivity(e, id, size, message) {
+	e.preventDefault();
+	
+	var href = $("#dailyActivityDetailsHref" + id).attr('href');
+	
+	$.get(href, function(activityDetails) {
+		$("#title").text(message + ' - ' + activityDetails[0].employeeFirstName + ' ' + activityDetails[0].employeeLastName);
+		var tbodyRef = document.getElementById('daily-activity-table').getElementsByTagName('tbody')[0];
+		$("#daily-activity-table-body").empty();
+		
+		for (var i = 0; i < activityDetails.length; i++) {
+			// Insert a row at the end of table
+			var newRow = tbodyRef.insertRow();
+			
+			// Insert a cell at the end of the row
+			var weightCell = newRow.insertCell();
+			var weight = document.createTextNode(activityDetails[i].weight + ' kg');
+		    weightCell.appendChild(weight);
+		    
+		    var timeCell = newRow.insertCell();
+			var time = document.createTextNode(activityDetails[i].time);
+		    timeCell.appendChild(time);
+		    
+			var vacancyCell = newRow.insertCell();
+			var vacancyNumber = document.createTextNode(activityDetails[i].vacancyNumber);
+		    vacancyCell.appendChild(vacancyNumber);
+		    
+		    var productCell = newRow.insertCell();
+			var product = document.createTextNode(activityDetails[i].productName);
+		    productCell.appendChild(product);
+		}
+	});
+	
+	/* var href = $("#financialDetailsHref" + id).attr('href');
+	
+	$.get(href, function(activity) {
+		$("#employee-full-name").text(activity.employee.firstName + ' ' + activity.employee.lastName);
+		$("#employee-personal-number").text(activity.employee.personalNumber);
+		$("#gross-salary").text(activity.formattedGrossSalary + ' ALL');
+		$("#social-insurance-salary").text(activity.formattedSocialInsuranceSalary + ' ALL');
+		$("#health-insurance-salary").text(activity.formattedHealthInsuranceSalary + ' ALL');
+		$("#employer-social-insurance").text(activity.formattedEmployerSocialInsurance + ' ALL');
+		$("#employer-health-insurance").text(activity.formattedEmployerHealthInsurance + ' ALL');
+		$("#employee-social-insurance").text(activity.formattedEmployeeSocialInsurance + ' ALL');
+		$("#employee-health-insurance").text(activity.formattedEmployeeHealthInsurance + ' ALL');
+		$("#progressive-tax").text(activity.formattedProgressiveTax + ' ALL');
+		$("#employer-total-cost").text(activity.formattedTotalEmploymentCost + ' ALL');
+		$("#net-salary").text(activity.formattedNetSalary + ' ALL');
+		
+		if (activity.belowMinimalWage) {
+			$("#below-minimal-wage-message").css("display","block");
+		} else {
+			$("#below-minimal-wage-message").css("display","none");
+		}
+	});*/ 
+	
+	$('#dailyActivitiesDetailsModal').modal('show');
+}
+
 function setDeleteEmployeeId(id) {
 	$("#delete-employee-id").val(id);
 }

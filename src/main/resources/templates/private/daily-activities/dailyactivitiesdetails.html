@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+	<div th:fragment="dailyactivitiesdetails">
+		<div id="dailyActivitiesDetailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dailyActivitiesDetailsModal" aria-hidden="true">
+			<div class="modal-dialog" role="document" style="max-width: 600px;">
+				<div class="modal-content">
+					<div class="modal-body">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       						<span aria-hidden="true">&times;</span>
+     					</button>
+						
+						<div>
+							<h5 id="title" class="modal-title" th:text="#{messages.daily.activity.details}"></h5>
+							
+							<br/>
+							
+							<div style="max-height: 220px; overflow: auto; border-bottom: 1px solid #dee2e6;">
+								<table class="table" id="daily-activity-table" style="margin-bottom: 0px;">
+									<thead>
+										<tr>
+											<th th:text="#{messages.weighing}"></th>
+											<th th:text="#{messages.time}"></th>
+											<th th:text="#{messages.vacancy}"></th>
+											<th th:text="#{messages.product}"></th>
+										</tr>
+									</thead>
+									<tbody id="daily-activity-table-body"></tbody>
+								</table>
+							</div>
+							
+							<br/>
+
+							<div class="clearfix" style="float: right;">
+								<button type="button" data-dismiss="modal" class="btn btn-light" th:text="#{messages.close}"></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</html>

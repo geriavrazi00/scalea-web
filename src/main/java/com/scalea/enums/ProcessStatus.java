@@ -14,4 +14,17 @@ public enum ProcessStatus {
 	public int getStatus() {
 		return status;
 	}
+	
+	public static String getStatusTranslationMessage(int status) {
+		switch(status) {
+			case 0:
+				return "messages.active";
+			case 1:
+				return "messages.paused";
+			case 2: 
+				return "messages.finished";
+			default:
+				return null;
+		}
+	}
 }

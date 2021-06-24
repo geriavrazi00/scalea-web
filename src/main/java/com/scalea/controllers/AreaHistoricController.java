@@ -59,7 +59,7 @@ public class AreaHistoricController {
 		int currentPage = page.orElse(DEFAULT_PAGE);
         int pageSize = size.orElse(DEFAULT_SIZE);
         Date startedAt = date.orElse(null) == null ? null : Utils.inputDateStringToDate(date.orElse(null));
-        Optional<Product> selectedProduct = productService.findById(product.orElse(0L));        
+        Optional<Product> selectedProduct = productService.findById(product.orElse(0L));
         
         Optional<Area> optionalArea = areaService.findById(id);
 		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));

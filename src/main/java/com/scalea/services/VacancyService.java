@@ -52,7 +52,7 @@ public class VacancyService {
 	}
 	
 	public void delete(Vacancy vacancy) {
-		this.vacancyRepo.save(vacancy);
+		this.vacancyRepo.delete(vacancy);
 	}
 	
 	public Optional<Vacancy> findById(Long id) {

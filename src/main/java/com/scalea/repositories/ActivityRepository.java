@@ -22,6 +22,7 @@ public interface ActivityRepository extends CrudRepository<Activity, Long> {
 	  + "FROM Activity a "
 	  + "WHERE MONTH(a.createdAt) = ?1 "
 	  + "AND YEAR(a.createdAt) = ?2 "
+	  + "AND a.employee IS NOT NULL AND a.vacancy IS NOT NULL "
 	  + "GROUP BY a.employee ")
 	Page<ActivityAggregatorDTO> findSumOfWeightForProductAndVacancy(int month, int year, Pageable pageable);
 	
@@ -37,6 +38,7 @@ public interface ActivityRepository extends CrudRepository<Activity, Long> {
 	Iterable<Integer> findYearsWithData();
 	
 	boolean existsByVacancyAndWeightAndDate(Vacancy vacancy, double weight, Date date);
+	boolean existsByAreaAndWeightAndDate(Area area, double weight, Date date);
 	
 	@Query("SELECT SUM(a.weight) FROM Activity a")
 	Double findSumOfWeightedAmount();
@@ -46,6 +48,8 @@ public interface ActivityRepository extends CrudRepository<Activity, Long> {
 		+ "WHERE a.area = ?1 AND DATE(a.date) = ?2 "
 		+ "GROUP BY a.employee")
 	Iterable<DailyActivityDTO> findActivityByAreaAndDate(Area area, Date date);
+	
+	Iterable<Activity> findByAreaAndEmployeeIsNullAndVacancyIsNullAndDateBetween(Area area, Date fromDate, Date toDate);
 	
 	@Query("SELECT new com.scalea.models.dto.DailyActivityDetailDTO(a.employee.firstName, a.employee.lastName, a.vacancy.number, a.product.name, a.weight, a.date) "
 		+ "FROM Activity a "

@@ -1,0 +1,1 @@
+ALTER TABLE areas ALTER column uuid SET NOT NULL;

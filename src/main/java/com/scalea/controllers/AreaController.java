@@ -1,6 +1,7 @@
 package com.scalea.controllers;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -108,6 +112,7 @@ public class AreaController {
 		}
 		
 		area.setEnabled(true);
+		area.setUuid(Utils.generateUniqueVacancyCodes());
 		area = this.areaService.save(area);
 		
 		for (int i = 0; i < area.getCapacity(); i++) {
@@ -257,6 +262,34 @@ public class AreaController {
 		}
 		
 		return "redirect:/areas" + paginationParameters(page, size);
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.VIEW_AREAS_PRIVILEGE + "'")
+	@GetMapping("/download/{id}")
+	public ResponseEntity<byte[]> downloadAreaBarcode(@PathVariable("id") Long id, @RequestParam("page") Optional<Integer> page, 
+			@RequestParam("size") Optional<Integer> size, RedirectAttributes redirectAttributes) throws GenericException {
+		log.info("Method downloadAreaBarcode()");
+		
+		Optional<Area> optionalArea = areaService.findById(id);
+		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		Area area = optionalArea.get();
+		
+		String areaName = area.getName().trim().replaceAll(this.messages.get("messages.area"), "");
+		String barcodeLabel = this.messages.get("messages.area") + " " + areaName 
+			+ ", " + this.messages.get("messages.supervisor").toLowerCase();
+		
+		String encodedBarcode = Utils.getBarCodeImage(area.getUuid(), 450, 80, barcodeLabel);
+		byte[] decodedBarcode = Base64.getDecoder().decode(encodedBarcode);
+		
+		areaName = areaName.replaceAll(" ", "_");
+		if (areaName.startsWith("_")) areaName = areaName.substring(1);
+		String fileName = this.messages.get("messages.area") + "_" + areaName 
+			+ "-" + this.messages.get("messages.supervisor") + "-" + System.currentTimeMillis() + ".png";
+		
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE); // Content-Type: image/jpeg
+        httpHeaders.set("Content-Disposition", "attachment; filename=" + fileName); // Content-Disposition: attachment; filename="demo-file.txt"
+        return ResponseEntity.ok().headers(httpHeaders).body(decodedBarcode); // Return Response
 	}
 	
 	private String paginationParameters(Optional<Integer> page, Optional<Integer> size) {

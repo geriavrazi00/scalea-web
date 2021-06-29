@@ -150,4 +150,8 @@ public class ActivityService {
 	public Iterable<Activity> findAllActivityByAreaAndDate(Area area, Date date) {
 		return activityRepo.findAllActivityByAreaAndDate(area, date);
 	}
+	
+	public Iterable<Activity> findUnassignedActivitiesByAreaAndDate(Area area, Date fromDate, Date toDate) {
+		return activityRepo.findByAreaAndEmployeeIsNullAndVacancyIsNullAndDateBetween(area, fromDate, toDate);
+	}
 }

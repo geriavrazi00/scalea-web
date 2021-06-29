@@ -25,6 +25,7 @@ import com.scalea.entities.Vacancy;
 import com.scalea.enums.ProcessStatus;
 import com.scalea.models.dto.ActivityDTO;
 import com.scalea.repositories.ActivityRepository;
+import com.scalea.repositories.AreaRepository;
 import com.scalea.repositories.ProcessRepository;
 import com.scalea.repositories.VacancyRepository;
 
@@ -54,6 +55,7 @@ import javassist.NotFoundException;
 @CrossOrigin(origins = "*")
 public class DeviceCommunicationController {
 	
+	private AreaRepository areaRepository;
 	private VacancyRepository vacancyRepo;
 	private ActivityRepository activityRepo;
 	private ProcessRepository processRepo;
@@ -73,38 +75,14 @@ public class DeviceCommunicationController {
 		if (activities != null && activities.size() > 0) {
 			for (ActivityDTO activityDto: activities) {
 				try {
-					Optional<Vacancy> optionalVacancy = vacancyRepo.findByUuid(activityDto.getBarcode());
-					if (!optionalVacancy.isPresent()) throw new NotFoundException("Vendi i punës nuk ekziston!");
-					Vacancy vacancy = optionalVacancy.get();
+					Optional<Area> optionalArea = areaRepository.findByEnabledIsTrueAndUuid(activityDto.getBarcode());
 					
-					if (vacancy.getEmployee() == null) throw new NotFoundException("Vendi i punës me id " + vacancy.getId() + " nuk është shoqëruar me asnjë punonjës!");
-					
-					Optional<Process> optionalProcess = processRepo.findByStatusAndArea(ProcessStatus.STARTED.getStatus(), vacancy.getArea());
-					if (!optionalProcess.isPresent()) throw new NotFoundException("Asnjë proces aktiv për vendin e punës me id " + vacancy.getId() + "!");
-					Process activeProcess = optionalProcess.get();
-					Area area = vacancy.getArea();
-					
-					double weight = Double.valueOf(activityDto.getWeight());
-					Long timestamp = Long.valueOf(activityDto.getTime());
-					
-					Instant instant = Instant.ofEpochSecond(timestamp);
-					Date date = Date.from(instant);
-					
-					// Use this control to prevent inserting the same record more than once. It should not be possible to have the same vacancy, weight amount and timestamp twice in the db
-					boolean alreadyInserted = activityRepo.existsByVacancyAndWeightAndDate(vacancy, weight, date);
-					
-					if (!alreadyInserted) {
-						Activity activity = new Activity();
-						activity.setVacancy(vacancy);
-						activity.setWeight(weight);
-						activity.setProduct(activeProcess.getProduct());
-						activity.setEmployee(vacancy.getEmployee());
-						activity.setDate(date);
-						activity.setArea(area);
-						activity.setUser(area.getUser());
-						
-						activityRepo.save(activity);
+					if (optionalArea.isPresent()) {
+						this.saveDataForArea(activityDto, optionalArea.get());
+					} else {
+						this.saveDataForEmployee(activityDto);
 					}
+					
 				} catch(NotFoundException e) {
 					log.error(e.getMessage());
 					throw e;
@@ -117,5 +95,68 @@ public class DeviceCommunicationController {
 		String confirmationMessage = "Të dhënat u ruajtën me sukses!";
 		log.info(confirmationMessage);
 		return new ResponseEntity<>(confirmationMessage, HttpStatus.OK);	
+	}
+	
+	private void saveDataForArea(ActivityDTO activityDto, Area area) throws NotFoundException {
+		Optional<Process> optionalProcess = processRepo.findByStatusAndArea(ProcessStatus.STARTED.getStatus(), area);
+		if (!optionalProcess.isPresent()) throw new NotFoundException("Asnjë proces aktiv për sallën " + area.getName() + "!");
+		Process activeProcess = optionalProcess.get();
+		
+		double weight = Double.valueOf(activityDto.getWeight());
+		Long timestamp = Long.valueOf(activityDto.getTime());
+		
+		Instant instant = Instant.ofEpochSecond(timestamp);
+		Date date = Date.from(instant);
+		
+		// Use this control to prevent inserting the same record more than once. It should not be possible to have the same area, weight amount and timestamp twice in the db
+		boolean alreadyInserted = activityRepo.existsByAreaAndWeightAndDate(area, weight, date);
+		
+		if (!alreadyInserted) {
+			Activity activity = new Activity();
+			activity.setVacancy(null);
+			activity.setWeight(weight);
+			activity.setProduct(activeProcess.getProduct());
+			activity.setEmployee(null);
+			activity.setDate(date);
+			activity.setArea(area);
+			activity.setUser(area.getUser());
+			
+			activityRepo.save(activity);
+		}
+	}
+	
+	private void saveDataForEmployee(ActivityDTO activityDto) throws NotFoundException {
+		Optional<Vacancy> optionalVacancy = vacancyRepo.findByUuid(activityDto.getBarcode());
+		if (!optionalVacancy.isPresent()) throw new NotFoundException("Vendi i punës nuk ekziston!");
+		Vacancy vacancy = optionalVacancy.get();
+		
+		if (vacancy.getEmployee() == null) throw new NotFoundException("Vendi i punës me id " + vacancy.getId() + " nuk është shoqëruar me asnjë punonjës!");
+		
+		Area area = vacancy.getArea();
+		Optional<Process> optionalProcess = processRepo.findByStatusAndArea(ProcessStatus.STARTED.getStatus(), area);
+		if (!optionalProcess.isPresent()) throw new NotFoundException("Asnjë proces aktiv për vendin e punës me id " + vacancy.getId() + "!");
+		Process activeProcess = optionalProcess.get();
+		
+		double weight = Double.valueOf(activityDto.getWeight());
+		Long timestamp = Long.valueOf(activityDto.getTime());
+		
+		Instant instant = Instant.ofEpochSecond(timestamp);
+		Date date = Date.from(instant);
+		
+		// Use this control to prevent inserting the same record more than once. It should not be possible to have the same vacancy, weight amount and timestamp twice in the db
+		boolean alreadyInserted = activityRepo.existsByVacancyAndWeightAndDate(vacancy, weight, date);
+		
+		if (!alreadyInserted) {
+			Activity activity = new Activity();
+			activity.setVacancy(vacancy);
+			activity.setWeight(weight);
+			activity.setProduct(activeProcess.getProduct());
+			activity.setEmployee(vacancy.getEmployee());
+			activity.setDate(date);
+			activity.setArea(area);
+			activity.setUser(area.getUser());
+			
+			activityRepo.save(activity);
+		}
 	}
 }

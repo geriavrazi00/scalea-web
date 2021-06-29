@@ -397,7 +397,8 @@ function loadDailyActivity(e, id, size, message) {
 		    
 			var vacancyCell = newRow.insertCell();
 			var vacancyNumber = document.createTextNode(activityDetails[i].vacancyNumber);
-		    vacancyCell.appendChild(vacancyNumber);
+			var emptyChar = document.createTextNode("-");
+		    vacancyCell.appendChild(activityDetails[i].vacancyNumber === 0 ? emptyChar : vacancyNumber);
 		    
 		    var productCell = newRow.insertCell();
 			var product = document.createTextNode(activityDetails[i].productName);

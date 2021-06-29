@@ -41,7 +41,13 @@
 					<div class="col">
 						<form th:id="'downloadAllVacancyBarcodes' + ${area.id}" method="GET" th:action="@{'/areas/{id}/vacancies/download'(id=${area.id}, size=${areas.size}, page=${areas.number + 1})}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="display: initial;">
 							<a th:id="'downloadAllVacancyBarcodesHref' + ${area.id}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="padding-right: 20px; font-size: 18px;" onclick="$(this).closest('form').submit();">
-								<i class="fas fa-file-download row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.download.all.barcodes}"></i>
+								<i class="fas fa-file-archive row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.download.all.barcodes}"></i>
+							</a>
+						</form>
+						
+						<form th:id="'downloadAreaBarcode' + ${area.id}" method="GET" th:action="@{'/areas/download/{id}'(id=${area.id}, size=${areas.size}, page=${areas.number + 1})}" sec:authorize="hasAuthority('VIEW_AREAS_PRIVILEGE')" style="display: initial;">
+							<a th:id="'downloadAreaBarcodeHref' + ${area.id}" href="#" sec:authorize="hasAuthority('VIEW_AREAS_PRIVILEGE')" style="padding-right: 20px; font-size: 18px;" onclick="$(this).closest('form').submit();">
+								<i class="fas fa-file-download row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.area.barcode.download}"></i>
 							</a>
 						</form>
 						

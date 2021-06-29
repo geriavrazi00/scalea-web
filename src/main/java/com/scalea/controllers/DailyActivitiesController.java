@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -66,7 +67,7 @@ public class DailyActivitiesController {
 		@RequestParam("area") Optional<Long> area) throws ParseException {
 		log.info("Method allDailyActivities()");
         
-        List<Area> areas = (List<Area>) areaService.findByEnabled(true);
+        List<Area> areas = (List<Area>) areaService.findByEnabledOrderByName();
         
         date = date.isPresent() ? date : Optional.of(Utils.dateToDateString(new Date()));
         area = area.isPresent() ? area : ((areas != null && areas.size() > 0) ? Optional.of(areas.get(0).getId()) : Optional.empty());
@@ -75,6 +76,9 @@ public class DailyActivitiesController {
         Optional<Area> selectedArea = area.isPresent() ? areaService.findById(area.get()) : Optional.empty();
         
         Iterable<DailyActivityDTO> activities = activityService.findActivityByAreaAndDate(selectedArea.get(), selectedDate);
+        Iterable<Activity> unassignedWeighings = this.loadUnassignedWeighings(selectedDate, selectedArea.get());
+        this.addUnassignedWeighingsToDailyActivities(activities, unassignedWeighings);
+        
         double totalWeight = 0;
         long totalWeighings = 0;
         
@@ -106,13 +110,18 @@ public class DailyActivitiesController {
 		Optional<Area> area = areaService.findById(areaId);
 		if (!area.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
 		
-		Optional<Employee> employee = employeeService.findById(employeeId);
-		if (!employee.isPresent()) throw new GenericException(messages.get("messages.employee.not.found"));
-		
 		Date selectedDate = Utils.inputDateStringToDate(dateString);
+		List<DailyActivityDetailDTO> activityDetails = new ArrayList<>();
 		
-		Iterable<DailyActivityDetailDTO> activityDetails = activityService.findActivityByAreaAndDateAndEmployee(area.get(), 
-			selectedDate, employee.get());
+		if (employeeId == 0) {
+			this.addUnassignedWeighingsToDailyActivityDetails(selectedDate, area.get(), activityDetails);
+		} else {
+			Optional<Employee> employee = employeeService.findById(employeeId);
+			if (!employee.isPresent()) throw new GenericException(messages.get("messages.employee.not.found"));
+
+			activityDetails = (List<DailyActivityDetailDTO>) activityService.findActivityByAreaAndDateAndEmployee(area.get(), selectedDate, employee.get());
+		}
+		
 		return activityDetails;
 	}
 	
@@ -124,6 +133,7 @@ public class DailyActivitiesController {
 		Date selectedDate = Utils.inputDateStringToDate(dateString);
 		
 		Iterable<Activity> activities = activityService.findAllActivityByAreaAndDate(area.get(), selectedDate);
+		Iterable<Activity> unassignedActivities = this.loadUnassignedWeighings(selectedDate, area.get());
 		
 		Workbook workbook = new XSSFWorkbook();
 		Sheet sheet = workbook.createSheet(dateString);
@@ -141,20 +151,9 @@ public class DailyActivitiesController {
 		
 		List<Object[]> data = new ArrayList<>();
 		
-		for (Activity activity : activities) {
-			Object[] object = new Object[] {
-				activity.getEmployee().getFirstName() + " " + activity.getEmployee().getLastName(),
-				activity.getVacancy().getNumber(), 
-				activity.getProduct().getName(), 
-				activity.getWeight(), 
-				activity.getDate(), 
-				activity.getArea().getName(), 
-				activity.getUser() != null ? activity.getUser().getFirstName() + " " + activity.getUser().getLastName() : activity.getUser()
-			};
-			
-			data.add(object);
-		}
-		
+		this.createExportData(activities, data);
+		this.createExportData(unassignedActivities, data);
+				
 		ExcelUtil.addRows(sheet, 1, data);
 		
 		String fileName = this.messages.get("messages.daily.activities.export") + "_" + dateString 
@@ -173,5 +172,74 @@ public class DailyActivitiesController {
         httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.parseMediaType("application/vnd.ms-excel").toString());
         httpHeaders.set("Content-Disposition", "attachment; filename=" + fileName);
         return ResponseEntity.ok().headers(httpHeaders).body(bos.toByteArray());
+	}
+	
+	private Iterable<Activity> loadUnassignedWeighings(Date selectedDate, Area area) {
+		/* To get the activities with null employees, since JPA @Query annotation excludes it, I am using a statement to build the query. 
+         * For getting the data on the date we need, I'm adding the condition of the date being between selectedDate and selectedDate + 1 
+         * since without a query we lose the ability to use the DATE function on the date
+         **/
+        Calendar c = Calendar.getInstance();
+        c.setTime(selectedDate);
+        c.add(Calendar.DATE, 1);  // number of days to add
+        Date nextDayDate = c.getTime();
+        
+        Iterable<Activity> unassignedActivities = activityService.findUnassignedActivitiesByAreaAndDate(area, selectedDate, nextDayDate);
+        
+        return unassignedActivities;
+	}
+	
+	private void addUnassignedWeighingsToDailyActivities(Iterable<DailyActivityDTO> activities, Iterable<Activity> unassignedWeighings) {
+		if (unassignedWeighings != null && ((List<Activity>)unassignedWeighings).size() > 0) {
+        	DailyActivityDTO dailyActivity = new DailyActivityDTO();
+        	Employee employee = new Employee();
+        	employee.setId(0L);
+        	employee.setFirstName(this.messages.get("messages.extra.weighings"));
+        	employee.setLastName("");
+        	dailyActivity.setEmployee(employee);
+        	
+        	int weighings = 0;
+        	double total = 0;
+        	
+        	for (Activity activity : unassignedWeighings) {
+        		weighings++;
+        		total += activity.getWeight();
+			}
+        	
+        	dailyActivity.setTotalWeight(total);
+        	dailyActivity.setWeighings(weighings);
+        	((List<DailyActivityDTO>)activities).add(dailyActivity);
+        }
+	}
+	
+	private void addUnassignedWeighingsToDailyActivityDetails(Date selectedDate, Area area, List<DailyActivityDetailDTO> activityDetails) {
+		Iterable<Activity> unassignedWeighings = this.loadUnassignedWeighings(selectedDate, area);
+		for (Activity activity : unassignedWeighings) {
+			DailyActivityDetailDTO activityDetailDTO = new DailyActivityDetailDTO();
+			activityDetailDTO.setEmployeeFirstName(this.messages.get("messages.extra.weighings"));
+			activityDetailDTO.setEmployeeLastName("");
+			activityDetailDTO.setProductName(activity.getProduct().getName());
+			activityDetailDTO.setVacancyNumber(0);
+			activityDetailDTO.setWeight(activity.getWeight());
+			activityDetailDTO.setDate(activity.getDate());
+			
+			activityDetails.add(activityDetailDTO);
+		}
+	}
+	
+	private void createExportData(Iterable<Activity> activities, List<Object[]> data) {
+		for (Activity activity : activities) {
+			Object[] object = new Object[] {
+				activity.getEmployee() != null ? activity.getEmployee().getFirstName() + " " + activity.getEmployee().getLastName() : this.messages.get("messages.extra.weighings"),
+				activity.getVacancy() != null ? activity.getVacancy().getNumber() : null, 
+				activity.getProduct().getName(), 
+				activity.getWeight(), 
+				activity.getDate(), 
+				activity.getArea().getName(), 
+				activity.getUser() != null ? activity.getUser().getFirstName() + " " + activity.getUser().getLastName() : activity.getUser()
+			};
+			
+			data.add(object);
+		}
 	}
 }

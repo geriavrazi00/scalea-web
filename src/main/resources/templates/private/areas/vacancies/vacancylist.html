@@ -57,10 +57,18 @@
 			</div>
 			
 			<div class="table-container">
-				<div class="col-lg-2 offset-lg-10">
-					<form th:id="'downloadAllVacancyBarcodes' + ${area.id}" method="GET" th:action="@{'/areas/{id}/vacancies/download'(id=${area.id}, size=${vacancies.size}, page=${vacancies.number + 1})}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="display: initial;">
-						<a class="btn btn-primary" th:text="#{messages.download.all.barcodes}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="margin-top: 10px;" onclick="$(this).closest('form').submit();"></a>
-					</form>
+				<div style="display: flex;">
+					<div class="col-lg-2 offset-lg-8">
+						<form th:id="'downloadAllVacancyBarcodes' + ${area.id}" method="GET" th:action="@{'/areas/{id}/vacancies/download'(id=${area.id}, size=${vacancies.size}, page=${vacancies.number + 1})}" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="display: initial;">
+							<a class="btn btn-primary" th:text="#{messages.download.all.barcodes}" href="#" sec:authorize="hasAuthority('UPSERT_VACANCIES_PRIVILEGE')" style="margin-top: 10px;" onclick="$(this).closest('form').submit();"></a>
+						</form>
+					</div>
+					
+					<div class="col-lg-2 ">
+						<form th:id="'downloadAreaBarcode' + ${area.id}" method="GET" th:action="@{'/areas/download/{id}'(id=${area.id}, size=${vacancies.size}, page=${vacancies.number + 1})}" sec:authorize="hasAuthority('VIEW_AREAS_PRIVILEGE')" style="display: initial;">
+							<a class="btn btn-primary" th:text="#{messages.area.barcode.download}" href="#" sec:authorize="hasAuthority('VIEW_AREAS_PRIVILEGE')" style="margin-top: 10px;" onclick="$(this).closest('form').submit();"></a>
+						</form>
+					</div>
 				</div>
 				
 				<br/>

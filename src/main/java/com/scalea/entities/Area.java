@@ -57,6 +57,8 @@ public class Area {
 	@Transient
 	private int employeeNumber;
 	
+	private String uuid;
+	
 	public void calculateEmployeeNumber() {
 		for (Vacancy vacancy: this.getVacancies()) {
 			if (vacancy.getEmployee() != null) {

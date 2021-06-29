@@ -22,4 +22,5 @@ public interface AreaRepository extends CrudRepository<Area, Long> {
 	Iterable<Area> findByEnabledIsTrueAndUserOrderByName(User user);
 	boolean existsByEnabledIsTrueAndUser(User user);
 	Optional<Area> findByEnabledIsTrueAndUser(User user);
+	Optional<Area> findByEnabledIsTrueAndUuid(String uuid);
 }

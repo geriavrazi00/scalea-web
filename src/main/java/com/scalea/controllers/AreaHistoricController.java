@@ -38,9 +38,6 @@ public class AreaHistoricController {
 	private Logger log;
 	private Messages messages;
 	
-	private static final int DEFAULT_PAGE = 1;
-	private static final int DEFAULT_SIZE = 7;
-	
 	@Autowired
 	public AreaHistoricController(AreaService areaService, ProcessService processService, ProductService productService, Messages messages) {
 		this.areaService = areaService;
@@ -56,8 +53,8 @@ public class AreaHistoricController {
 			@RequestParam("date") Optional<String> date, @RequestParam("product") Optional<Long> product) throws GenericException, ParseException {
 		log.info("Method showHistoric()");
 		
-		int currentPage = page.orElse(DEFAULT_PAGE);
-        int pageSize = size.orElse(DEFAULT_SIZE);
+		int currentPage = page.orElse(Constants.DEFAULT_PAGE);
+        int pageSize = size.orElse(Constants.DEFAULT_SIZE);
         Date startedAt = date.orElse(null) == null ? null : Utils.inputDateStringToDate(date.orElse(null));
         Optional<Product> selectedProduct = productService.findById(product.orElse(0L));
         

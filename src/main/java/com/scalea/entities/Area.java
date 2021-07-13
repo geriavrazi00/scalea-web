@@ -59,6 +59,9 @@ public class Area {
 	
 	private String uuid;
 	
+	@OneToMany(mappedBy="area")
+	private Collection<Group> groups;
+	
 	public void calculateEmployeeNumber() {
 		for (Vacancy vacancy: this.getVacancies()) {
 			if (vacancy.getEmployee() != null) {

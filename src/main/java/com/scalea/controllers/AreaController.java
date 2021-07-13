@@ -29,11 +29,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Area;
+import com.scalea.entities.Group;
 import com.scalea.entities.User;
 import com.scalea.entities.Vacancy;
 import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.AreaDTO;
 import com.scalea.services.AreaService;
+import com.scalea.services.GroupService;
 import com.scalea.services.UserService;
 import com.scalea.services.VacancyService;
 import com.scalea.utils.Constants;
@@ -46,14 +48,17 @@ public class AreaController {
 	private AreaService areaService;
 	private VacancyService vacancyService;
 	private UserService userService;
+	private GroupService groupService;
 	private Logger log;
 	private Messages messages;
 	
 	@Autowired
-	public AreaController(AreaService areaService, VacancyService vacancyService, UserService userService, Messages messages) {
+	public AreaController(AreaService areaService, VacancyService vacancyService, UserService userService, GroupService groupService,
+			Messages messages) {
 		this.areaService = areaService;
 		this.vacancyService = vacancyService;
 		this.userService = userService;
+		this.groupService = groupService;
 		this.log = LoggerFactory.getLogger(AreaController.class);
 		this.messages = messages;
 	}
@@ -111,10 +116,12 @@ public class AreaController {
 			return this.allAreas(model, page, size);
 		}
 		
+		// Creating the area
 		area.setEnabled(true);
 		area.setUuid(Utils.generateUniqueVacancyCodes());
 		area = this.areaService.save(area);
 		
+		// Creating the vacancies
 		for (int i = 0; i < area.getCapacity(); i++) {
 			Vacancy vacancy = new Vacancy();
 			vacancy.setNumber(i + 1);
@@ -123,6 +130,13 @@ public class AreaController {
 			
 			this.vacancyService.save(vacancy);
 		}
+		
+		// Creating the default group
+		Group group = new Group();
+		group.setName("1");
+		group.setDefaultGroup(true);
+		group.setArea(area);
+		this.groupService.save(group);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.area.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");

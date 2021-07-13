@@ -38,7 +38,7 @@
 											
 											<div th:each="privilege : ${instance.value}">
 												&emsp;
-												<input th:id="'add-role-privilege-' + ${privilege.id}" name="privilege" type="checkbox" th:value="${privilege.id}" th:field="*{privileges}"/>
+												<input th:id="'add-role-privilege-' + ${privilege.id}" name="privilege" type="checkbox" th:value="${privilege}" th:field="*{privileges}"/>
 												<label th:for="'add-role-privilege-' + ${privilege.id}" th:text="${privilege.name}"></label>
 											</div>
 											<br />

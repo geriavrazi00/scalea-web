@@ -13,9 +13,11 @@
 			
 			<div class="filter-row">
 				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
-					<a th:href="@{'/areas/{id}/vacancies'(id=${area.id})}" th:text="#{messages.vacancies}" class="inactive-tab"></a>
+					<a th:href="@{'/areas/{id}/vacancies'(id=${area.id})}" th:text="#{messages.vacancies}" class="inactive-tab" sec:authorize="hasAuthority('VIEW_VACANCIES_PRIVILEGE')"></a>
 					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a th:href="@{'/areas/{id}/historic'(id=${area.id})}" th:text="#{messages.history}" class="active-tab"></a>
+					<a th:href="@{'/areas/{id}/groups'(id=${area.id})}" th:text="#{messages.groups}" class="inactive-tab" sec:authorize="hasAuthority('VIEW_GROUPS_PRIVILEGE')"></a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a th:href="@{'/areas/{id}/historic'(id=${area.id})}" th:text="#{messages.history}" class="active-tab" sec:authorize="hasAuthority('VIEW_PROCESSES_HISTORIC_PRIVELEGE')"></a>
 				</div>
 				
 				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">

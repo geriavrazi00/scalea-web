@@ -406,30 +406,27 @@ function loadDailyActivity(e, id, size, message) {
 		}
 	});
 	
-	/* var href = $("#financialDetailsHref" + id).attr('href');
-	
-	$.get(href, function(activity) {
-		$("#employee-full-name").text(activity.employee.firstName + ' ' + activity.employee.lastName);
-		$("#employee-personal-number").text(activity.employee.personalNumber);
-		$("#gross-salary").text(activity.formattedGrossSalary + ' ALL');
-		$("#social-insurance-salary").text(activity.formattedSocialInsuranceSalary + ' ALL');
-		$("#health-insurance-salary").text(activity.formattedHealthInsuranceSalary + ' ALL');
-		$("#employer-social-insurance").text(activity.formattedEmployerSocialInsurance + ' ALL');
-		$("#employer-health-insurance").text(activity.formattedEmployerHealthInsurance + ' ALL');
-		$("#employee-social-insurance").text(activity.formattedEmployeeSocialInsurance + ' ALL');
-		$("#employee-health-insurance").text(activity.formattedEmployeeHealthInsurance + ' ALL');
-		$("#progressive-tax").text(activity.formattedProgressiveTax + ' ALL');
-		$("#employer-total-cost").text(activity.formattedTotalEmploymentCost + ' ALL');
-		$("#net-salary").text(activity.formattedNetSalary + ' ALL');
-		
-		if (activity.belowMinimalWage) {
-			$("#below-minimal-wage-message").css("display","block");
-		} else {
-			$("#below-minimal-wage-message").css("display","none");
-		}
-	});*/ 
-	
 	$('#dailyActivitiesDetailsModal').modal('show');
+}
+
+// Groups
+function loadGroup(e, id) {
+	e.preventDefault();
+	
+	var href = $("#editGroupHref" + id).attr('href');
+	$.get(href, function(group) {
+		$("#edit-group-id").val(group.id);
+		$("#edit-group-name").val(group.name);
+		
+		// Uncheck all options first so different users don't overlap their groups
+		$('.chk').prop("checked", false);
+		
+		for (var i = 0; i < group.vacancyDTOs.length; i++) {
+			$("#edit-group-vacancy-" + group.vacancyDTOs[i].id).prop('checked', true);
+		}
+	});
+	
+	$('#editGroupModal').modal('show');
 }
 
 function setDeleteEmployeeId(id) {

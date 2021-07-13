@@ -37,9 +37,6 @@ public class FinanceController {
 	private Logger log;
 	private Messages messages;
 	
-	private static final int DEFAULT_PAGE = 1;
-	private static final int DEFAULT_SIZE = 7;
-	
 	@Autowired
 	public FinanceController(ActivityService activityService, Messages messages) {
 		this.activityService = activityService;
@@ -53,13 +50,13 @@ public class FinanceController {
 		@RequestParam("month") Optional<Integer> selectedMonth, @RequestParam("year") Optional<Integer> selectedYear) throws NumberFormatException, Exception {
 		log.info("Method allFinancialActivities()");
 		
-		int currentPage = page.orElse(DEFAULT_PAGE);
+		int currentPage = page.orElse(Constants.DEFAULT_PAGE);
 		Date date = new Date();
 		
 		int month = selectedMonth.orElse(Utils.getMonthFromDate(date));
 		int year = selectedYear.orElse(Utils.getYearFromDate(date));
 		
-		Page<ActivityAggregatorDTO> activities = activityService.findAllActivities(month, year, PageRequest.of(currentPage - 1, DEFAULT_SIZE));
+		Page<ActivityAggregatorDTO> activities = activityService.findAllActivities(month, year, PageRequest.of(currentPage - 1, Constants.DEFAULT_SIZE));
 		List<FinanceDTO> finances = activityService.findAllFinancialActivities(activities.getContent());
 		Collections.sort(finances);
 		

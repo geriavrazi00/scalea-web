@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org">
+	<head th:replace="commons/template.html :: headerfiles"></head>
+	
+	<body>
+		<div th:replace="commons/template.html :: menu"></div>
+		
+		<div class="main-container">
+			<h1 th:text="${area.name}" class="page-title"></h1>
+			
+			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
+			
+			<div class="filter-row">
+				<div class="col-lg-3" style="padding-left: 0px; text-align: left;">
+					<a th:href="@{'/areas/{id}/vacancies'(id=${area.id})}" th:text="#{messages.vacancies}" class="inactive-tab" sec:authorize="hasAuthority('VIEW_VACANCIES_PRIVILEGE')"></a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a th:href="@{'/areas/{id}/groups'(id=${area.id})}" th:text="#{messages.groups}" class="active-tab" sec:authorize="hasAuthority('VIEW_GROUPS_PRIVILEGE')"></a>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<a th:href="@{'/areas/{id}/historic'(id=${area.id})}" th:text="#{messages.history}" class="inactive-tab" sec:authorize="hasAuthority('VIEW_PROCESSES_HISTORIC_PRIVELEGE')"></a>
+				</div>
+				
+				<div class="col-lg-2 offset-7">
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createGroupModal" th:text="#{messages.groups.create}" sec:authorize="hasAuthority('UPSERT_GROUPS_PRIVILEGE')"></button>
+				</div>
+			</div>
+			
+			<div class="table-container">
+				<div th:if="${groups.content.size() > 0}" th:each="group, iter : ${groups.content}" th:class="${iter.index == iter.size - 1 ? 'table-container-rows' : 'table-container-rows bottom-border'}">
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.name}"></span>
+						<span class="row-table-value" th:text="${group.name}"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.groups.default}"></span>
+						<span class="row-table-value" th:text="${group.defaultGroup} ? #{messages.yes} : #{messages.no}" th:style="${group.defaultGroup} ? 'color: #1f9583;' : 'color: #f1818c;'"></span>
+					</div>
+					
+					<div class="col">
+						<span class="row-table-text" th:text="#{messages.groups.number.vacancies}"></span>
+						<span class="row-table-value" th:text="${group.vacancies.size()}"></span>
+					</div>
+					
+					<div class="col" style="text-align: center;">
+						<a th:id="'editGroupHref' + ${group.id}" th:href="@{'/areas/{id}/groups/{groupId}'(id=${area.id},groupId=${group.id})}" sec:authorize="hasAuthority('UPSERT_GROUPS_PRIVILEGE')" style="padding-right: 20px;" th:onclick="'loadGroup(event, ' + ${group.id} + ')'">
+							<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
+						</a>
+						
+						<form th:id="'deleteGroupForm' + ${group.id}" method="POST" th:action="@{'/areas/{id}/groups/delete/{gId}'(id=${area.id}, gId=${group.id}, page=${groups.number + 1})}" sec:authorize="hasAuthority('DELETE_GROUPS_PRIVILEGE')" style="display: initial;" th:if="${!group.defaultGroup}">
+							<a href="#" data-toggle="modal" data-target="#deleteGroupModal" th:onclick="'setDeleteGroupId(' + ${group.id} + ')'">
+								<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i>
+							</a>
+						</form>
+						
+						<i class="fas fa-times row-table-icons not-allowed-cursor disabled-icon" data-toggle="tooltip" data-placement="top" th:title="#{messages.groups.default.cannot.delete}" th:if="${group.defaultGroup}"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div th:replace="private/areas/groups/creategroup.html :: creategroup" sec:authorize="hasAuthority('UPSERT_GROUPS_PRIVILEGE')"></div>
+		<div th:replace="private/areas/groups/editgroup.html :: editgroup" sec:authorize="hasAuthority('UPSERT_GROUPS_PRIVILEGE')"></div>
+		 
+		<div th:replace="commons/template.html :: js-scripts"></div>
+	</body>
+</html>

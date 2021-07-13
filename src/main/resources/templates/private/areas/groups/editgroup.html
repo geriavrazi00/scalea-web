@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+	<div th:fragment="editgroup">
+		<form method="POST" th:action="@{'/areas/{id}/groups/update'(id=${area.id}, page=${groups.number + 1})}" th:object="${groupDTO}">
+			<input type="hidden" id="edit-group-id" name="edit-group-id" th:field="*{id}"/>
+		
+			<div class="modal fade" id="editGroupModal" tabindex="-1" role="dialog" aria-labelledby="editGroupModal" aria-hidden="true">
+				<div class="modal-dialog" role="document" style="max-width: 600px;">
+					<div class="modal-content" style="border-radius: 8px;">
+						<div class="custom-modal-header" style="display: unset;">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        						<span aria-hidden="true">&times;</span>
+      						</button>
+      						
+      						<br/>
+      						
+							<h5 class="modal-title" th:text="#{messages.group.edit}" style="width: 100%; font-size: 28px; text-align: left; padding-left: 20px;"></h5>
+    					</div>
+    					
+						<div class="modal-body" style="padding-top: 0;">
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px;">
+								<div class="col" style="padding-left: 0px;">
+									<div>
+										<label class="modal-text-labels" for="name" th:text="#{messages.name} + ' *'"></label>
+									</div>
+									<input id="edit-group-name" class="text-input" type="text" name="edit-group-name" th:field="*{name}" required/>
+									<br/>
+									<span class="validationError" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+								</div>
+							</div>
+							
+							<div class="row" style="margin-bottom: 0px; padding-bottom: 0px;" th:if="${vacancies != null && vacancies.size() > 0}">	
+								<h3 th:text="#{messages.vacancies}">: </h3>
+								<div class="grid" style="overflow: auto;" th:class="${vacancies != null && vacancies.size() > 0 ? 'product-container-height' : ''}">
+									<div id="privileges">
+										<div th:each="vacancy : ${vacancies}">
+											&emsp;
+											<input class="chk" th:id="'edit-group-vacancy-' + ${vacancy.id}" th:name="'edit-group-vacancy-' + ${vacancy.id}" type="checkbox" th:value="${vacancy.id}" th:field="*{vacancies}"/>
+											<label th:for="'edit-group-vacancy-' + ${vacancy.id}" th:text="${vacancy.employee != null ? vacancy.number + ' - ' + vacancy.employee.firstName + ' ' + vacancy.employee.lastName : vacancy.number}"></label>
+											
+											<br />
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row" th:if="${area.vacancies != null && area.vacancies.size() > 0}">
+								<button type="submit" th:text="#{messages.save}" class="btn btn-primary"></button>				
+							</div>
+							
+							<div class="row" th:if="${area.vacancies == null || area.vacancies.size() == 0}">
+								<span th:text="#{messages.no.vacancies.for.area}"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div th:if="${#fields.hasErrors()}">
+				<script type="text/javascript">
+					$('#editGroupModal').modal('show');
+				</script>
+			</div>
+		</form>
+	</div>
+</html>

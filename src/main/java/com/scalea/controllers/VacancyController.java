@@ -53,9 +53,6 @@ public class VacancyController {
 	private Logger log;
 	private Messages messages;
 	
-	private static final int DEFAULT_PAGE = 1;
-	private static final int DEFAULT_SIZE = 7;
-	
 	@Autowired
 	public VacancyController(VacancyService vacancyService, EmployeeService employeeService, AreaService areaService, ProcessService processService,
 		Messages messages) {
@@ -72,8 +69,8 @@ public class VacancyController {
 	public String allVacancies(Model model, @PathVariable("id") Long id, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) throws GenericException {
 		log.info("Method allVacancies()");
 		
-		int currentPage = page.orElse(DEFAULT_PAGE);
-        int pageSize = size.orElse(DEFAULT_SIZE);
+		int currentPage = page.orElse(Constants.DEFAULT_PAGE);
+        int pageSize = size.orElse(Constants.DEFAULT_SIZE);
         
         Optional<Area> area = areaService.findById(id);
 		if (!area.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
@@ -295,6 +292,6 @@ public class VacancyController {
 	}
 	
 	private String paginationParameters(Optional<Integer> page, Optional<Integer> size) {
-		return "?page=" + page.orElse(DEFAULT_PAGE) + "&size=" + size.orElse(DEFAULT_SIZE);
+		return "?page=" + page.orElse(Constants.DEFAULT_PAGE) + "&size=" + size.orElse(Constants.DEFAULT_SIZE);
 	}
 }

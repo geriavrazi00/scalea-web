@@ -46,6 +46,10 @@ public class Vacancy {
 	@Transient
 	private String base64Image;
 	
+	@ManyToOne
+	@JoinColumn(name="group_id", nullable=false)
+	private Group group;
+	
 	public String getBase64Image() {
 		return Utils.getBarCodeImage(this.uuid, 450, 80, this.getUuid());
 	}

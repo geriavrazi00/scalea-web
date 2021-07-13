@@ -12,14 +12,20 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.scalea.entities.Area;
+import com.scalea.entities.Group;
 import com.scalea.entities.Privilege;
 import com.scalea.entities.Role;
 import com.scalea.entities.User;
+import com.scalea.entities.Vacancy;
 import com.scalea.enums.ApplicationPrivileges;
 import com.scalea.enums.ApplicationRoles;
+import com.scalea.repositories.AreaRepository;
+import com.scalea.repositories.GroupRepository;
 import com.scalea.repositories.PrivilegeRepository;
 import com.scalea.repositories.RoleRepository;
 import com.scalea.repositories.UserRepository;
+import com.scalea.repositories.VacancyRepository;
 import com.scalea.utils.Constants;
 
 /*
@@ -42,11 +48,27 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
  
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private AreaRepository areaRepository;
+    
+    @Autowired
+    private GroupRepository groupRepository;
+    
+    @Autowired
+    private VacancyRepository vacancyRepository;
+
 
     @Transactional
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		if (alreadySetup) return;
+		this.manageRolesAndPrivileges();
+		this.manageAreasAndGroups();
+	}
+	
+    @Transactional
+    private void manageRolesAndPrivileges() {
+    	if (alreadySetup) return;
 		
 		List<Privilege> adminPrivileges = new ArrayList<>();
 		List<Privilege> userPrivileges = new ArrayList<>();
@@ -71,8 +93,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createAdminUserIfNotFound(adminRole);
         
         alreadySetup = true;
-	}
-	
+    }
+    
 	@Transactional
 	private User createAdminUserIfNotFound(Role adminRole) {
 		User admin = userRepository.findByUsername(Constants.DEFAULT_ADMIN_USERNAME);
@@ -111,5 +133,59 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         
         role = roleRepository.save(role);
         return role;
+    }
+    
+    @Transactional
+    private void manageAreasAndGroups() {
+    	Iterable<Area> areas = this.areaRepository.findByEnabled(true);
+    	
+    	// We get all the areas
+    	for (Area area : areas) {
+    		// If the areas have no groups, we create a default one and associate all the vacancies to it
+			if (area.getGroups() == null || area.getGroups().size() == 0) {
+				Group group = new Group();
+				group.setArea(area);
+				group.setDefaultGroup(true);
+				group.setName("1");
+				
+				group = this.groupRepository.save(group);
+				
+				Collection<Vacancy> vacancies = (Collection<Vacancy>) this.vacancyRepository.findByAreaAndEnabledOrderByNumber(area, true);
+				
+				if (vacancies != null && vacancies.size() > 0) {
+					for (Vacancy vacancy : vacancies) {
+						vacancy.setGroup(group);
+						this.vacancyRepository.save(vacancy);
+					}
+				}
+			} else {
+				// If the areas have groups, we check if they have a default one. If not, we create one and associate to it all the vacancies with no groups
+				boolean foundDefaultGroup = false;
+				
+				for (Group group : area.getGroups()) {
+					if (group.isDefaultGroup()) foundDefaultGroup = true;
+				}
+				
+				if (!foundDefaultGroup) {
+					Group group = new Group();
+					group.setArea(area);
+					group.setDefaultGroup(true);
+					group.setName("1");
+					
+					group = this.groupRepository.save(group);
+					
+					Collection<Vacancy> vacancies = (Collection<Vacancy>) this.vacancyRepository.findByAreaAndEnabledOrderByNumber(area, true);
+					
+					if (vacancies != null && vacancies.size() > 0) {
+						for (Vacancy vacancy : vacancies) {
+							if (vacancy.getGroup() == null) {
+								vacancy.setGroup(group);
+								this.vacancyRepository.save(vacancy);
+							}
+						}
+					}
+				}
+			}
+		}
     }
 }

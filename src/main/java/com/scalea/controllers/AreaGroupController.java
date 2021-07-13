@@ -1,8 +1,6 @@
 package com.scalea.controllers;
 
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -141,7 +139,7 @@ public class AreaGroupController {
 		Group originalGroup = optionalOriginalGroup.get();
 		
 		Optional<Group> optionalDefaultGroup = this.groupService.findDefaultGroupByArea(area);
-		if (optionalOriginalGroup.isEmpty()) throw new GenericException(messages.get("messages.default.group.not.found"));
+		if (optionalDefaultGroup.isEmpty()) throw new GenericException(messages.get("messages.default.group.not.found"));
 		Group defaultGroup = optionalDefaultGroup.get();
 		
 		// To avoid leaving vacancies without groups, we set all the original group vacancies to the default group
@@ -163,6 +161,39 @@ public class AreaGroupController {
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.group.updated"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 	    return "redirect:/areas/" + id + "/groups" + paginationParameters(page);
+	}
+	
+	@PreAuthorize("hasAuthority('" + Constants.UPSERT_GROUPS_PRIVILEGE + "'")
+	@PostMapping("/delete/{groupId}")
+	public String deleteGroup(@PathVariable("id") Long areaId, @PathVariable("groupId") Long groupId, 
+			Model model, RedirectAttributes redirectAttributes, @RequestParam("page") Optional<Integer> page) throws Exception {
+		log.info("Method deleteGroup()");
+		
+		Optional<Area> optionalArea = areaService.findByIdAndEnabledIsTrue(areaId);
+		if (optionalArea.isEmpty()) throw new GenericException(messages.get("messages.area.not.found"));
+		Area area = optionalArea.get();
+		
+		Optional<Group> optionalGroup = this.groupService.findById(groupId);
+		if (optionalGroup.isEmpty()) throw new GenericException(messages.get("messages.group.not.found"));
+		Group group = optionalGroup.get();
+		
+		if (group.isDefaultGroup()) throw new GenericException(messages.get("messages.group.default.cannot.be.deleted"));
+		
+		Optional<Group> optionalDefaultGroup = this.groupService.findDefaultGroupByArea(area);
+		if (optionalDefaultGroup.isEmpty()) throw new GenericException(messages.get("messages.default.group.not.found"));
+		Group defaultGroup = optionalDefaultGroup.get();
+		
+		// To avoid leaving vacancies without groups, we set all the original group vacancies to the default group
+		for (Vacancy vacancy : group.getVacancies()) {
+			vacancy.setGroup(defaultGroup);
+			this.vacancyService.save(vacancy);
+		}
+		
+		this.groupService.delete(group);
+		
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.group.deleted"));
+	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+	    return "redirect:/areas/" + areaId + "/groups" + paginationParameters(page);
 	}
 	
 	private String paginationParameters(Optional<Integer> page) {

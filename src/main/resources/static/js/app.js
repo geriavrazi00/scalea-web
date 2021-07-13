@@ -206,6 +206,15 @@ function submitVacancyDetachForm() {
 	$("#detachVacancyForm" + id).submit(); // Submit the form
 }
 
+function setDeleteGroupId(id) {
+	$("#delete-group-id").val(id);
+}
+
+function submitGroupDeleteForm() {
+	id = $("#delete-group-id").val();
+	$("#deleteGroupForm" + id).submit(); // Submit the form
+}
+
 function incrementNumber(id) {
   	var value = document.getElementById(id).value;
   	

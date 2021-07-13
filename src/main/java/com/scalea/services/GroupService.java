@@ -37,4 +37,8 @@ public class GroupService {
 	public Optional<Group> findDefaultGroupByArea(Area area) {
 		return this.groupRepo.findByAreaAndDefaultGroupIsTrue(area);
 	}
+	
+	public void delete(Group group) {
+		this.groupRepo.delete(group);
+	}
 }

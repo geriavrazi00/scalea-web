@@ -37,7 +37,7 @@
 									<div id="privileges">
 										<div th:each="vacancy : ${vacancies}">
 											&emsp;
-											<input class="chk" th:id="'edit-group-vacancy-' + ${vacancy.id}" th:name="'edit-group-vacancy-' + ${vacancy.id}" type="checkbox" th:value="${vacancy.id}" th:field="*{vacancies}"/>
+											<input class="chk" th:id="'edit-group-vacancy-' + ${vacancy.id}" th:name="'edit-group-vacancy-' + ${vacancy.id}" type="checkbox" th:value="${vacancy}" th:field="*{vacancies}"/>
 											<label th:for="'edit-group-vacancy-' + ${vacancy.id}" th:text="${vacancy.employee != null ? vacancy.number + ' - ' + vacancy.employee.firstName + ' ' + vacancy.employee.lastName : vacancy.number}"></label>
 											
 											<br />

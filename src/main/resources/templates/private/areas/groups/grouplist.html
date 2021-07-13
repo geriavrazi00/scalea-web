@@ -47,7 +47,7 @@
 							<i class="fas fa-pen row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.update}"></i>
 						</a>
 						
-						<form th:id="'deleteGroupForm' + ${group.id}" method="POST" th:action="@{'/areas/{id}/groups/delete/{gId}'(id=${area.id}, gId=${group.id}, page=${groups.number + 1})}" sec:authorize="hasAuthority('DELETE_GROUPS_PRIVILEGE')" style="display: initial;" th:if="${!group.defaultGroup}">
+						<form th:id="'deleteGroupForm' + ${group.id}" method="POST" th:action="@{'/areas/{id}/groups/delete/{groupId}'(id=${area.id}, groupId=${group.id}, page=${groups.number + 1})}" sec:authorize="hasAuthority('DELETE_GROUPS_PRIVILEGE')" style="display: initial;" th:if="${!group.defaultGroup}">
 							<a href="#" data-toggle="modal" data-target="#deleteGroupModal" th:onclick="'setDeleteGroupId(' + ${group.id} + ')'">
 								<i class="fas fa-times row-table-icons" data-toggle="tooltip" data-placement="top" th:title="#{messages.delete}"></i>
 							</a>
@@ -61,6 +61,7 @@
 		
 		<div th:replace="private/areas/groups/creategroup.html :: creategroup" sec:authorize="hasAuthority('UPSERT_GROUPS_PRIVILEGE')"></div>
 		<div th:replace="private/areas/groups/editgroup.html :: editgroup" sec:authorize="hasAuthority('UPSERT_GROUPS_PRIVILEGE')"></div>
+		<div th:replace="private/areas/groups/deletegroup.html :: deletegroup" sec:authorize="hasAuthority('DELETE_GROUPS_PRIVILEGE')"></div>
 		 
 		<div th:replace="commons/template.html :: js-scripts"></div>
 	</body>

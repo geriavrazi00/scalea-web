@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.scalea.entities.Area;
+import com.scalea.entities.Group;
 import com.scalea.entities.Vacancy;
 import com.scalea.repositories.VacancyRepository;
 
@@ -61,5 +62,9 @@ public class VacancyService {
 	
 	public boolean existsByIdAndArea(Long id, Area area) {
 		return this.vacancyRepo.existsByIdAndArea(id, area);
+	}
+	
+	public void updateGroupById(Long id, Group group) {
+		this.vacancyRepo.updateGroupById(id, group);
 	}
 }

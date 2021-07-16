@@ -57,6 +57,25 @@
 					</div>
 				</div>
 			</div>
+			
+			<div th:if="${groups.totalPages > 1 && groups.content.size() > 0}">
+				<ul class="pagination">
+					<li th:class="${groups.number == 0 ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{'/areas/{id}/groups'(id=${area.id},page=${groups.number})}">
+							<span aria-hidden="true">&laquo;</span>
+						</a>
+					</li>
+					<li th:if="${groups.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+					    <a th:href="@{'/areas/{id}/groups'(id=${area.id},page=${pageNumber})}" th:text=${pageNumber} 
+					    	th:class="${pageNumber == groups.number + 1} ? 'page-link active' : 'page-link'"></a>
+					</li>
+					<li th:class="${(groups.number + 1) == groups.totalPages ? 'page-item disabled not-allowed-cursor' : 'page-item'}">
+						<a class="page-link" th:href="@{'/areas/{id}/groups'(id=${area.id},page=${groups.number + 2})}">
+							<span aria-hidden="true">&raquo;</span>
+						</a>
+					</li>
+				</ul>
+			</div>
 		</div>
 		
 		<div th:replace="private/areas/groups/creategroup.html :: creategroup" sec:authorize="hasAuthority('UPSERT_GROUPS_PRIVILEGE')"></div>

@@ -1,6 +1,8 @@
 package com.scalea.controllers;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -94,12 +96,14 @@ public class AreaGroupController {
 	@PreAuthorize("hasAnyAuthority('" + Constants.UPSERT_VACANCIES_PRIVILEGE + "')")
 	@PostMapping
 	public String createGroup(Model model, @Valid Group group, Errors errors, @PathVariable("id") Long id, @RequestParam("page") Optional<Integer> page, 
-			RedirectAttributes redirectAttributes) throws GenericException, ParseException {
+			@RequestParam("add-group-vacancy") Optional<List<Long>> optionalSelectedVacancyIds, RedirectAttributes redirectAttributes) throws GenericException, ParseException {
 		log.info("Method createGroup()");
 		
 		if (errors.hasErrors()) {
 			return this.showAreaGroups(model, id, page);
 		}
+		
+		List<Long> selectedVacancyIds = optionalSelectedVacancyIds.orElse(new ArrayList<>());
         
         Optional<Area> optionalArea = areaService.findByIdAndEnabledIsTrue(id);
 		if (!optionalArea.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
@@ -110,9 +114,8 @@ public class AreaGroupController {
 		group.setDefaultGroup(false);
 		group = this.groupService.save(group);
 		
-		for (Vacancy vacancy : group.getVacancies()) {
-			vacancy.setGroup(group);
-			this.vacancyService.save(vacancy);
+		for (Long vacancyId: selectedVacancyIds) {
+			this.vacancyService.updateGroupById(vacancyId, group);
 		}
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.group.created"));
@@ -123,12 +126,14 @@ public class AreaGroupController {
 	@PreAuthorize("hasAuthority('" + Constants.UPSERT_GROUPS_PRIVILEGE + "'")
 	@PostMapping("/update")
 	public String updateGroup(@Valid GroupDTO groupDTO, Errors errors, @PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes, 
-			@RequestParam("page") Optional<Integer> page) throws Exception {
+			@RequestParam("edit-group-vacancy") Optional<List<Long>> optionalSelectedVacancyIds, @RequestParam("page") Optional<Integer> page) throws Exception {
 		log.info("Method updateGroup()");
 		
 		if (errors.hasErrors()) {
 			return this.showAreaGroups(model, id, page);
 		}
+		
+		List<Long> selectedVacancyIds = optionalSelectedVacancyIds.orElse(new ArrayList<>());
 		
 		Optional<Area> optionalArea = areaService.findByIdAndEnabledIsTrue(id);
 		if (optionalArea.isEmpty()) throw new GenericException(messages.get("messages.area.not.found"));
@@ -139,7 +144,7 @@ public class AreaGroupController {
 		Group originalGroup = optionalOriginalGroup.get();
 		
 		Optional<Group> optionalDefaultGroup = this.groupService.findDefaultGroupByArea(area);
-		if (optionalDefaultGroup.isEmpty()) throw new GenericException(messages.get("messages.default.group.not.found"));
+		if (optionalDefaultGroup.isEmpty() && !originalGroup.isDefaultGroup()) throw new GenericException(messages.get("messages.default.group.not.found"));
 		Group defaultGroup = optionalDefaultGroup.get();
 		
 		// To avoid leaving vacancies without groups, we set all the original group vacancies to the default group
@@ -149,13 +154,13 @@ public class AreaGroupController {
 		}
 		
 		Group group = groupDTO.toGroup();
+		if (originalGroup.isDefaultGroup()) group.setDefaultGroup(true);
 		group.setArea(area);
 		group = this.groupService.save(group);
 		
 		// Next we save the new vacancies by setting them to the new edited group
-		for (Vacancy vacancy : groupDTO.getVacancies()) {
-			vacancy.setGroup(group);
-			this.vacancyService.save(vacancy);
+		for (Long vacancyId: selectedVacancyIds) {
+			this.vacancyService.updateGroupById(vacancyId, group);
 		}
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.group.updated"));
@@ -177,7 +182,7 @@ public class AreaGroupController {
 		if (optionalGroup.isEmpty()) throw new GenericException(messages.get("messages.group.not.found"));
 		Group group = optionalGroup.get();
 		
-		if (group.isDefaultGroup()) throw new GenericException(messages.get("messages.group.default.cannot.be.deleted"));
+		if (group.isDefaultGroup() && !group.isDefaultGroup()) throw new GenericException(messages.get("messages.group.default.cannot.be.deleted"));
 		
 		Optional<Group> optionalDefaultGroup = this.groupService.findDefaultGroupByArea(area);
 		if (optionalDefaultGroup.isEmpty()) throw new GenericException(messages.get("messages.default.group.not.found"));

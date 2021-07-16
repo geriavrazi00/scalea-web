@@ -5,10 +5,12 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.scalea.entities.Area;
+import com.scalea.entities.Group;
 import com.scalea.entities.Vacancy;
 
 public interface VacancyRepository extends CrudRepository<Vacancy, Long> {
@@ -20,12 +22,12 @@ public interface VacancyRepository extends CrudRepository<Vacancy, Long> {
 	List<Vacancy> findUnassociatedVacancies();
 	
 	Iterable<Vacancy> findByEnabled(boolean enabled);
-	
 	Optional<Vacancy> findByUuid(String uuid);
-	
 	Page<Vacancy> findByAreaAndEnabledOrderByNumber(Area area, boolean enabled, Pageable pageable);
-	
 	boolean existsByIdAndArea(Long id, Area area);
-	
 	Iterable<Vacancy> findByAreaAndEnabledOrderByNumber(Area area, boolean enabled);
+	
+	@Modifying
+	@Query("UPDATE Vacancy v SET v.group = ?2 where v.id = ?1")
+	void updateGroupById(Long id, Group group);
 }

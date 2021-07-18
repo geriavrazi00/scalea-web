@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.scalea.controllers.ProcessController;
 import com.scalea.entities.Activity;
 import com.scalea.entities.Area;
+import com.scalea.entities.Group;
 import com.scalea.entities.Process;
 import com.scalea.entities.Vacancy;
 import com.scalea.enums.ProcessStatus;
@@ -62,11 +63,13 @@ public class DeviceCommunicationController {
 	private Logger log;
 	
 	@Autowired
-	public DeviceCommunicationController(VacancyRepository vacancyRepo, ActivityRepository activityRepo, ProcessRepository processRepo) {
+	public DeviceCommunicationController(VacancyRepository vacancyRepo, ActivityRepository activityRepo, ProcessRepository processRepo,
+			AreaRepository areaRepository) {
 		this.vacancyRepo = vacancyRepo;
 		this.activityRepo = activityRepo;
 		this.processRepo = processRepo;
-		this.log = LoggerFactory.getLogger(ProcessController.class);
+		this.areaRepository = areaRepository;
+		this.log = LoggerFactory.getLogger(DeviceCommunicationController.class);
 	}
 	
 	@PostMapping
@@ -87,7 +90,7 @@ public class DeviceCommunicationController {
 					log.error(e.getMessage());
 					throw e;
 				} catch(Exception e) {
-					throw new Exception("Invalid input!");
+					throw new Exception(e);
 				}
 			}
 		}
@@ -131,11 +134,15 @@ public class DeviceCommunicationController {
 		Vacancy vacancy = optionalVacancy.get();
 		
 		if (vacancy.getEmployee() == null) throw new NotFoundException("Vendi i punës me id " + vacancy.getId() + " nuk është shoqëruar me asnjë punonjës!");
+		if (vacancy.getGroup() == null) throw new NotFoundException("Vendi i punës me id " + vacancy.getId() + " nuk është shoqëruar me asnjë grup!");
 		
-		Area area = vacancy.getArea();
-		Optional<Process> optionalProcess = processRepo.findByStatusAndArea(ProcessStatus.STARTED.getStatus(), area);
+		Group group = vacancy.getGroup();	
+		Optional<Process> optionalProcess = processRepo.findByStatusAndGroup(ProcessStatus.STARTED.getStatus(), group);
 		if (!optionalProcess.isPresent()) throw new NotFoundException("Asnjë proces aktiv për vendin e punës me id " + vacancy.getId() + "!");
 		Process activeProcess = optionalProcess.get();
+		Area area = group.getArea();
+		
+		if (area == null) throw new NotFoundException("Grupi nuk është shoqëruar me asnjë sallë!");
 		
 		double weight = Double.valueOf(activityDto.getWeight());
 		Long timestamp = Long.valueOf(activityDto.getTime());
@@ -155,6 +162,7 @@ public class DeviceCommunicationController {
 			activity.setDate(date);
 			activity.setArea(area);
 			activity.setUser(area.getUser());
+			activity.setGroup(group);
 			
 			activityRepo.save(activity);
 		}

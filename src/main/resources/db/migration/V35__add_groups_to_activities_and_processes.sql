@@ -1,0 +1,5 @@
+ALTER TABLE activities ADD COLUMN group_id BIGINT NULL DEFAULT NULL;
+ALTER TABLE activities ADD CONSTRAINT fk_groups FOREIGN KEY (group_id) REFERENCES groups(id);
+
+ALTER TABLE processes ADD COLUMN group_id BIGINT NULL DEFAULT NULL;
+ALTER TABLE processes ADD CONSTRAINT fk_groups FOREIGN KEY (group_id) REFERENCES groups(id);

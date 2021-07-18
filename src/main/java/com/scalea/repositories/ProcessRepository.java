@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.scalea.entities.Area;
+import com.scalea.entities.Group;
 import com.scalea.entities.Process;
 import com.scalea.entities.Product;
 
@@ -20,6 +21,7 @@ public interface ProcessRepository extends CrudRepository<Process, Long> {
 	boolean existsByStatusInAndArea(int[] status, Area area);
 	Optional<Process> findByStatusInAndArea(int[] statuses, Area area);
 	long countByStatusIn(int[] statuses);
+	Optional<Process> findByStatusAndGroup(int status, Group group);
 	
 	Page<Process> findByAreaOrderByCreatedAtDesc(Area area, Pageable pageable);
 	Page<Process> findByAreaAndStartedAtGreaterThanEqualAndStartedAtLessThanOrderByCreatedAtDesc(Area area, Date startedAt, Date endDate, Pageable pageable);

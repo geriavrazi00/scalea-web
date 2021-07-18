@@ -67,6 +67,10 @@ public class Process {
 	@Column(name="elapsed_time")
 	private Long elapsedTime;
 	
+	@ManyToOne
+	@JoinColumn(name="group_id")
+	private Group group;
+	
 	public void calculateElapsedTime() {
 		if (this.elapsedTime == null) this.elapsedTime = 0L;
 		this.elapsedTime += this.getStoppedAt().getTime() - this.getStartedAt().getTime();

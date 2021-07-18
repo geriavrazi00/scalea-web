@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.scalea.entities.Area;
+import com.scalea.entities.Group;
 import com.scalea.entities.Process;
 import com.scalea.entities.Product;
 import com.scalea.repositories.ProcessRepository;
@@ -69,5 +70,9 @@ public class ProcessService {
 	
 	public Optional<Process> findByStatusesAndArea(int[] statuses, Area area) {
 		return processRepo.findByStatusInAndArea(statuses, area);
+	}
+	
+	public Optional<Process> findByStatusAndGroup(int status, Group group) {
+		return processRepo.findByStatusAndGroup(status, group);
 	}
 }

@@ -41,4 +41,8 @@ public class GroupService {
 	public void delete(Group group) {
 		this.groupRepo.delete(group);
 	}
+	
+	public Page<Group> findAllByEnabledAreas(Pageable pageable) {
+		return this.groupRepo.findAByAreaEnabledIsTrueOrderByAreaNameAscNameAsc(pageable);
+	}
 }

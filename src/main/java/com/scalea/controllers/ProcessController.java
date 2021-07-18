@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
-import com.scalea.entities.Area;
+import com.scalea.entities.Group;
 import com.scalea.entities.Process;
 import com.scalea.entities.Product;
 import com.scalea.enums.ProcessStatus;
 import com.scalea.exceptions.GenericException;
-import com.scalea.services.AreaService;
+import com.scalea.services.GroupService;
 import com.scalea.services.ProcessService;
 import com.scalea.services.ProductService;
 import com.scalea.services.UserService;
@@ -37,22 +37,19 @@ import com.scalea.utils.Utils;
 public class ProcessController {
 
 	private ProcessService processService;
-	private AreaService areaService;
 	private ProductService productService;
 	private UserService userService;
+	private GroupService groupService;
 	private Logger log;
 	private Messages messages;
 	
-	private static final int DEFAULT_PAGE = 1;
-	private static final int DEFAULT_SIZE = 7;
-	
 	@Autowired
-	public ProcessController(ProcessService processService, AreaService areaService, ProductService productService, UserService userService,
+	public ProcessController(ProcessService processService, ProductService productService, UserService userService, GroupService groupService, 
 			Messages messages) {
 		this.processService = processService;
-		this.areaService = areaService;
 		this.productService = productService;
 		this.userService = userService;
+		this.groupService = groupService;
 		this.log = LoggerFactory.getLogger(ProcessController.class);
 		this.messages = messages;
 	}
@@ -62,23 +59,23 @@ public class ProcessController {
 	public String allActiveProcesses(Model model, @RequestParam("page") Optional<Integer> page) {
 		log.info("Method allActiveProcesses()");
 		
-		int currentPage = page.orElse(DEFAULT_PAGE);
+		int currentPage = page.orElse(Constants.DEFAULT_PAGE);
 		
 		Iterable<Process> activeProcesses = processService.findByStatusIn(new int[] {ProcessStatus.STARTED.getStatus(), ProcessStatus.PAUSED.getStatus()});
-		Page<Area> areas = areaService.findPaginatedByEnabledOrderByName(PageRequest.of(currentPage - 1, DEFAULT_SIZE));
+		Page<Group> groups = groupService.findAllByEnabledAreas(PageRequest.of(currentPage - 1, Constants.DEFAULT_SIZE));
 		Iterable<Product> products = productService.findByEnabledIsTrueAndWithSubProductsIsFalse();
 		
-		for (Area area: areas) {
+		for (Group group: groups) {
 			for (Process process: activeProcesses) {
-				if (process.getArea().equals(area)) {
-					area.setActiveProcess(process);
+				if (process.getGroup() != null && process.getGroup().equals(group)) {
+					group.setActiveProcess(process);
 				}
 			}
 		}
 		
-		model.addAttribute("areas", areas);
+		model.addAttribute("groups", groups);
 		model.addAttribute("products", products);
-		model.addAttribute("pageNumbers", Utils.getPageNumbersList(areas.getTotalPages()));
+		model.addAttribute("pageNumbers", Utils.getPageNumbersList(groups.getTotalPages()));
 		return "private/processes/processmonitoring";
 	}
 	
@@ -88,8 +85,9 @@ public class ProcessController {
 			RedirectAttributes redirectAttributes, @RequestParam("page") Optional<Integer> page) throws GenericException {
 		log.info("Method startProcess()");
 		
-		Optional<Area> area = areaService.findById(id);
-		if (!area.isPresent()) throw new GenericException(messages.get("messages.area.not.found"));
+		Optional<Group> optionalGroup = groupService.findById(id);
+		if (!optionalGroup.isPresent()) throw new GenericException(messages.get("messages.group.not.found"));
+		Group group = optionalGroup.get();
 		
 		if (productId == null) throw new GenericException(messages.get("messages.product.not.found"));
 		Optional<Product> product = productService.findById(productId);
@@ -99,13 +97,14 @@ public class ProcessController {
 		process.setStatus(ProcessStatus.STARTED.getStatus());
 		process.setStartedAt(new Date());
 		process.setProduct(product.get());
-		process.setArea(area.get());
+		process.setGroup(group);
+		process.setArea(group.getArea());
 		process.setUser(userService.findByUsername(principal.getName()));
 		process.setElapsedTime(0L);
 		
 		processService.save(process);
 		
-		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.process.started", area.get().getName()));
+		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.process.started", group.getName()));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 	    return "redirect:/processes" + paginationParameters(page);
 	}
@@ -171,6 +170,6 @@ public class ProcessController {
 	}
 	
 	private String paginationParameters(Optional<Integer> page) {
-		return "?page=" + page.orElse(DEFAULT_PAGE);
+		return "?page=" + page.orElse(Constants.DEFAULT_PAGE);
 	}
 }

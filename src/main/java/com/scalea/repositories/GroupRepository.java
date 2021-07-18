@@ -12,4 +12,5 @@ import com.scalea.entities.Group;
 public interface GroupRepository extends CrudRepository<Group, Long> {
 	Page<Group> findByAreaOrderByName(Area area, Pageable pageable);
 	Optional<Group> findByAreaAndDefaultGroupIsTrue(Area area);
+	Page<Group> findAByAreaEnabledIsTrueOrderByAreaNameAscNameAsc(Pageable pageable);
 }

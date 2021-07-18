@@ -60,6 +60,10 @@ public class Activity {
     @JoinColumn(name="user_id", nullable=false)
     private User user;
 	
+	@ManyToOne
+	@JoinColumn(name="group_id")
+	private Group group;
+	
 	@PrePersist
 	void preInsert() {
 	   if (this.createdAt == null) this.createdAt = new Date();

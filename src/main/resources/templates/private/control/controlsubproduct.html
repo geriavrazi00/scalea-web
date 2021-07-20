@@ -16,10 +16,17 @@
 			
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 			
+			<div class="filter-row">
+				<div class="col" style="padding-left: 0px;">
+					<span class="row-table-value" th:text="#{messages.group} + ' - ' + ${group.name}"></span>
+				</div>
+			</div>
+			
 			<form method="GET" th:action="@{/control/process}" th:object="${controlSubProductDTO}">
 				<input type="hidden" id="product-id" name="productId" th:field="*{productId}"/>
 				<input type="hidden" id="area-id" name="areaId" th:field="*{areaId}"/>
 				<input type="hidden" id="subproduct-id" name="subProductId" th:field="*{subProductId}"/>
+				<input type="hidden" id="group-id" name="groupId" th:field="*{groupId}"/>
 				
 				<section class="carosel_sec">
 					<div class="container-fluid">

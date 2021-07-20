@@ -22,6 +22,8 @@ public interface ProcessRepository extends CrudRepository<Process, Long> {
 	Optional<Process> findByStatusInAndArea(int[] statuses, Area area);
 	long countByStatusIn(int[] statuses);
 	Optional<Process> findByStatusAndGroup(int status, Group group);
+	Optional<Process> findByStatusInAndGroup(int[] statuses, Group group);
+	boolean existsByStatusInAndGroup(int[] status, Group group);
 	
 	Page<Process> findByAreaOrderByCreatedAtDesc(Area area, Pageable pageable);
 	Page<Process> findByAreaAndStartedAtGreaterThanEqualAndStartedAtLessThanOrderByCreatedAtDesc(Area area, Date startedAt, Date endDate, Pageable pageable);

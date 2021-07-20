@@ -25,6 +25,7 @@ public class RoleUtil {
 		groupedPrivileges.put(messages.get("messages.role.financial.privilege"), new ArrayList<>());
 		groupedPrivileges.put(messages.get("messages.role.statistic.privilege"), new ArrayList<>());
 		groupedPrivileges.put(messages.get("messages.role.control.privilege"), new ArrayList<>());
+		groupedPrivileges.put(messages.get("messages.role.daily.activities.privilege"), new ArrayList<>());
 		
 		for (Privilege privilege : privileges) {
 			if (Arrays.asList(Constants.HOME_PRIVILEGES).contains(privilege.getName())) {
@@ -53,6 +54,8 @@ public class RoleUtil {
 				groupedPrivileges.get(messages.get("messages.role.statistic.privilege")).add(privilege);
 			} else if (Arrays.asList(Constants.CONTROL_PRIVILEGES).contains(privilege.getName())) {
 				groupedPrivileges.get(messages.get("messages.role.control.privilege")).add(privilege);
+			} else if (Arrays.asList(Constants.DAILY_ACTIVITIES_PRIVILEGES).contains(privilege.getName())) {
+				groupedPrivileges.get(messages.get("messages.role.daily.activities.privilege")).add(privilege);
 			}
 		}
 		

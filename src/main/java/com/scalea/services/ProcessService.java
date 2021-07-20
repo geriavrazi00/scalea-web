@@ -68,11 +68,19 @@ public class ProcessService {
 		return processRepo.existsByStatusInAndArea(statuses, area);
 	}
 	
+	public boolean existsByStatusAndGroup(int[] statuses, Group group) {
+		return processRepo.existsByStatusInAndGroup(statuses, group);
+	}
+	
 	public Optional<Process> findByStatusesAndArea(int[] statuses, Area area) {
 		return processRepo.findByStatusInAndArea(statuses, area);
 	}
 	
 	public Optional<Process> findByStatusAndGroup(int status, Group group) {
 		return processRepo.findByStatusAndGroup(status, group);
+	}
+	
+	public Optional<Process> findByStatusesAndGroup(int[] statuses, Group group) {
+		return processRepo.findByStatusInAndGroup(statuses, group);
 	}
 }

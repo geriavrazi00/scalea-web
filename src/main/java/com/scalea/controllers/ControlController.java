@@ -1,6 +1,7 @@
 package com.scalea.controllers;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scalea.configurations.Messages;
 import com.scalea.entities.Area;
+import com.scalea.entities.Group;
 import com.scalea.entities.Process;
 import com.scalea.entities.Product;
 import com.scalea.entities.User;
@@ -31,6 +33,7 @@ import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.ControlProductDTO;
 import com.scalea.models.dto.ControlSubProductDTO;
 import com.scalea.services.AreaService;
+import com.scalea.services.GroupService;
 import com.scalea.services.ProcessService;
 import com.scalea.services.ProductService;
 import com.scalea.services.UserService;
@@ -43,39 +46,64 @@ public class ControlController {
 	private AreaService areaService;
 	private UserService userService;
 	private ProcessService processService;
+	private GroupService groupService;
 	private Logger log;
 	private Messages messages;
 	
 	@Autowired
 	public ControlController(ProductService productService, AreaService areaService, UserService userService, ProcessService processService, 
-			Messages messages) {
+			GroupService groupService, Messages messages) {
 		this.productService = productService;
 		this.areaService = areaService;
 		this.userService = userService;
 		this.processService = processService;
+		this.groupService = groupService;
 		this.log = LoggerFactory.getLogger(ControlController.class);
 		this.messages = messages;
 	}
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.MANAGE_CONTROL_PRIVILEGE + "')")
 	@GetMapping
-	public String loadStep1(Model model, Principal principal, HttpServletRequest request) throws GenericException {
+	public String loadStep1(Model model, Principal principal, HttpServletRequest request, @RequestParam("group-id") Optional<Long> groupId) throws GenericException {
 		log.info("Method loadStep1()");
 		
 		Iterable<Product> products = productService.findByFatherProductIsNullAndEnabledIsTrueOrderByName();
 		List<Area> areas = null;
+		List<Group> groups = new ArrayList<>();
+		Long selectedGroupId = groupId.isPresent() ? groupId.get() : null;
 		ControlProductDTO controlProductDTO = new ControlProductDTO();
 		
 		if (request.isUserInRole(Constants.ROLE_ADMIN)) {
 			areas = (List<Area>) areaService.findByEnabledOrderByName();
+			if (areas != null && areas.size() == 1) controlProductDTO.setAreaId(areas.get(0).getId());
+			
+			for (Area area : areas) {
+				if (area.getGroups() != null) {
+					groups.addAll(area.getGroups());
+				}
+			}
+			if (groups.size() > 0 && selectedGroupId == null) selectedGroupId = groups.get(0).getId();
+			controlProductDTO.setGroupId(selectedGroupId);
 		} else {
 			User user = userService.findByUsername(principal.getName());
 			areas = (List<Area>) areaService.findByUserId(user);
 			if (areas != null && areas.size() == 1) controlProductDTO.setAreaId(areas.get(0).getId());
 			
+			for (Area area : areas) {
+				if (area.getGroups() != null) {
+					groups.addAll(area.getGroups());
+				}
+			}
+			
+			if (groups.size() > 0 && selectedGroupId == null) selectedGroupId = groups.get(0).getId();
+			controlProductDTO.setGroupId(selectedGroupId);
+			
+			Optional<Group> optionalGroup = groupService.findById(selectedGroupId);
+			if (optionalGroup.isEmpty()) throw new GenericException(messages.get("messages.group.not.found"));
+			
 			if (areas.size() == 1) {
-				Optional<Process> optionalProcess = processService.findByStatusesAndArea(new int[] {ProcessStatus.STARTED.getStatus(), 
-					ProcessStatus.PAUSED.getStatus()}, areas.get(0));
+				Optional<Process> optionalProcess = processService.findByStatusesAndGroup(new int[] {ProcessStatus.STARTED.getStatus(), 
+					ProcessStatus.PAUSED.getStatus()}, optionalGroup.get());
 				if (optionalProcess.isPresent()) {
 					Process activeProcess = optionalProcess.get();
 					Area area = areas.get(0);
@@ -84,6 +112,7 @@ public class ControlController {
 					controlSubProductDTO.setAreaId(area.getId());
 					controlSubProductDTO.setAreaName(area.getName());
 					controlSubProductDTO.setActiveProcess(activeProcess);
+					controlSubProductDTO.setGroupId(selectedGroupId);
 					
 					if (activeProcess.getProduct().getFatherProduct() != null) {
 						controlSubProductDTO.setProductId(activeProcess.getProduct().getFatherProduct().getId());
@@ -95,33 +124,41 @@ public class ControlController {
 						controlSubProductDTO.setProductName(activeProcess.getProduct().getName());
 					}
 					
-					return this.loadStep3(model, controlSubProductDTO, null, principal, request);
+					return this.loadStep3(model, controlSubProductDTO, null, principal, groupId, request);
 				}
 			}
 		}
 		
 		model.addAttribute("products", products);
 		model.addAttribute("areas", areas);
+		model.addAttribute("groups", groups);
+		model.addAttribute("selectedGroupId", selectedGroupId);
 		if (model.getAttribute("controlProductDTO") == null) model.addAttribute("controlProductDTO", controlProductDTO);
 		return "private/control/controlproduct";
 	}
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.MANAGE_CONTROL_PRIVILEGE + "')")
 	@GetMapping("/subproduct")
-	public String loadStep2(Model model, @Valid ControlProductDTO controlProductDto, Errors errors, Principal principal, HttpServletRequest request, 
-			RedirectAttributes redirectAttributes) throws GenericException {
+	public String loadStep2(Model model, @Valid ControlProductDTO controlProductDto, Errors errors, Principal principal, 
+			HttpServletRequest request, RedirectAttributes redirectAttributes) throws GenericException {
 		log.info("Method loadStep2()");
 		
 		if (errors.hasErrors()) {
-			return this.loadStep1(model, principal, request);
+			return this.loadStep1(model, principal, request, Optional.of(controlProductDto.getGroupId()));
 		}
-		
+				
 		Optional<Area> optionalArea = areaService.findByIdAndEnabledIsTrue(controlProductDto.getAreaId());
 		if (optionalArea.isEmpty()) throw new GenericException(messages.get("messages.area.not.found"));
 		Area area = optionalArea.get();
 		
+		Optional<Group> optionalGroup = groupService.findById(controlProductDto.getGroupId());
+		if (optionalGroup.isEmpty()) throw new GenericException(messages.get("messages.group.not.found"));
+		Group group = optionalGroup.get();
+		
 		User user = userService.findByUsername(principal.getName());
 		if (area.getUser() == null || !area.getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.area.not.found"));
+		if (group.getArea() == null || !group.getArea().getId().equals(area.getId())) throw new GenericException(messages.get("messages.group.not.found"));
+		if (group.getArea().getUser() == null || !group.getArea().getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.group.not.found"));
 		
 		Optional<Product> optionalProduct = productService.findByIdAndFatherProductIsNullAndEnabledIsTrue(controlProductDto.getProductId());
 		if (optionalProduct.isEmpty()) throw new GenericException(messages.get("messages.product.not.found"));
@@ -130,13 +167,16 @@ public class ControlController {
 		ControlSubProductDTO controlSubProduct = new ControlSubProductDTO();
 		controlSubProduct.setAreaId(controlProductDto.getAreaId());
 		controlSubProduct.setProductId(controlProductDto.getProductId());
+		controlSubProduct.setGroupId(controlProductDto.getGroupId());
 		
 		if (product.isWithSubProducts() && product.getChildrenProducts() != null && product.getChildrenProducts().size() > 0) {
 			model.addAttribute("products", product.getChildrenProducts());
 			model.addAttribute("controlSubProductDTO", controlSubProduct);
+			model.addAttribute("group", group);
 		} else if (!product.isWithSubProducts()) {
 			redirectAttributes.addAttribute("productId", controlSubProduct.getProductId());
 			redirectAttributes.addAttribute("areaId", controlSubProduct.getAreaId());
+			redirectAttributes.addAttribute("groupId", controlSubProduct.getGroupId());
 			return "redirect:/control/process";
 		} else {
 			throw new GenericException(messages.get("messages.product.not.found"));
@@ -147,15 +187,30 @@ public class ControlController {
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.MANAGE_CONTROL_PRIVILEGE + "')")
 	@GetMapping("/process")
-	public String loadStep3(Model model, @Valid ControlSubProductDTO controlSubProductDTO, Errors errors, Principal principal, HttpServletRequest request) throws GenericException {
+	public String loadStep3(Model model, @Valid ControlSubProductDTO controlSubProductDTO, Errors errors, Principal principal, 
+			@RequestParam("group-id") Optional<Long> groupId, HttpServletRequest request) throws GenericException {
 		log.info("Method loadStep3()");
+		
+		List<Group> groups = new ArrayList<>();
 		
 		Optional<Area> optionalArea = areaService.findByIdAndEnabledIsTrue(controlSubProductDTO.getAreaId());
 		if (optionalArea.isEmpty()) throw new GenericException(messages.get("messages.area.not.found"));
 		Area area = optionalArea.get();
 		
+		Optional<Group> optionalGroup = groupService.findById(controlSubProductDTO.getGroupId());
+		if (optionalGroup.isEmpty()) throw new GenericException(messages.get("messages.group.not.found"));
+		Group group = optionalGroup.get();
+		
+		if (area.getGroups() != null) {
+			groups.addAll(area.getGroups());
+		}
+		
+		Long selectedGroupId = groupId.isPresent() ? groupId.get() : controlSubProductDTO.getGroupId();
+		
 		User user = userService.findByUsername(principal.getName());
 		if (area.getUser() == null || !area.getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.area.not.found"));
+		if (group.getArea() == null || !group.getArea().getId().equals(area.getId())) throw new GenericException(messages.get("messages.group.not.found"));
+		if (group.getArea().getUser() == null || !group.getArea().getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.group.not.found"));
 		
 		Optional<Product> optionalProduct = productService.findByIdAndFatherProductIsNullAndEnabledIsTrue(controlSubProductDTO.getProductId());
 		if (optionalProduct.isEmpty()) throw new GenericException(messages.get("messages.product.not.found"));
@@ -175,6 +230,9 @@ public class ControlController {
 		if (optionalSubProduct.isPresent()) controlSubProductDTO.setSubProductName(optionalSubProduct.get().getName());
 		
 		model.addAttribute("controlSubProductDTO", controlSubProductDTO);
+		model.addAttribute("groups", groups);
+		model.addAttribute("group", group);
+		model.addAttribute("selectedGroupId", selectedGroupId);
 		return "private/control/controlprocess";
 	}
 	
@@ -188,8 +246,16 @@ public class ControlController {
 		if (optionalArea.isEmpty()) throw new GenericException(messages.get("messages.area.not.found"));
 		Area area = optionalArea.get();
 		
+		Optional<Group> optionalGroup = groupService.findById(controlSubProductDTO.getGroupId());
+		if (optionalGroup.isEmpty()) throw new GenericException(messages.get("messages.group.not.found"));
+		Group group = optionalGroup.get();
+		
+		Optional<Long> selectedGroupId = Optional.of(controlSubProductDTO.getGroupId());
+		
 		User user = userService.findByUsername(principal.getName());
 		if (area.getUser() == null || !area.getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.area.not.found"));
+		if (group.getArea() == null || !group.getArea().getId().equals(area.getId())) throw new GenericException(messages.get("messages.group.not.found"));
+		if (group.getArea().getUser() == null || !group.getArea().getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.group.not.found"));
 		
 		Optional<Product> optionalProduct = productService.findByIdAndFatherProductIsNullAndEnabledIsTrue(controlSubProductDTO.getProductId());
 		if (optionalProduct.isEmpty()) throw new GenericException(messages.get("messages.product.not.found"));
@@ -205,11 +271,11 @@ public class ControlController {
 		if (product.isWithSubProducts() && optionalSubProduct.isEmpty()) throw new GenericException(messages.get("messages.product.not.found"));
 		Product selectedProduct = optionalSubProduct.isPresent() ? optionalSubProduct.get() : product;
 		
-		if (processService.existsByStatusAndArea(new int[] {ProcessStatus.STARTED.getStatus(), ProcessStatus.PAUSED.getStatus()}, area)) {
+		if (processService.existsByStatusAndGroup(new int[] {ProcessStatus.STARTED.getStatus(), ProcessStatus.PAUSED.getStatus()}, group)) {
 			model.addAttribute("message", this.messages.get("messages.process.already.started.in.area", area.getName()));
 			model.addAttribute("alertClass", "alert-danger");
 			
-			return this.loadStep3(model, controlSubProductDTO, null, principal, request);
+			return this.loadStep3(model, controlSubProductDTO, null, principal, selectedGroupId, request);
 		}
 		
 		Process process = new Process();
@@ -219,6 +285,7 @@ public class ControlController {
 		process.setArea(area);
 		process.setUser(userService.findByUsername(principal.getName()));
 		process.setElapsedTime(0L);
+		process.setGroup(group);
 		
 		processService.save(process);
 	    
@@ -227,7 +294,7 @@ public class ControlController {
 	    model.addAttribute("message", this.messages.get("messages.process.started", area.getName()));
 		model.addAttribute("alertClass", "alert-success");
 		
-		return this.loadStep3(model, controlSubProductDTO, null, principal, request);
+		return this.loadStep3(model, controlSubProductDTO, null, principal, selectedGroupId, request);
 	}
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.MANAGE_PROCESSES_PRIVILEGE + "')")
@@ -240,8 +307,16 @@ public class ControlController {
 		if (optionalArea.isEmpty()) throw new GenericException(messages.get("messages.area.not.found"));
 		Area area = optionalArea.get();
 		
+		Optional<Group> optionalGroup = groupService.findById(controlSubProductDTO.getGroupId());
+		if (optionalGroup.isEmpty()) throw new GenericException(messages.get("messages.group.not.found"));
+		Group group = optionalGroup.get();
+		
+		Optional<Long> selectedGroupId = Optional.of(controlSubProductDTO.getGroupId());
+		
 		User user = userService.findByUsername(principal.getName());
 		if (area.getUser() == null || !area.getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.area.not.found"));
+		if (group.getArea() == null || !group.getArea().getId().equals(area.getId())) throw new GenericException(messages.get("messages.group.not.found"));
+		if (group.getArea().getUser() == null || !group.getArea().getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.group.not.found"));
 		
 		Optional<Product> optionalProduct = productService.findByIdAndFatherProductIsNullAndEnabledIsTrue(controlSubProductDTO.getProductId());
 		if (optionalProduct.isEmpty()) throw new GenericException(messages.get("messages.product.not.found"));
@@ -271,7 +346,7 @@ public class ControlController {
 	    model.addAttribute("message", this.messages.get("messages.process.paused", area.getName()));
 		model.addAttribute("alertClass", "alert-success");
 		
-		return this.loadStep3(model, controlSubProductDTO, null, principal, request);
+		return this.loadStep3(model, controlSubProductDTO, null, principal, selectedGroupId, request);
 	}
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.MANAGE_PROCESSES_PRIVILEGE + "')")
@@ -284,8 +359,16 @@ public class ControlController {
 		if (optionalArea.isEmpty()) throw new GenericException(messages.get("messages.area.not.found"));
 		Area area = optionalArea.get();
 		
+		Optional<Group> optionalGroup = groupService.findById(controlSubProductDTO.getGroupId());
+		if (optionalGroup.isEmpty()) throw new GenericException(messages.get("messages.group.not.found"));
+		Group group = optionalGroup.get();
+		
+		Optional<Long> selectedGroupId = Optional.of(controlSubProductDTO.getGroupId());
+		
 		User user = userService.findByUsername(principal.getName());
 		if (area.getUser() == null || !area.getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.area.not.found"));
+		if (group.getArea() == null || !group.getArea().getId().equals(area.getId())) throw new GenericException(messages.get("messages.group.not.found"));
+		if (group.getArea().getUser() == null || !group.getArea().getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.group.not.found"));
 		
 		Optional<Product> optionalProduct = productService.findByIdAndFatherProductIsNullAndEnabledIsTrue(controlSubProductDTO.getProductId());
 		if (optionalProduct.isEmpty()) throw new GenericException(messages.get("messages.product.not.found"));
@@ -315,7 +398,7 @@ public class ControlController {
 	    model.addAttribute("message", this.messages.get("messages.process.resumed", area.getName()));
 		model.addAttribute("alertClass", "alert-success");
 		
-		return this.loadStep3(model, controlSubProductDTO, null, principal, request);
+		return this.loadStep3(model, controlSubProductDTO, null, principal, selectedGroupId, request);
 	}
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.MANAGE_PROCESSES_PRIVILEGE + "')")
@@ -328,8 +411,16 @@ public class ControlController {
 		if (optionalArea.isEmpty()) throw new GenericException(messages.get("messages.area.not.found"));
 		Area area = optionalArea.get();
 		
+		Optional<Group> optionalGroup = groupService.findById(controlSubProductDTO.getGroupId());
+		if (optionalGroup.isEmpty()) throw new GenericException(messages.get("messages.group.not.found"));
+		Group group = optionalGroup.get();
+		
+		Optional<Long> selectedGroupId = Optional.of(controlSubProductDTO.getGroupId());
+		
 		User user = userService.findByUsername(principal.getName());
 		if (area.getUser() == null || !area.getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.area.not.found"));
+		if (group.getArea() == null || !group.getArea().getId().equals(area.getId())) throw new GenericException(messages.get("messages.group.not.found"));
+		if (group.getArea().getUser() == null || !group.getArea().getUser().getId().equals(user.getId())) throw new GenericException(messages.get("messages.group.not.found"));
 		
 		Optional<Product> optionalProduct = productService.findByIdAndFatherProductIsNullAndEnabledIsTrue(controlSubProductDTO.getProductId());
 		if (optionalProduct.isEmpty()) throw new GenericException(messages.get("messages.product.not.found"));
@@ -357,6 +448,6 @@ public class ControlController {
 		model.addAttribute("message", this.messages.get("messages.process.finished", area.getName()));
 		model.addAttribute("alertClass", "alert-success");
 		
-		return this.loadStep1(model, principal, request);
+		return this.loadStep1(model, principal, request, selectedGroupId);
 	}
 }

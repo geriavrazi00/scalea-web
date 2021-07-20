@@ -15,4 +15,7 @@ public class ControlProductDTO {
 	
 	@NotNull(message="{messages.product.required}")
 	private Long productId;
+	
+	@NotNull(message="{messages.group.required}")
+	private Long groupId;
 }

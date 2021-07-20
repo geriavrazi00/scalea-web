@@ -531,7 +531,7 @@ function uploadSubProductImage() {
 
 /********************************************** WIZARD *******************************************************/
 
-function goToStep2(e, elem, productId) {
+function goToStep2(e, elem, productId, groupId) {
 	e.preventDefault();
 	$("#product-id").val(productId);
 	$(elem).closest('form').submit();

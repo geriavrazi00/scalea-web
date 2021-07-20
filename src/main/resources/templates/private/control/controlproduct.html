@@ -9,17 +9,20 @@
 		
 		<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 		
+		<div class="filter-row">
+			<form id="controlProductFilterForm" method="GET" th:action="@{'/control'}" style="display: initial;">
+				<div class="col-lg-3" style="padding-left: 0px; text-align: left;" th:if="${groups.size() > 0}">
+					<select id="group-id" name="group-id" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.groups}" onchange="document.getElementById('controlProductFilterForm').submit();">
+						<option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}" th:selected="${selectedGroupId == group.id ? 'true' : 'false'}"/>
+					</select>
+				</div>
+			</form>
+		</div>
+		
 		<form method="GET" th:action="@{/control/subproduct}" th:object="${controlProductDTO}">
 			<input type="hidden" id="product-id" name="productId" th:field="*{productId}" />
 			<input type="hidden" id="area-id" name="areaId" th:field="*{areaId}" th:if="${areas.size() == 1}"/>
-			
-			<div class="filter-row">
-				<div class="col-lg-3" style="padding-left: 0px; text-align: left;" th:if="${areas.size() > 1}">
-					<select id="area" name="area" th:field="*{areaId}" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.areas}">
-						<option th:each="area : ${areas}" th:value="${area.id}" th:text="${area.name}"/>
-					</select>
-				</div>
-			</div>
+			<input type="hidden" id="group-id-2" name="groupId" th:field="*{groupId}" />
 			
 			<div class="col-lg-12" style="padding-left: 0px; text-align: left;" th:if="${areas == null || areas.size() == 0}">
 				<p th:text="#{messages.user.has.no.area}"></p>
@@ -33,7 +36,7 @@
 							<div th:each="product : ${products}" class="swiper-slide">
 								<img th:src="${product.base64Image}"/>
 								<br/><br/>
-								<a href="#" th:text="${product.name}" style="font-size: 18px; margin-top: 5px;" th:onclick="'goToStep2(event, this, ' + ${product.id} + ')'"></a>
+								<a href="#" th:text="${product.name}" style="font-size: 18px; margin-top: 5px;" th:onclick="'goToStep2(event, this, ' + ${product.id} + ', ' + ${selectedGroupId} + ')'"></a>
 							</div>
 						</div>
 		

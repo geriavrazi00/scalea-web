@@ -43,6 +43,10 @@ public class AuthenticationRedirectHandler implements AuthenticationSuccessHandl
 		privilegeTargetUrlMap.put(Constants.DELETE_EMPLOYEES_PRIVILEGE, "/employees");
 		privilegeTargetUrlMap.put(Constants.UPLOAD_EMPLOYEES_PRIVILEGE, "/employees");
 		
+		// Daily activities
+		privilegeTargetUrlMap.put(Constants.VIEW_DAILY_ACTIVITIES_PRIVILEGE, "/daily-activities");
+		privilegeTargetUrlMap.put(Constants.DOWNLOAD_DAILY_ACTIVITIES_PRIVILEGE, "/daily-activities");
+		
 		// Statistics
 		privilegeTargetUrlMap.put(Constants.VIEW_GENERAL_STATISTICS_PRIVILEGE, "/statistics");
 		

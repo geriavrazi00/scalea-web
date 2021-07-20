@@ -10,19 +10,34 @@
 			
 			<div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></div>
 			
+			<div class="filter-row">
+				<form id="controlProductFilterForm" method="GET" th:action="@{'/control'}" style="display: initial;">
+					<div class="col-lg-3" style="padding-left: 0px; text-align: left;" th:if="${groups.size() > 0}">
+						<select id="group-id" name="group-id" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.groups}" onchange="document.getElementById('controlProductFilterForm').submit();">
+							<option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}" th:selected="${selectedGroupId == group.id ? 'true' : 'false'}"/>
+						</select>
+					</div>
+				</form>
+			</div>
+			
 			<section class="carosel_sec">
 				<div class="filter-row">
-					<div class="col-lg-4" style="padding-left: 0px; text-align: center;">
+					<div class="col-lg-3" style="padding-left: 0px; text-align: center;">
 						<span class="row-table-text-2" th:text="#{messages.area} + ': '" style="font-size: 22px;"></span>
 						<span class="row-table-value-2" th:text="${controlSubProductDTO.areaName}" style="font-size: 22px;"></span>
 					</div>
 					
-					<div class="col-lg-4" style="padding-left: 0px; text-align: center;">
+					<div class="col-lg-3" style="padding-left: 0px; text-align: center;">
+						<span class="row-table-text-2" th:text="#{messages.group} + ': '" style="font-size: 22px;"></span>
+						<span class="row-table-value-2" th:text="${group.name}" style="font-size: 22px;"></span>
+					</div>
+					
+					<div class="col-lg-3" style="padding-left: 0px; text-align: center;">
 						<span class="row-table-text-2" th:text="#{messages.product} + ': '" style="font-size: 22px;"></span>
 						<span class="row-table-value-2" th:text="${controlSubProductDTO.productName}" style="font-size: 22px;"></span>
 					</div>
 					
-					<div class="col-lg-4" style="padding-left: 0px; text-align: center;">
+					<div class="col-lg-3" style="padding-left: 0px; text-align: center;">
 						<span class="row-table-text-2" th:text="#{messages.subproduct} + ': '" style="font-size: 22px;"></span>
 						<span class="row-table-value-2" th:text="${controlSubProductDTO.subProductName}" style="font-size: 22px;" th:if="${controlSubProductDTO.subProductId != null}"></span>
 						<span class="row-table-value-2" style="font-size: 22px;" th:if="${controlSubProductDTO.subProductId == null}">-</span>
@@ -94,6 +109,7 @@
 				<input type="hidden" id="product-id" name="productId" th:field="*{productId}"/>
 				<input type="hidden" id="subproduct-id" name="subProductId" th:field="*{subProductId}"/>
 				<input type="hidden" id="area" name="areaId" th:field="*{areaId}"/>
+				<input type="hidden" id="group-id" name="groupId" th:field="*{groupId}"/>
 				
 				<div th:if="${controlSubProductDTO.activeProcess != null}">
 					<input type="hidden" id="started" th:value="${controlSubProductDTO.activeProcess.startedAt.getTime()}"/>
@@ -106,6 +122,7 @@
 				<input type="hidden" id="product-id" name="productId" th:field="*{productId}"/>
 				<input type="hidden" id="subproduct-id" name="subProductId" th:field="*{subProductId}"/>
 				<input type="hidden" id="area" name="areaId" th:field="*{areaId}"/>
+				<input type="hidden" id="group-id" name="groupId" th:field="*{groupId}"/>
 				
 				<div th:if="${controlSubProductDTO.activeProcess != null}">
 					<input type="hidden" id="started" th:value="${controlSubProductDTO.activeProcess.startedAt.getTime()}"/>
@@ -119,6 +136,7 @@
 				<input type="hidden" id="product-id" name="productId" th:field="*{productId}"/>
 				<input type="hidden" id="subproduct-id" name="subProductId" th:field="*{subProductId}"/>
 				<input type="hidden" id="area" name="areaId" th:field="*{areaId}"/>
+				<input type="hidden" id="group-id" name="groupId" th:field="*{groupId}"/>
 				
 				<div th:if="${controlSubProductDTO.activeProcess != null}">
 					<input type="hidden" id="started" th:value="${controlSubProductDTO.activeProcess.startedAt.getTime()}"/>
@@ -132,6 +150,7 @@
 				<input type="hidden" id="product-id" name="productId" th:field="*{productId}"/>
 				<input type="hidden" id="subproduct-id" name="subProductId" th:field="*{subProductId}"/>
 				<input type="hidden" id="area" name="areaId" th:field="*{areaId}"/>
+				<input type="hidden" id="group-id" name="groupId" th:field="*{groupId}"/>
 				
 				<div th:if="${controlSubProductDTO.activeProcess != null}">
 					<input type="hidden" id="started" th:value="${controlSubProductDTO.activeProcess.startedAt.getTime()}"/>

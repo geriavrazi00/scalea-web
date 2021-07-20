@@ -2,12 +2,15 @@ package com.scalea.controllers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -32,12 +35,14 @@ import com.scalea.configurations.Messages;
 import com.scalea.entities.Activity;
 import com.scalea.entities.Area;
 import com.scalea.entities.Employee;
+import com.scalea.entities.User;
 import com.scalea.exceptions.GenericException;
 import com.scalea.models.dto.DailyActivityDTO;
 import com.scalea.models.dto.DailyActivityDetailDTO;
 import com.scalea.services.ActivityService;
 import com.scalea.services.AreaService;
 import com.scalea.services.EmployeeService;
+import com.scalea.services.UserService;
 import com.scalea.utils.Constants;
 import com.scalea.utils.ExcelUtil;
 import com.scalea.utils.Utils;
@@ -49,14 +54,17 @@ public class DailyActivitiesController {
 	private AreaService areaService;
 	private ActivityService activityService;
 	private EmployeeService employeeService;
+	private UserService userService;
 	private Logger log;
 	private Messages messages;
 	
 	@Autowired
-	public DailyActivitiesController(AreaService areaService, ActivityService activityService, EmployeeService employeeService, Messages messages) {
+	public DailyActivitiesController(AreaService areaService, ActivityService activityService, EmployeeService employeeService, UserService userService, 
+			Messages messages) {
 		this.areaService = areaService;
 		this.activityService = activityService;
 		this.employeeService = employeeService;
+		this.userService = userService;
 		this.log = LoggerFactory.getLogger(DailyActivitiesController.class);
 		this.messages = messages;
 	}
@@ -64,13 +72,30 @@ public class DailyActivitiesController {
 	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_DAILY_ACTIVITIES_PRIVILEGE + "')")
 	@GetMapping
 	public String allDailyActivities(Model model, @RequestParam("date") Optional<String> date, 
-		@RequestParam("area") Optional<Long> area) throws ParseException {
+		@RequestParam("area") Optional<Long> area, HttpServletRequest request, Principal principal) throws ParseException, GenericException {
 		log.info("Method allDailyActivities()");
         
-        List<Area> areas = (List<Area>) areaService.findByEnabledOrderByName();
+		List<Area> areas = new ArrayList<>();
+		User user = new User();
+        
+        if (request.isUserInRole(Constants.ROLE_ADMIN)) {
+        	areas = (List<Area>) areaService.findByEnabledOrderByName();
+        } else {
+        	user = userService.findByUsername(principal.getName());
+			areas = (List<Area>) areaService.findByUserId(user);
+        }
         
         date = date.isPresent() ? date : Optional.of(Utils.dateToDateString(new Date()));
         area = area.isPresent() ? area : ((areas != null && areas.size() > 0) ? Optional.of(areas.get(0).getId()) : Optional.empty());
+        
+        if (!request.isUserInRole(Constants.ROLE_ADMIN)) {
+        	for (Area a : areas) {
+				if (area.isPresent() && a.getUser() != null && user.getId() != null && (!a.getUser().getId().equals(user.getId()) 
+						|| !a.getId().equals(area.get()))) {
+					throw new GenericException(messages.get("messages.group.not.found"));
+				}
+			}
+        }
         
         Date selectedDate = Utils.inputDateStringToDate(date.get());
         Optional<Area> selectedArea = area.isPresent() ? areaService.findById(area.get()) : Optional.empty();

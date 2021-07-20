@@ -17,9 +17,11 @@
 						
 						&nbsp;&nbsp;
 						
-						<select id="area" name="area" th:if="${areas.size() > 0}" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.areas}" onchange="document.getElementById('dailyActivitiesFilterForm').submit();">
+						<select id="area" name="area" th:if="${areas.size() > 1}" class="filter-field" style="margin-top: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.areas}" onchange="document.getElementById('dailyActivitiesFilterForm').submit();">
 							<option th:each="area : ${areas}" th:value="${area.id}" th:text="${area.name}" th:selected="${selectedArea.isPresent() && selectedArea.get().id == area.id ? 'true' : 'false'}"/>
 						</select>
+						
+						<span class="filter-field" th:if="${areas.size() == 1}" style="margin-top: 10px; padding: 10px;" data-toggle="tooltip" data-placement="top" th:title="#{messages.area}" th:text="${areas.get(0).name}"></span>
 					</form>
 				</div>
 				

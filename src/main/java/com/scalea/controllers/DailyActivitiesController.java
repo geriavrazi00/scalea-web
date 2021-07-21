@@ -100,9 +100,14 @@ public class DailyActivitiesController {
         Date selectedDate = Utils.inputDateStringToDate(date.get());
         Optional<Area> selectedArea = area.isPresent() ? areaService.findById(area.get()) : Optional.empty();
         
-        Iterable<DailyActivityDTO> activities = activityService.findActivityByAreaAndDate(selectedArea.get(), selectedDate);
-        Iterable<Activity> unassignedWeighings = this.loadUnassignedWeighings(selectedDate, selectedArea.get());
-        this.addUnassignedWeighingsToDailyActivities(activities, unassignedWeighings);
+        Iterable<DailyActivityDTO> activities = new ArrayList<>();
+        Iterable<Activity> unassignedWeighings = new ArrayList<>();
+        
+        if (selectedArea.isPresent()) {
+        	activities = activityService.findActivityByAreaAndDate(selectedArea.get(), selectedDate);
+            unassignedWeighings = this.loadUnassignedWeighings(selectedDate, selectedArea.get());
+            this.addUnassignedWeighingsToDailyActivities(activities, unassignedWeighings);
+        }
         
         double totalWeight = 0;
         long totalWeighings = 0;

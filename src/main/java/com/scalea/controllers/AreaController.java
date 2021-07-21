@@ -121,22 +121,23 @@ public class AreaController {
 		area.setUuid(Utils.generateUniqueVacancyCodes());
 		area = this.areaService.save(area);
 		
+		// Creating the default group
+		Group group = new Group();
+		group.setName("1");
+		group.setDefaultGroup(true);
+		group.setArea(area);
+		group = this.groupService.save(group);
+		
 		// Creating the vacancies
 		for (int i = 0; i < area.getCapacity(); i++) {
 			Vacancy vacancy = new Vacancy();
 			vacancy.setNumber(i + 1);
 			vacancy.setUuid(Utils.generateUniqueVacancyCodes());
 			vacancy.setArea(area);
+			vacancy.setGroup(group);
 			
 			this.vacancyService.save(vacancy);
 		}
-		
-		// Creating the default group
-		Group group = new Group();
-		group.setName("1");
-		group.setDefaultGroup(true);
-		group.setArea(area);
-		this.groupService.save(group);
 		
 		redirectAttributes.addFlashAttribute("message", this.messages.get("messages.area.created"));
 	    redirectAttributes.addFlashAttribute("alertClass", "alert-success");

@@ -27,7 +27,7 @@
 				
 				<!-- th:action="@{/employees/upload(page=${employees.number + 1})}" -->
 				
-				<div sec:authorize="hasAuthority('DOWNLOAD_DAILY_ACTIVITIES_PRIVILEGE')" style="justify-content: space-between;">
+				<div sec:authorize="hasAuthority('DOWNLOAD_DAILY_ACTIVITIES_PRIVILEGE')" style="justify-content: space-between;"  th:if="${selectedArea.isPresent() || activities.size() > 0}">
 					<form method="POST" th:action="@{'/daily-activities/export'(date=${selectedDate.get()},area=${selectedArea.isPresent() ? selectedArea.get().id : activities.get(0)})}">
 						<button type="submit" class="btn btn-primary" th:text="#{messages.download}"></button>
 					</form>

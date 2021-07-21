@@ -38,6 +38,6 @@ public class EmployeeService {
 	}
 	
 	public Iterable<Employee> findByVacancyIsNullAndEnabledIsTrue() {
-		return employeeRepo.findByVacancyIsNullAndEnabledIsTrue();
+		return employeeRepo.findByVacancyIsNullAndEnabledIsTrueOrderByFirstNameAscLastNameAsc();
 	}
 }

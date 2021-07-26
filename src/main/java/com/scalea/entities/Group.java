@@ -44,6 +44,9 @@ public class Group {
 	@OneToMany(mappedBy="group")
 	private Collection<Vacancy> vacancies;
 	
+	@OneToMany(mappedBy="group")
+	private Collection<Process> processes;
+	
 	@Transient
 	private Process activeProcess;
 

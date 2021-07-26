@@ -188,10 +188,14 @@ public class AreaGroupController {
 		if (optionalDefaultGroup.isEmpty()) throw new GenericException(messages.get("messages.default.group.not.found"));
 		Group defaultGroup = optionalDefaultGroup.get();
 		
+		if (group.getProcesses() != null && group.getProcesses().size() > 0) throw new GenericException(messages.get("messages.group.with.processes.cannot.delete"));
+		
 		// To avoid leaving vacancies without groups, we set all the original group vacancies to the default group
-		for (Vacancy vacancy : group.getVacancies()) {
-			vacancy.setGroup(defaultGroup);
-			this.vacancyService.save(vacancy);
+		if (group.getVacancies() != null && group.getVacancies().size() > 0) {
+			for (Vacancy vacancy : group.getVacancies()) {
+				vacancy.setGroup(defaultGroup);
+				this.vacancyService.save(vacancy);
+			}
 		}
 		
 		this.groupService.delete(group);

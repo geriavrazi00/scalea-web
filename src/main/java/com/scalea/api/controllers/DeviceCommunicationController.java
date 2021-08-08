@@ -1,6 +1,5 @@
 package com.scalea.api.controllers;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -107,8 +106,8 @@ public class DeviceCommunicationController {
 		double weight = Double.valueOf(activityDto.getWeight());
 		Long timestamp = Long.valueOf(activityDto.getTime());
 		
-		Instant instant = Instant.ofEpochSecond(timestamp);
-		Date date = Date.from(instant);
+		// Instant instant = Instant.ofEpochSecond(timestamp);
+		Date date = new Date(timestamp);
 		
 		// Use this control to prevent inserting the same record more than once. It should not be possible to have the same area, weight amount and timestamp twice in the db
 		boolean alreadyInserted = activityRepo.existsByAreaAndWeightAndDate(area, weight, date);

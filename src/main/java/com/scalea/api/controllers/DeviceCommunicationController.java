@@ -1,6 +1,5 @@
 package com.scalea.api.controllers;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -103,7 +102,7 @@ public class DeviceCommunicationController {
 		Optional<Process> optionalProcess = processRepo.findByStatusAndArea(ProcessStatus.STARTED.getStatus(), area);
 		if (!optionalProcess.isPresent()) throw new NotFoundException("Asnjë proces aktiv për sallën " + area.getName() + "!");
 		Process activeProcess = optionalProcess.get();
-		
+		 
 		double weight = Double.valueOf(activityDto.getWeight());
 		Long timestamp = Long.valueOf(activityDto.getTime());
 		

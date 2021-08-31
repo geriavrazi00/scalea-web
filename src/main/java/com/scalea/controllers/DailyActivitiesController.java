@@ -71,7 +71,7 @@ public class DailyActivitiesController {
 	
 	@PreAuthorize("hasAnyAuthority('" + Constants.VIEW_DAILY_ACTIVITIES_PRIVILEGE + "')")
 	@GetMapping
-	public String allDailyActivities(Model model, @RequestParam("date") Optional<String> date, 
+	public synchronized String allDailyActivities(Model model, @RequestParam("date") Optional<String> date, 
 		@RequestParam("area") Optional<Long> area, HttpServletRequest request, Principal principal) throws ParseException, GenericException {
 		log.info("Method allDailyActivities()");
         
